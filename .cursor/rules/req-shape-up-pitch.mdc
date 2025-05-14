@@ -1,0 +1,115 @@
+---
+description: pitch Creator. Invoke with "Create a Pitch"
+globs: 
+alwaysApply: false
+---
+## Pitche Management Rule
+
+*This rule guides the creation and maintenance of the `docs/pitch.md` file.*
+
+### Core Directive
+Create, maintain, and update the `docs/pitch.md` file located in the root of the project. Operate based on information found in `NOTES.md` and ensure `docs/pitch.md` aligns with the predefined structure below.
+
+### Strict Limitations
+* **File Operations:** You are ONLY permitted to read `NOTES.md` and read/write to `docs/pitch.md`. You must not interact with any other files or perform any other actions.
+* **Communication:** You are forbidden from generating any conversational output, commentary, preamble, or summaries. Your entire output must be the content of the `docs/pitch.md` file itself. Do not repeat the contents of `docs/pitch.md` back to the user in any other format.
+* **User Interaction:** You do not directly converse with the user. If sections of the `docs/pitch.md` are incomplete, you will indicate this *within* the `docs/pitch.md` file using a specific comment format.
+
+### Pitch Structure and Content Source
+The `docs/pitch.md` file must be structured around the following 5 key sections, derived from the "shape up pitch" outline below.
+
+
+#### I. The Goal of a Pitch:
+
+To present a well-shaped, de-risked, potential "bet" (project) that clearly communicates the problem, the proposed solution, its boundaries, and why it's worth doing within a specific timeframe ("appetite").
+
+#### II. Core Ingredients of Every Pitch (The "What"):
+1.  **Problem (The "Why"):**
+    *   **Action:** Clearly articulate the specific problem, raw idea, or use case that motivates this work.
+    *   **Guidance:**
+        *   Present it alongside the solution; don't assume the "why" is obvious.
+        *   Use a *specific story or concrete example* of the status quo failing or a customer struggling. This provides a baseline to measure the solution against.
+        *   Explain *for whom* this is a problem and *why it matters* to them/the business.
+        *   This establishes the basis for judging the solution's fitness.
+
+2.  **Appetite (The "How Much"):**
+    *   **Action:** State the pre-defined time budget for this project (e.g., 2 weeks for a "Small Batch" or 6 weeks for a "Big Batch").
+    *   **Guidance:**
+        *   This is *not an estimate* of how long the proposed solution will take. It's a *constraint* that the solution was designed to fit *within*.
+        *   It prevents unproductive "what if we did more?" conversations by framing the solution around a fixed investment.
+        *   It helps evaluate if the proposed solution delivers enough value for the stated appetite.
+
+3.  **Solution (The "How"):**
+    *   **Action:** Describe the core elements of the proposed solution in a way that's easy for stakeholders to immediately understand.
+    *   **Guidance:**
+        *   The solution must be *shaped*, not just a vague idea. This means:
+            *   **It's Rough:** Defined at a high level of abstraction (e.g., fat-marker sketches, breadboards), leaving room for designers/developers to work out details. Avoid over-specifying with wireframes or high-fidelity mocks.
+            *   **It's Solved:** The main elements are thought through, connect coherently, and address the core problem. Key interactions are considered.
+            *   **It's Bounded:** It's clear what's in and what's out, fitting the defined appetite.
+        *   **Visualization:**
+            *   Use "Embedded Sketches": Show new UI elements/affordances *within the context* of existing screens to make placement and interaction clear.
+            *   Use "Annotated Fat Marker Sketches": For more visual concepts, use clean labels, color separation, and call-outs to explain key parts. Ensure they are clear even to someone not involved in the initial shaping.
+        *   Focus on *what* the solution does and *how it generally works*, not pixel-perfect details.
+
+4.  **Rabbit Holes (The "Watch Outs"):**
+    *   **Action:** Explicitly call out any potential complexities, tricky technical areas, or significant design challenges that were considered and how they've been de-risked or "patched" in the proposed solution.
+    *   **Guidance:**
+        *   This demonstrates that risks have been proactively identified and addressed.
+        *   Example: "We decided to handle X this simpler way to avoid Y complexity, even though Z might seem better, because Y is a known time sink."
+        *   Spelling these out prevents the implementation team from re-discovering them or getting stuck.
+
+5.  **No-Gos (The "What We're Not Doing"):**
+    *   **Action:** List any specific functionalities, use cases, or features that are *intentionally excluded* from this version of the solution.
+    *   **Guidance:**
+        *   This manages expectations and reinforces the boundaries set by the appetite.
+        *   It helps prevent scope creep during implementation.
+        *   Be explicit about things that might seem obvious to include but are being deferred or cut to make the project tractable within the appetite.
+
+#### III. The Process of Creating a Pitch (The "How To Get There" - Assumed Pre-requisites):
+
+While the pitch has the 5 ingredients above, creating a *good* pitch relies on the preceding "Shaping" process:
+
+1.  **Set Boundaries (Before Pitching):**
+    *   **Action:** Start with a raw idea. Define the "appetite" (time budget). Narrow down the problem to a specific, well-understood pain point or use case.
+    *   **Guidance:** Avoid "grab-bags" (e.g., "redesign X"). Focus on a specific problem to solve.
+
+2.  **Rough out the Elements (Before Pitching):**
+    *   **Action:** Sketch solutions at a high level of abstraction (fat-marker sketches for UI layout ideas, breadboards for user flows/interactions).
+    *   **Guidance:** Move fast, explore multiple options. Don't get bogged down in details. Focus on key components and connections. The output is a conceptual solution.
+
+3.  **Address Risks and Rabbit Holes (Before Pitching):**
+    *   **Action:** Critically review the conceptual solution. Identify potential holes, technical unknowns, or design problems.
+    *   **Guidance:**
+        *   "Patch" holes by making specific design/technical decisions.
+        *   "Declare out of bounds" any features/use cases that add too much risk or scope.
+        *   "Cut back" on non-essential elements.
+        *   Present to technical experts for feedback if needed to validate assumptions within the appetite.
+
+#### IV. Pitch Presentation (Where it Goes):
+*   **Action:** Post the written pitch in `docs/pitch.md` (e.g., as a document or message in a shared system like Basecamp).
+*   **Guidance:**
+    *   Allow stakeholders to read it asynchronously before any meeting.
+    *   Use clear formatting, embed sketches effectively with captions.
+    *   The pitch is ready for the "Betting Table" where decisions are made about what to build in the next cycle.
+
+### Workflow
+
+1.  **Process User Request:** A user request triggers your operation. (This prompt assumes the trigger is an implicit instruction to update/create the pitch).
+2.  **Access Files:**
+    * Read the content of `NOTES.md`. This is your primary source of information for populating `docs/pitch.md`.
+    * Read the current content of `docs/pitch.md` if it exists.
+3.  **Manage `docs/pitch.md`:**
+    * **Initialization:** If `docs/pitch.md` does not exist, create it. Populate it with the 5 section headers listed above.
+    * **Content Integration:** For each of the eight sections in `docs/pitch.md`:
+        * Review `NOTES.md` for relevant information pertaining to that section.
+        * Update the corresponding section in `docs/pitch.md` with this information. If the section already has content, intelligently merge or update it based on the latest `NOTES.md`. Strive to be comprehensive but concise.
+    * **Identify Gaps & Insert TODOs:** After attempting to populate each section from `NOTES.md`:
+        - A TODO comment MUST ONLY be inserted if, after reviewing `NOTES.md`, the section in `docs/pitch.md` remains genuinely empty, or contains only placeholder text (e.g., a rephrasing of the section title without substantive information), or if critical information explicitly requested by the section's definition (as outlined in "Technical Plan Outline") is clearly missing and not found in `NOTES.md`.
+        - Do NOT insert a TODO comment if the section has been populated with relevant information from `NOTES.md`, even if that information could be more detailed. The purpose of the TODO is to address missing information, not to solicit further elaboration on existing information unless that information is so scant as to be effectively missing or fails to address the core requirements of the section.
+        - **TODO Comment Format:** Use an HTML comment starting with `<!-- TODO: ... -->`.
+        - **Contextual TODO Prompts:** When a TODO is necessary according to the criteria above, analyze `NOTES.md` and the current `docs/pitch.md` to infer a specific question that addresses the missing information. The examples provided in "Technical Plan Outline" for each section should be used as inspiration for formulating these contextual prompts. The goal is to ask targeted questions based on the current context, rather than always using the generic examples, to guide the user in providing the specific missing information.
+
+4.  **Output:** Your final action is to output the complete, updated content of `docs/pitch.md`. No other text or explanation should be provided.
+
+### Final Instruction
+Execute these instructions precisely. Your sole focus is the `docs/pitch.md` file.

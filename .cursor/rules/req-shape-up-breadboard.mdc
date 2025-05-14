@@ -1,0 +1,105 @@
+---
+description: pitch Creator. Invoke with "Create a Pitch"
+globs: 
+alwaysApply: false
+---
+Use [req-mermaid.mdc](mdc:.cursor/rules/req-mermaid.mdc) to create a diagram following the guidelines below
+
+Breadboarding: A Guide to Sketching Interface Flows
+
+I. What is Breadboarding?
+
+Core Idea: A technique borrowed from electrical engineering to quickly prototype the flow and connectivity of an interface without getting bogged down in visual design details.
+Software Equivalent: You're sketching the key "Places" (screens, dialogs), the "Affordances" (interactive elements like buttons, links, fields, informative text) within those places, and the "Connection Lines" (how users move between them).
+Purpose:
+To design at the right level of abstraction for early-stage thinking.
+To move fast and explore many different potential flows for a feature.
+To be concrete enough to make progress but abstract enough to avoid premature commitment to visual details.
+II. Why Use Breadboarding?
+
+Speed & Exploration: Lightweight notation allows for rapid iteration and exploration of different user paths.
+Focus on Interaction, Not Visuals: Keeps the conversation centered on how the feature works, what components are needed, and how they connect, rather than how it looks.
+Uncover Questions & Assumptions: The act of drawing the flow often reveals hidden complexities, missing steps, or unstated assumptions.
+Facilitate Discussion: Provides a shared, rough artifact for collaborators to discuss, question, and align on a potential solution path.
+Avoid Premature Detail: Prevents getting stuck on unnecessary details (like exact button placement or color) when the core flow isn't yet clear.
+III. Core Components of a Breadboard Diagram (The "What to Draw"):
+
+Places:
+
+Definition: Navigable locations in your interface where users can be.
+Examples: Screens, pages, dialog boxes, pop-up menus, specific states of a component.
+How to Draw: Write the name of the place (e.g., "Invoice Screen," "Setup Autopay Modal") and underline it.
+Affordances:
+
+Definition: Elements within a "Place" that the user can interact with or that provide information guiding their next action.
+Examples: Buttons ("Turn on Autopay"), input fields ("Credit Card Fields"), links, important text ("Thank You Message," "Autopay in Future?").
+How to Draw: Write the name or function of the affordance below the underlined "Place" it belongs to.
+Connection Lines:
+
+Definition: Show how an "Affordance" in one "Place" leads the user to another "Place" or triggers a state change.
+How to Draw: Use arrows pointing from an "Affordance" to the resulting "Place" or to indicate a sequence.
+IV. How to Create a Breadboard Diagram (Actionable Steps):
+
+Start with a Known "Place": Identify the user's starting point (e.g., "Invoice Screen"). Write it down and underline it.
+Identify Key "Affordances": List the relevant interactive elements or key information available in that "Place" that relate to the problem you're solving (e.g., "Turn on Autopay" button). Write these below the "Place."
+Connect to the Next "Place": Determine where an interaction with an "Affordance" leads. Draw an arrow from the "Affordance" to this new "Place" (e.g., "Setup Autopay Screen"). Write and underline the new "Place."
+Repeat: For the new "Place," identify its relevant "Affordances" and where they lead. Continue until the user flow for the specific scenario is complete.
+Use Words, Not Pictures: Resist the urge to sketch UI elements. The focus is on the names and connections.
+Keep it Rough & Fast: This is a thinking tool, not a polished deliverable. Don't worry about neatness.
+Explore Alternatives: If a flow feels clunky or raises too many questions, quickly sketch an alternative path on the same page or a new one.
+V. Key Principles & Best Practices for Breadboarding:
+
+Words Over Pictures: This is crucial. Using text for elements forces focus on function and connection, not visual appearance.
+One Flow at a Time: Typically, a breadboard traces a single user scenario or a core part of one.
+Ask "What happens next?": Continuously question the sequence of actions and resulting states.
+Don't Define Everything: Only include elements relevant to the flow being explored.
+Topology Matters: You're defining what's connected to what, not the exact layout or visual hierarchy.
+Embrace "Just Enough" Detail: Enough to communicate the flow, not so much it slows you down.
+Iterate and Discard: It's cheap to make changes or throw away a breadboard and start over.
+Good for Collaboration: Excellent for working with one or two other people on a whiteboard or shared digital space to quickly explore ideas.
+VI. Example Walkthrough (Derived from "Autopay" example in "Shape Up"):
+
+Start: INVOICE (Place)
+
+TURN ON AUTOPAY (Affordance)
+Connect: TURN ON AUTOPAY → SETUP AUTOPAY (New Place)
+
+New Place: SETUP AUTOPAY
+
+CC FIELDS (Affordance)
+FI LOGO (Affordance - info)
+SUBMIT (Affordance)
+Connect: SUBMIT → CONFIRM (New Place)
+
+New Place: CONFIRM
+
+THANK YOU MESSAGE (Affordance - info)
+This simple flow immediately raises questions: "Did we pay the original invoice?" "How is this different from the regular payment flow?" This leads to exploring alternative breadboards, like:
+
+Alternative Start: INVOICE
+
+PAY (Existing affordance, not the new "Turn on Autopay")
+Connect: PAY → PAY INVOICE (New/existing Place)
+
+New Place: PAY INVOICE
+
+CC FIELDS
+ACH FIELDS
+FI LOGO
+AUTOPAY IN FUTURE? (New affordance here)
+SUBMIT
+Connect: SUBMIT → CONFIRM
+
+New Place: CONFIRM
+
+PRINT RECEIPT
+THANK YOU MESSAGE
+CONFIRM AUTOPAY (IF CHOSEN)
+This iterative breadboarding helps define the elements and their relationships before any visual design or detailed coding.
+
+VII. When NOT to Use Breadboarding (or when to switch):
+
+Visual Arrangement is Key: If the core problem you're trying to solve is about the 2D layout or visual grouping of elements on a single screen, a "Fat Marker Sketch" is likely more appropriate.
+Flow is Trivial/Obvious: If the interactions are extremely simple and well-understood, breadboarding might be overkill.
+After Elements are Defined: Once the core flows and elements are clear from breadboarding (and perhaps fat marker sketches), you're ready to move towards writing the "Pitch," which might include cleaner, annotated versions of these initial sketches.
+By following this guide, you can effectively use breadboarding to clarify interface flows, identify key components, and make rapid progress in the early stages of shaping work.
