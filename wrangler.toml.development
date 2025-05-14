@@ -1,0 +1,23 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "spicy-wod"
+compatibility_date = "2024-12-24"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".vercel/output/static"
+
+# Workers Logs
+# Docs: https://developers.cloudflare.com/workers/observability/logs/workers-logs/
+# Configuration: https://developers.cloudflare.com/workers/observability/logs/workers-logs/#enable-workers-logs
+[observability]
+enabled = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "dev-spicy-db"
+database_id = "f866d06d-bc51-47de-ab43-9381a08b5c8a"
+migrations_table = "drizzle_migrations"
+migrations_dir = "./drizzle"
+
+[[kv_namespaces]]
+binding = "USER_SESSIONS"
+id = "9ff4a16a8c094b10a4d980b92cd9a1d4"
+

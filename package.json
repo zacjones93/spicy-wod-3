@@ -1,7 +1,10 @@
 {
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
+    "db:apply": "drizzle-kit generate && wrangler d1 migrations apply dev-spicy-db --local",
+    "db:apply:prod": "wrangler d1 migrations apply dev-spicy-db",
+    "db:studio": "drizzle-kit studio --config drizzle.studio.config.ts",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -11,20 +14,30 @@
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
     "bcrypt-ts": "^5.0.0",
-    "drizzle-orm": "^0.29.2",
+    "drizzle-orm": "^0.43.1",
     "geist": "^1.2.0",
     "next": "^14.0.4",
     "next-auth": "5.0.0-beta.4",
-    "postgres": "^3.4.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250514.0",
+    "@opennextjs/cloudflare": "^1.0.2",
+    "@types/better-sqlite3": "^7.6.13",
     "autoprefixer": "^10.4.16",
+    "better-sqlite3": "^11.10.0",
+    "cross-env": "^7.0.3",
+    "drizzle-kit": "^0.31.1",
     "eslint": "8.56.0",
     "eslint-config-next": "^14.0.4",
     "postcss": "^8.4.32",
+    "server-only": "^0.0.1",
+    "tailwind-merge": "^3.3.0",
     "tailwindcss": "^3.4.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "uuid": "^11.1.0",
+    "wrangler": "4.15.0",
+    "zod": "^3.24.4"
   }
 }
