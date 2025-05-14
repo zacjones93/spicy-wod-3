@@ -6,14 +6,15 @@ import { useState } from "react"
 import Link from "next/link"
 import { Dumbbell } from "lucide-react"
 
-export default function LoginPage() {
+export default function SignupPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle login logic here
-    console.log("Login attempt with:", { email, password })
+    // Handle signup logic here
+    console.log("Signup attempt with:", { email, password, confirmPassword })
   }
 
   return (
@@ -31,7 +32,7 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <div className="border-2 border-black">
             <div className="bg-black text-white p-4">
-              <h2 className="text-xl font-bold uppercase">Login</h2>
+              <h2 className="text-xl font-bold uppercase">Sign Up</h2>
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
@@ -57,25 +58,40 @@ export default function LoginPage() {
                 />
               </div>
 
-              <div className="flex justify-between items-center">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className="h-5 w-5" />
-                  <span>Remember me</span>
-                </label>
-                <Link href="/forgot-password" className="text-sm underline">
-                  Forgot password?
-                </Link>
+              <div>
+                <label className="block font-bold uppercase mb-2">Confirm Password</label>
+                <input
+                  type="password"
+                  className="input"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input type="checkbox" className="h-5 w-5" required />
+                <span>
+                  I agree to the{" "}
+                  <Link href="/terms" className="underline">
+                    Terms of Service
+                  </Link>{" "}
+                  and{" "}
+                  <Link href="/privacy" className="underline">
+                    Privacy Policy
+                  </Link>
+                </span>
               </div>
 
               <button type="submit" className="btn w-full">
-                Login
+                Create Account
               </button>
 
               <div className="text-center">
                 <p>
-                  Don't have an account?{" "}
-                  <Link href="/signup" className="underline font-bold">
-                    Sign up
+                  Already have an account?{" "}
+                  <Link href="/login" className="underline font-bold">
+                    Login
                   </Link>
                 </p>
               </div>

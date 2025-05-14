@@ -5,6 +5,7 @@
     "db:apply": "drizzle-kit generate && wrangler d1 migrations apply dev-spicy-db --local",
     "db:apply:prod": "wrangler d1 migrations apply dev-spicy-db",
     "db:studio": "drizzle-kit studio --config drizzle.studio.config.ts",
+    "db:seed": "wrangler d1 execute dev-spicy-db --local --file ./seed.sql",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -15,12 +16,16 @@
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
     "bcrypt-ts": "^5.0.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "drizzle-orm": "^0.43.1",
     "geist": "^1.2.0",
+    "lucide-react": "^0.510.0",
     "next": "^14.0.4",
     "next-auth": "5.0.0-beta.4",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250514.0",
