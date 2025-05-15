@@ -28,6 +28,7 @@ export async function getAllWorkouts() {
       allMovements
         .filter(wm => wm.workoutId === id && wm.movementId !== null)
         .map(wm => movementMap[wm.movementId as string])
+        .filter(Boolean)
     ])
   );
 
@@ -57,18 +58,6 @@ export async function getWorkoutById(id: string) {
     tags: tagObjs,
     movements: movementObjs,
   };
-}
-
-// Fetch all tags
-export async function getAllTags() {
-  const db = await getDb();
-  return db.select().from(tags);
-}
-
-// Fetch all movements
-export async function getAllMovements() {
-  const db = await getDb();
-  return db.select().from(movements);
 }
 
 // Insert a new workout (with tags and movements)

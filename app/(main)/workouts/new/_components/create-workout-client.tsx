@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Plus, X } from "lucide-react";
-import { createWorkout } from "@/server/functions/workout";
 import { useRouter } from "next/navigation";
 
 interface Movement {
@@ -20,11 +19,25 @@ interface Tag {
 interface Props {
 	movements: Movement[];
 	tags: Tag[];
+	createWorkoutAction: (data: {
+		workout: {
+			id: string;
+			name: string;
+			description: string;
+			scheme: string;
+			createdAt: Date;
+			roundsToScore?: number;
+			repsPerRound?: number;
+		};
+		tagIds: string[];
+		movementIds: string[];
+	}) => Promise<void>;
 }
 
 export default function CreateWorkoutClient({
 	movements,
 	tags: initialTags,
+	createWorkoutAction,
 }: Props) {
 	const [tags, setTags] = useState<Tag[]>(initialTags);
 	const [selectedMovements, setSelectedMovements] = useState<string[]>([]);
@@ -73,7 +86,7 @@ export default function CreateWorkoutClient({
 	const handleSubmit = async (e: any) => {
 		e.preventDefault();
 		const workoutId = crypto.randomUUID();
-		await createWorkout({
+		await createWorkoutAction({
 			workout: {
 				id: workoutId,
 				name,

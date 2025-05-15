@@ -7,9 +7,9 @@ export default async function WorkoutsPage() {
 
 	return (
 		<div>
-			<div className="flex justify-between items-center mb-6">
+			<div className="flex justify-between sm:items-center sm:flex-row flex-col mb-6">
 				<h1>WORKOUTS</h1>
-				<Link href="/workouts/new" className="btn flex items-center gap-2">
+				<Link href="/workouts/new" className="btn flex items-center gap-2 w-fit">
 					<Plus className="h-5 w-5" />
 					Create Workout
 				</Link>

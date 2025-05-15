@@ -1,8 +1,6 @@
-import {
-	getWorkoutById,
-	getAllTags,
-	getAllMovements,
-} from "@/server/functions/workout";
+import { getWorkoutById } from "@/server/functions/workout";
+import { getAllTags } from "@/server/functions/tag";
+import { getAllMovements } from "@/server/functions/movement";
 import EditWorkoutClient from "./_components/edit-workout-client";
 
 export default async function EditWorkoutPage({
