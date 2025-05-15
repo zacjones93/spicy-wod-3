@@ -99,7 +99,7 @@ export default function CreateWorkoutClient({
 			tagIds: selectedTags,
 			movementIds: selectedMovements,
 		});
-		router.push("/workouts");
+		router.push(`/workouts/${workoutId}`);
 	};
 
 	return (

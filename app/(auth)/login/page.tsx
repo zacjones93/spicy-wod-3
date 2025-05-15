@@ -3,6 +3,7 @@ import type React from "react";
 import Link from "next/link";
 import { Dumbbell } from "lucide-react";
 import { signIn } from "@/auth";
+import { headers } from "next/headers";
 
 export default function LoginPage() {
 	return (
@@ -26,6 +27,7 @@ export default function LoginPage() {
 						<form
 							action={async (formData: FormData) => {
 								"use server";
+								headers();
 								await signIn("credentials", {
 									redirectTo: "/workouts",
 									email: formData.get("email") as string,

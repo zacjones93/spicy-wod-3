@@ -61,9 +61,10 @@ export async function getWorkoutById(id: string) {
 }
 
 // Insert a new workout (with tags and movements)
-export async function createWorkout({ workout, tagIds, movementIds }: { workout: any, tagIds: string[], movementIds: string[] }) {
+export async function createWorkout({ workout, tagIds, movementIds, userId }: { workout: any, tagIds: string[], movementIds: string[], userId: string }) {
   const db = await getDbAsync();
-  await db.insert(workouts).values(workout);
+  await db.insert(workouts).values({ ...workout, userId });
+
   if (tagIds.length) {
     await db.insert(workoutTags).values(tagIds.map(tagId => ({ id: crypto.randomUUID(), workoutId: workout.id, tagId })));
   }
