@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Search, Filter } from "lucide-react";
-import { getAllMovements } from "@/server/functions/workout";
+import { getAllMovements } from "@/server/functions/movement";
 
 export default async function MovementsPage() {
 	const movements = await getAllMovements();
