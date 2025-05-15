@@ -1,6 +1,7 @@
 import { getDbAsync } from "../db";
 import { movements } from "../db/schema";
 import { revalidatePath } from "next/cache";
+import { eq } from "drizzle-orm";
 
 type MovementType = 'strength' | 'gymnastic' | 'monostructural';
 const VALID_MOVEMENT_TYPES: MovementType[] = ['strength', 'gymnastic', 'monostructural'];
@@ -16,6 +17,24 @@ export async function getAllMovements() {
   } catch (error) {
     console.error("[server/functions/movement] Error in getAllMovements:", error);
     throw new Error("Failed to fetch movements.");
+  }
+}
+
+// Fetch a single movement by ID
+export async function getMovementById(id: string) {
+  console.log(`[server/functions/movement] getMovementById called for id: ${id}`);
+  try {
+    const db = await getDbAsync();
+    const movement = await db.select().from(movements).where(eq(movements.id, id));
+    if (movement.length === 0) {
+      console.log(`[server/functions/movement] No movement found for id: ${id}`);
+      return null;
+    }
+    console.log(`[server/functions/movement] Fetched movement: ${movement[0].name}`);
+    return movement[0];
+  } catch (error) {
+    console.error(`[server/functions/movement] Error in getMovementById for id ${id}:`, error);
+    throw new Error("Failed to fetch movement.");
   }
 }
 
