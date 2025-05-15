@@ -3,6 +3,8 @@ import LogFormClient from "./_components/log-form-client";
 import { getUser } from "@/server/functions/user";
 import { auth } from "@/auth";
 
+export const dynamic = "force-dynamic";
+
 export default async function LogNewResultPage({
 	searchParams,
 }: {

@@ -3,6 +3,8 @@ import { getAllMovements } from "@/server/functions/movement";
 import { getAllTags } from "@/server/functions/tag";
 import { createWorkout } from "@/server/functions/workout";
 
+export const dynamic = "force-dynamic";
+
 export default async function CreateWorkoutPage() {
 	const movements = await getAllMovements();
 	const tags = await getAllTags();
