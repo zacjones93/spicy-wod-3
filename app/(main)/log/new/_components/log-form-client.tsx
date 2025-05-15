@@ -18,11 +18,17 @@ interface Workout {
 export default function LogFormClient({
 	workouts,
 	userId,
+	selectedWorkoutId,
+	redirectUrl,
 }: {
 	workouts: Workout[]; // Use the Workout interface
 	userId: string;
+	selectedWorkoutId?: string;
+	redirectUrl?: string;
 }) {
-	const [selectedWorkout, setSelectedWorkout] = useState<string | null>(null);
+	const [selectedWorkout, setSelectedWorkout] = useState<string | null>(
+		selectedWorkoutId || null
+	);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [scale, setScale] = useState<"rx" | "scaled" | "rx+">("rx");
 	const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
@@ -50,11 +56,16 @@ export default function LogFormClient({
 			return;
 		}
 
+		// Add redirectUrl to formData if it exists
+		if (redirectUrl) {
+			formData.set("redirectUrl", redirectUrl);
+		}
+
 		// Ensure selectedWorkoutId is on formData if not already explicitly set by a hidden field
-		// (The hidden field <input type=\"hidden\" name=\"selectedWorkoutId\" value={selectedWorkout} /> handles this)
-		// if (!formData.has("selectedWorkoutId") && selectedWorkout) {
-		//  formData.set("selectedWorkoutId", selectedWorkout);
-		// }
+		// (The hidden field <input type="hidden" name="selectedWorkoutId" value={selectedWorkout} /> handles this)
+		if (!formData.has("selectedWorkoutId") && selectedWorkout) {
+			formData.set("selectedWorkoutId", selectedWorkout);
+		}
 
 		startTransition(async () => {
 			try {
@@ -79,9 +90,12 @@ export default function LogFormClient({
 			{selectedWorkout && (
 				<input type="hidden" name="selectedWorkoutId" value={selectedWorkout} />
 			)}
+			{redirectUrl && (
+				<input type="hidden" name="redirectUrl" value={redirectUrl} />
+			)}
 			<div className="flex justify-between items-center mb-6">
 				<div className="flex items-center gap-2">
-					<Link href="/log" className="btn-outline p-2">
+					<Link href={redirectUrl || "/log"} className="btn-outline p-2">
 						<ArrowLeft className="h-5 w-5" />
 					</Link>
 					<h1>LOG RESULT</h1>

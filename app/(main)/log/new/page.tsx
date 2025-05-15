@@ -3,7 +3,11 @@ import LogFormClient from "./_components/log-form-client";
 import { getUser } from "@/server/functions/user";
 import { auth } from "@/auth";
 
-export default async function LogNewResultPage() {
+export default async function LogNewResultPage({
+	searchParams,
+}: {
+	searchParams?: { workoutId?: string; redirectUrl?: string };
+}) {
 	console.log("[log/new] Fetching workouts for log form");
 	let session = await auth();
 
@@ -12,13 +16,20 @@ export default async function LogNewResultPage() {
 		return <div>Please log in to view your workout log.</div>;
 	}
 
-  const user = await getUser(session?.user?.email);
+	const user = await getUser(session?.user?.email);
 
-  if (!user) {
-    console.log("[log/page] No user found");
-    return <div>Please log in to view your workout log.</div>;
-  }
+	if (!user) {
+		console.log("[log/page] No user found");
+		return <div>Please log in to view your workout log.</div>;
+	}
 
 	const workouts = await getAllWorkouts();
-	return <LogFormClient workouts={workouts} userId={user.id} />;
+	return (
+		<LogFormClient
+			workouts={workouts}
+			userId={user.id}
+			selectedWorkoutId={searchParams?.workoutId}
+			redirectUrl={searchParams?.redirectUrl}
+		/>
+	);
 }

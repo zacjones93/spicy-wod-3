@@ -108,7 +108,10 @@ export default function WorkoutDetailClient({
 							<ListChecks className="h-5 w-5" />
 							<h2>WORKOUT RESULTS</h2>
 						</div>
-						<Link href={`/log/new?workoutId=${workoutId}`} className="btn">
+						<Link
+							href={`/log/new?workoutId=${workoutId}&redirectUrl=/workouts/${workoutId}`}
+							className="btn"
+						>
 							Log Result
 						</Link>
 					</div>

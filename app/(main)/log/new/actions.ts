@@ -21,6 +21,7 @@ export async function submitLogFormAction(
   const dateStr = formData.get("date") as string;
   const scaleValue = formData.get("scale") as "rx" | "scaled" | "rx+";
   const notesValue = formData.get("notes") as string;
+  const redirectUrl = formData.get("redirectUrl") as string | null;
 
   if (!selectedWorkoutId) {
     console.error("[Action] No workout selected");
@@ -85,5 +86,5 @@ export async function submitLogFormAction(
     return { error: `Failed to save log: ${error instanceof Error ? error.message : String(error)}` };
   }
 
-  redirect("/log"); // On success, redirect
+  redirect(redirectUrl || "/log"); // On success, redirect
 } 
