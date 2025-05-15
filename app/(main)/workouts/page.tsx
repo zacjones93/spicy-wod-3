@@ -1,34 +1,75 @@
 import Link from "next/link";
-import { Search, Plus, Filter } from "lucide-react";
+import { Plus } from "lucide-react";
 import { getAllWorkouts } from "@/server/functions/workout";
+import WorkoutControls from "./_components/WorkoutControls";
 
-export default async function WorkoutsPage() {
-	const workouts = await getAllWorkouts();
+export default async function WorkoutsPage({
+	searchParams,
+}: {
+	searchParams?: { search?: string; tag?: string; movement?: string };
+}) {
+	const allWorkouts = await getAllWorkouts();
+
+	const searchTerm = searchParams?.search?.toLowerCase() || "";
+	const selectedTag = searchParams?.tag || "";
+	const selectedMovement = searchParams?.movement || "";
+
+	const workouts = allWorkouts.filter((workout) => {
+		const nameMatch = workout.name.toLowerCase().includes(searchTerm);
+		const descriptionMatch = workout.description
+			?.toLowerCase()
+			.includes(searchTerm);
+		const movementSearchMatch = workout.movements.some((movement: any) =>
+			movement?.name?.toLowerCase().includes(searchTerm)
+		);
+		const tagSearchMatch = workout.tags.some((tag: any) =>
+			tag.toLowerCase().includes(searchTerm)
+		);
+
+		const searchFilterPassed = searchTerm
+			? nameMatch || descriptionMatch || movementSearchMatch || tagSearchMatch
+			: true;
+
+		const tagFilterPassed = selectedTag
+			? workout.tags.some((tag: any) => tag === selectedTag)
+			: true;
+
+		const movementFilterPassed = selectedMovement
+			? workout.movements.some(
+					(movement: any) => movement?.name === selectedMovement
+			  )
+			: true;
+
+		return searchFilterPassed && tagFilterPassed && movementFilterPassed;
+	});
+
+	// Extract unique tags and movements for filter dropdowns
+	const allTags = [
+		...new Set(allWorkouts.flatMap((workout: any) => workout.tags)),
+	].sort() as string[];
+
+	const allMovements = [
+		...new Set(
+			allWorkouts.flatMap((workout: any) =>
+				workout.movements.map((m: any) => m?.name).filter(Boolean)
+			)
+		),
+	].sort() as string[];
 
 	return (
 		<div>
 			<div className="flex justify-between sm:items-center sm:flex-row flex-col mb-6">
 				<h1>WORKOUTS</h1>
-				<Link href="/workouts/new" className="btn flex items-center gap-2 w-fit">
+				<Link
+					href="/workouts/new"
+					className="btn flex items-center gap-2 w-fit"
+				>
 					<Plus className="h-5 w-5" />
 					Create Workout
 				</Link>
 			</div>
 
-			<div className="flex gap-4 mb-6">
-				<div className="relative flex-1">
-					<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-					<input
-						type="text"
-						placeholder="Search workouts..."
-						className="input pl-10"
-					/>
-				</div>
-				<button className="btn-outline flex items-center gap-2">
-					<Filter className="h-5 w-5" />
-					Filter
-				</button>
-			</div>
+			<WorkoutControls allTags={allTags} allMovements={allMovements} />
 
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 				{workouts.map((workout: any) => (
@@ -42,7 +83,7 @@ export default async function WorkoutsPage() {
 						<div className="flex flex-wrap gap-2 mb-3">
 							{workout.movements.map((movement: any) => (
 								<span
-									key={movement?.id || movement}
+									key={movement?.id || movement?.name || movement}
 									className="inline-block px-2 py-1 text-xs font-bold bg-black text-white"
 								>
 									{movement?.name || movement}
