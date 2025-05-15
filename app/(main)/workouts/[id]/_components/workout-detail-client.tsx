@@ -24,6 +24,8 @@ export default function WorkoutDetailClient({
 }) {
 	if (!workout) return <div>Loading...</div>;
 
+	const canEditWorkout = userId === workout.userId;
+
 	// Helper to format date
 	const formatDate = (timestamp: number | Date | null) => {
 		if (!timestamp) return "N/A";
@@ -39,13 +41,18 @@ export default function WorkoutDetailClient({
 					</Link>
 					<h1>{workout.name}</h1>
 				</div>
+				{canEditWorkout && (
 				<Link
 					href={`/workouts/${workoutId}/edit`}
 					className="btn flex items-center gap-2"
 				>
-					<Edit className="h-5 w-5" />
-					Edit Workout
-				</Link>
+						
+						<>
+							<Edit className="h-5 w-5" />
+							Edit Workout
+						</>
+					</Link>
+				)}
 			</div>
 
 			<div className="border-2 border-black mb-6">

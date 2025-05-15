@@ -15,6 +15,24 @@ export default async function EditWorkoutPage({
 	const movements = await getAllMovements();
 	const tags = await getAllTags();
 
+	let session = await auth();
+
+	if (!session || !session?.user?.email) {
+		console.log("[log/page] No user found");
+		return <div>Please log in to view your workout log.</div>;
+	}
+
+	const user = await getUser(session?.user?.email);
+
+	if (!user) {
+		console.log("[log/page] No user found");
+		return <div>Please log in to view your workout log.</div>;
+	}
+
+	if (workout?.userId !== user.id) {
+		redirect(`/workouts/${workout?.id}`);
+	}
+
 	if (!workout) {
 		return <div>Workout not found</div>;
 	}
