@@ -5,6 +5,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Menu, Dumbbell, User, LogOut } from "lucide-react";
 import LogoutButton from "@/components/nav/logout-button";
+import { SheetTitle } from "@/components/ui/sheet";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 export default function MobileNav() {
 	return (
@@ -16,6 +18,9 @@ export default function MobileNav() {
 				</Button>
 			</SheetTrigger>
 			<SheetContent side="left" className="bg-white">
+				<VisuallyHidden>
+					<SheetTitle>Navigation Menu</SheetTitle>
+				</VisuallyHidden>
 				<nav className="grid gap-6 text-lg font-medium">
 					<Link
 						href="#"
