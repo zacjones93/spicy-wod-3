@@ -43,7 +43,7 @@ export async function createMovement(data: {
   name: string;
   type: string;
   // userId is not in the current schema for movements table
-  // userId?: string; 
+  userId?: string; 
 }) {
   console.log("[server/functions/movement] createMovement called with data:", data);
   const db = await getDbAsync();
