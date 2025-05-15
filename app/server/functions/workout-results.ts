@@ -1,4 +1,4 @@
-import { getDb } from "@/server/db";
+import { getDbAsync } from "@/server/db";
 import { results } from "@/server/db/schema";
 import { eq, and } from "drizzle-orm";
 
@@ -8,7 +8,7 @@ export async function getWorkoutResultsByWorkoutAndUser(
   workoutId: string,
   userId: string,
 ): Promise<WorkoutResult[]> {
-  const db = getDb();
+  const db = getDbAsync();
   console.log(
     `Fetching workout results for workoutId: ${workoutId}, userId: ${userId}`,
   );
