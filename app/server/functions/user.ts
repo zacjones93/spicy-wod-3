@@ -7,12 +7,12 @@ import { genSaltSync, hashSync } from "bcrypt-ts";
 import { userSchema } from "@/server/db/types";
 
 export async function getUser(email: string) {
-  const db = getDbAsync();
+  const db = await getDbAsync();
   const user = await db.select().from(users).where(eq(users.email, email));
   return userSchema.parse(user[0]);
 }
 export async function createUser(email: string, password: string) {
-  const db = getDbAsync();
+  const db = await getDbAsync();
   let salt = genSaltSync(10);
   let hash = hashSync(password, salt);
 

@@ -40,7 +40,7 @@ export async function getLogsByUser(userId: string, month?: number, year?: numbe
     console.error("[log] getLogsByUser called with undefined userId. Returning empty array.");
     return [];
   }
-  const db = getDbAsync();
+  const db = await getDbAsync();
   const conditions = [eq(results.userId, userId)];
 
   if (month !== undefined && year !== undefined) {
@@ -89,7 +89,7 @@ export async function addLog({
   sets?: SetDataForDb[]; // Optional for now, but WODs will pass it
   type: "wod" | "strength" | "monostructural"; // Added type
 }) {
-  const db = getDbAsync();
+  const db = await getDbAsync();
   const resultId = crypto.randomUUID();
 
   try {

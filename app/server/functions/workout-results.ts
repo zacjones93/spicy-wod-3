@@ -8,7 +8,7 @@ export async function getWorkoutResultsByWorkoutAndUser(
   workoutId: string,
   userId: string,
 ): Promise<WorkoutResult[]> {
-  const db = getDbAsync();
+  const db = await getDbAsync();
   console.log(
     `Fetching workout results for workoutId: ${workoutId}, userId: ${userId}`,
   );
