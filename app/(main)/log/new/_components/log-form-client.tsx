@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Search } from "lucide-react";
@@ -12,6 +12,7 @@ interface Workout {
 	id: string;
 	name: string;
 	scheme: string;
+	roundsToScore?: number | null; // Added roundsToScore
 	// any other relevant properties
 }
 
@@ -32,13 +33,12 @@ export default function LogFormClient({
 	const [searchQuery, setSearchQuery] = useState("");
 	const [scale, setScale] = useState<"rx" | "scaled" | "rx+">("rx");
 	const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
-	const [score, setScore] = useState("");
-	const [rounds, setRounds] = useState("");
-	const [reps, setReps] = useState("");
+	const [scores, setScores] = useState<string[]>([]); // Added scores array state
 	const [notes, setNotes] = useState("");
 	const [isPending, startTransition] = useTransition();
 	const router = useRouter(); // Kept for "Cancel" button or other navigation
 	const [formError, setFormError] = useState<string | null>(null);
+	const prevSelectedWorkoutIdRef = useRef<string | null | undefined>(undefined); // Ref to track previous workout ID for scores effect
 
 	const filteredWorkouts = workouts.filter((workout: Workout) =>
 		workout.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -46,6 +46,47 @@ export default function LogFormClient({
 
 	const getSelectedWorkout = () => {
 		return workouts.find((w: Workout) => w.id === selectedWorkout);
+	};
+
+	// Effect to synchronize internal selectedWorkout state with selectedWorkoutId prop
+	useEffect(() => {
+		const currentPropId = selectedWorkoutId || null;
+		if (selectedWorkout !== currentPropId) {
+			setSelectedWorkout(currentPropId);
+		}
+	}, [selectedWorkoutId, selectedWorkout]);
+
+	// Update scores state when selected workout changes, preserving input during Fast Refresh
+	useEffect(() => {
+		const currentWorkoutData = workouts.find((w) => w.id === selectedWorkout);
+		const numRounds = currentWorkoutData?.roundsToScore || 1;
+
+		if (!selectedWorkout) {
+			// No workout selected
+			if (scores.length > 0) {
+				setScores([]);
+			}
+			prevSelectedWorkoutIdRef.current = null;
+			return;
+		}
+
+		// Reset scores if the selected workout ID has actually changed,
+		// or if the current number of score inputs doesn't match the required rounds.
+		if (
+			selectedWorkout !== prevSelectedWorkoutIdRef.current ||
+			scores.length !== numRounds
+		) {
+			setScores(Array(numRounds).fill(""));
+			prevSelectedWorkoutIdRef.current = selectedWorkout;
+		}
+		// If selectedWorkout is same as prevRef and scores.length matches numRounds,
+		// do nothing to preserve user input (e.g. during Fast Refresh).
+	}, [selectedWorkout, workouts, scores.length]); // Using scores.length as dependency
+
+	const handleScoreChange = (index: number, value: string) => {
+		const newScores = [...scores];
+		newScores[index] = value;
+		setScores(newScores);
 	};
 
 	// Client-side handler to call the server action
@@ -60,6 +101,11 @@ export default function LogFormClient({
 		if (redirectUrl) {
 			formData.set("redirectUrl", redirectUrl);
 		}
+
+		// Add scores to formData
+		scores.forEach((score, index) => {
+			formData.append(`scores[${index}]`, score);
+		});
 
 		// Ensure selectedWorkoutId is on formData if not already explicitly set by a hidden field
 		// (The hidden field <input type="hidden" name="selectedWorkoutId" value={selectedWorkout} /> handles this)
@@ -203,52 +249,44 @@ export default function LogFormClient({
 											</label>
 										</div>
 									</div>
-									{getSelectedWorkout()?.scheme === "time" && (
-										<div>
-											<label className="block font-bold uppercase mb-2">
-												Time
-											</label>
-											<div className="flex gap-2">
+									<div>
+										<label className="block font-bold uppercase mb-2">
+											Score
+										</label>
+										{scores.map((score, index) => (
+											<div key={index} className="flex gap-2 items-center mb-2">
+												{getSelectedWorkout()?.roundsToScore &&
+													getSelectedWorkout()!.roundsToScore! > 1 && (
+														<span className="font-semibold">
+															Round {index + 1}:
+														</span>
+													)}
 												<input
-													type="text"
-													className="input w-20"
-													placeholder="e.g. 3:21"
+													type={
+														getSelectedWorkout()?.scheme === "time"
+															? "text"
+															: "number"
+													}
+													className="input w-full"
+													placeholder={
+														getSelectedWorkout()?.scheme === "time"
+															? "e.g. 3:21"
+															: "Reps/Load"
+													}
 													value={score}
-													onChange={(e) => setScore(e.target.value)}
-													name="score"
+													onChange={(e) =>
+														handleScoreChange(index, e.target.value)
+													}
+													name={`scores[${index}]`}
+													min={
+														getSelectedWorkout()?.scheme !== "time"
+															? "0"
+															: undefined
+													}
 												/>
 											</div>
-										</div>
-									)}
-									{getSelectedWorkout()?.scheme === "rounds-reps" && (
-										<div>
-											<label className="block font-bold uppercase mb-2">
-												Score
-											</label>
-											<div className="flex gap-2 items-center">
-												<input
-													type="number"
-													className="input w-20"
-													placeholder="Rounds"
-													min="0"
-													value={rounds}
-													onChange={(e) => setRounds(e.target.value)}
-													name="rounds"
-												/>
-												<span>rounds +</span>
-												<input
-													type="number"
-													className="input w-20"
-													placeholder="Reps"
-													min="0"
-													value={reps}
-													onChange={(e) => setReps(e.target.value)}
-													name="reps"
-												/>
-												<span>reps</span>
-											</div>
-										</div>
-									)}
+										))}
+									</div>
 									<div>
 										<label className="block font-bold uppercase mb-2">
 											Notes

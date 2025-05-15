@@ -33,6 +33,12 @@ export default function CreateWorkoutClient({
 	const [name, setName] = useState("");
 	const [description, setDescription] = useState("");
 	const [scheme, setScheme] = useState("");
+	const [roundsToScore, setRoundsToScore] = useState<number | undefined>(
+		undefined
+	);
+	const [repsPerRound, setRepsPerRound] = useState<number | undefined>(
+		undefined
+	);
 	const router = useRouter();
 
 	const handleAddTag = () => {
@@ -73,7 +79,9 @@ export default function CreateWorkoutClient({
 				name,
 				description,
 				scheme,
-				createdAt: Date.now(),
+				createdAt: new Date(),
+				roundsToScore,
+				repsPerRound,
 			},
 			tagIds: selectedTags,
 			movementIds: selectedMovements,
@@ -142,6 +150,42 @@ export default function CreateWorkoutClient({
 								<option value="meters">Meters</option>
 								<option value="pass-fail">Pass/Fail</option>
 							</select>
+						</div>
+
+						<div>
+							<label className="block font-bold uppercase mb-2">
+								Rounds to Score
+							</label>
+							<input
+								type="number"
+								className="input"
+								placeholder="e.g., 4 (default is 1)"
+								value={roundsToScore === undefined ? "" : roundsToScore}
+								onChange={(e) =>
+									setRoundsToScore(
+										e.target.value ? parseInt(e.target.value) : undefined
+									)
+								}
+								min="0"
+							/>
+						</div>
+
+						<div>
+							<label className="block font-bold uppercase mb-2">
+								Reps per Round (if applicable)
+							</label>
+							<input
+								type="number"
+								className="input"
+								placeholder="e.g., 10"
+								value={repsPerRound === undefined ? "" : repsPerRound}
+								onChange={(e) =>
+									setRepsPerRound(
+										e.target.value ? parseInt(e.target.value) : undefined
+									)
+								}
+								min="0"
+							/>
 						</div>
 
 						<div>

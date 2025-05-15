@@ -1,7 +1,7 @@
 "use server";
 
 import { getDb } from "../db";
-import { results, workouts } from "../db/schema";
+import { results, workouts, sets as setsTable } from "../db/schema";
 import { sql, eq, and, gte, lt, desc, getTableColumns } from "drizzle-orm";
 
 export type LogEntry = {
@@ -19,6 +19,20 @@ export type LogEntry = {
   time: number | null;
   workoutName: string | null;
 };
+
+// Interface for structured set data, mirroring the one in actions.ts
+// Ideally, this would be a shared type.
+interface SetDataForDb {
+  setNumber: number;
+  score?: number | null;
+  time?: number | null; // in seconds
+  reps?: number | null;
+  weight?: number | null;
+  status?: 'pass' | 'fail' | null;
+  distance?: number | null;
+  // score is already there, but for WOD sets, it maps to sets.score
+  // time is already there, maps to sets.time
+}
 
 // Fetch all logs for a user (optionally filter by month)
 export async function getLogsByUser(userId: string, month?: number, year?: number): Promise<LogEntry[]> {
@@ -55,34 +69,78 @@ export async function getLogsByUser(userId: string, month?: number, year?: numbe
   return logs;
 }
 
-// Add a new log (result)
+// Add a new log (result) and its associated sets
 export async function addLog({
   userId,
   workoutId,
   date,
   scale,
-  wodScore,
+  wodScore, // This is the summary score string
   notes,
+  sets,     // Array of sets to be created
+  type,     // Type of log, e.g., 'wod'
 }: {
   userId: string;
   workoutId: string;
-  date: number;
+  date: number; // Expecting timestamp
   scale: "rx" | "scaled" | "rx+";
   wodScore: string;
   notes?: string;
+  sets?: SetDataForDb[]; // Optional for now, but WODs will pass it
+  type: "wod" | "strength" | "monostructural"; // Added type
 }) {
   const db = getDb();
-  const id = crypto.randomUUID();
-  await db.insert(results).values({
-    id,
-    userId,
-    workoutId,
-    date: new Date(date),
-    type: "wod",
-    scale,
-    wodScore,
-    notes,
-  });
-  console.log(`[log] Added log ${id} for user ${userId}, workout ${workoutId}`);
-  return id;
+  const resultId = crypto.randomUUID();
+
+  try {
+    // 1. Define the first operation (mandatory for the batch structure)
+    const mainResultInsertOperation = db.insert(results).values({
+      id: resultId,
+      userId,
+      workoutId,
+      date: new Date(date),
+      type,
+      scale,
+      wodScore,
+      notes,
+    });
+    console.log(`[log] Prepared main result insert for ${resultId} for user ${userId}, workout ${workoutId}`);
+
+    const additionalOperations = [];
+
+    // 2. Insert the sets if provided
+    if (sets && sets.length > 0) {
+      const setValues = sets.map(s => ({
+        id: crypto.randomUUID(),
+        resultId: resultId,
+        setNumber: s.setNumber,
+        score: s.score,
+        time: s.time,
+        reps: s.reps,
+        weight: s.weight,
+        status: s.status,
+        distance: s.distance,
+      }));
+
+      if (setValues.length > 0) {
+        additionalOperations.push(db.insert(setsTable).values(setValues));
+        console.log(`[log] Prepared ${setValues.length} sets for result ${resultId}`);
+      }
+    }
+
+    const operationsToBatch: [any, ...any[]] = [mainResultInsertOperation, ...additionalOperations];
+
+    console.log(`[log] Executing batch operation for result ${resultId} with ${operationsToBatch.length} operations.`);
+    // The structure [firstOp, ...otherOps] ensures TypeScript sees a non-empty array,
+    // satisfying db.batch()'s type requirement.
+    await db.batch([mainResultInsertOperation, ...additionalOperations]);
+
+    console.log(`[log] Successfully batched log and associated sets for result ${resultId}`);
+    return resultId;
+  } catch (error) {
+    console.error(`[log] Batch operation failed for addLog (resultId: ${resultId}):`, error);
+    // Re-throw or handle error as appropriate for the application
+    // For now, re-throwing to ensure the action can catch it.
+    throw error;
+  }
 } 
