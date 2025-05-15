@@ -2,6 +2,9 @@ import { getWorkoutById } from "@/server/functions/workout";
 import { getAllTags } from "@/server/functions/tag";
 import { getAllMovements } from "@/server/functions/movement";
 import EditWorkoutClient from "./_components/edit-workout-client";
+import { auth } from "@/auth";
+import { getUser } from "@/server/functions/user";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
