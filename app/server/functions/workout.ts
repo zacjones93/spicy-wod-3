@@ -1,10 +1,12 @@
-import { getDb, getDbAsync } from "../db";
+"use server";
+
+import { getDb } from "../db";
 import { workouts, tags, movements, workoutTags, workoutMovements } from "../db/schema";
 import { eq, inArray } from "drizzle-orm";
 
 // Fetch all workouts with tags and movements
 export async function getAllWorkouts() {
-  const db = await getDbAsync();
+  const db = await getDb();
   const allWorkouts = await db.select().from(workouts);
   const workoutIds = allWorkouts.map(w => w.id);
 
@@ -38,7 +40,7 @@ export async function getAllWorkouts() {
 
 // Fetch a single workout by id (with tags and movements)
 export async function getWorkoutById(id: string) {
-  const db = await getDbAsync();
+  const db = await getDb();
   const workout = await db.select().from(workouts).where(eq(workouts.id, id)).get();
   if (!workout) return null;
 
@@ -59,19 +61,19 @@ export async function getWorkoutById(id: string) {
 
 // Fetch all tags
 export async function getAllTags() {
-  const db = await getDbAsync();
+  const db = await getDb();
   return db.select().from(tags);
 }
 
 // Fetch all movements
 export async function getAllMovements() {
-  const db = await getDbAsync();
+  const db = await getDb();
   return db.select().from(movements);
 }
 
 // Insert a new workout (with tags and movements)
 export async function createWorkout({ workout, tagIds, movementIds }: { workout: any, tagIds: string[], movementIds: string[] }) {
-  const db = await getDbAsync();
+  const db = await getDb();
   await db.insert(workouts).values(workout);
   if (tagIds.length) {
     await db.insert(workoutTags).values(tagIds.map(tagId => ({ id: crypto.randomUUID(), workoutId: workout.id, tagId })));
@@ -83,7 +85,7 @@ export async function createWorkout({ workout, tagIds, movementIds }: { workout:
 
 // Update a workout (with tags and movements)
 export async function updateWorkout({ id, workout, tagIds, movementIds }: { id: string, workout: any, tagIds: string[], movementIds: string[] }) {
-  const db = await getDbAsync();
+  const db = await getDb();
   await db.update(workouts).set(workout).where(eq(workouts.id, id));
   await db.delete(workoutTags).where(eq(workoutTags.workoutId, id));
   await db.delete(workoutMovements).where(eq(workoutMovements.workoutId, id));
