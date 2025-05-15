@@ -4,6 +4,8 @@ import { getUser } from "@/server/functions/user";
 import { auth } from "@/auth";
 import { getWorkoutResultsByWorkoutAndUser } from "@/server/functions/workout-results";
 
+export const dynamic = "force-dynamic";
+
 export default async function WorkoutDetailPage({
 	params,
 }: {

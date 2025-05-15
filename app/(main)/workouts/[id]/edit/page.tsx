@@ -3,6 +3,8 @@ import { getAllTags } from "@/server/functions/tag";
 import { getAllMovements } from "@/server/functions/movement";
 import EditWorkoutClient from "./_components/edit-workout-client";
 
+export const dynamic = "force-dynamic";
+
 export default async function EditWorkoutPage({
 	params,
 }: {

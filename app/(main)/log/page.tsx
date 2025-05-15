@@ -4,6 +4,8 @@ import LogCalendarClient from "./_components/log-calendar-client"; // Import new
 import { auth } from "@/auth";
 import { getUser } from "@/server/functions/user";
 
+export const dynamic = 'force-dynamic';
+
 export default async function LogPage() {
 	let session = await auth();
 

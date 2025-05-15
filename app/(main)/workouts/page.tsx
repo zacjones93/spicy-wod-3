@@ -3,6 +3,8 @@ import { Plus } from "lucide-react";
 import { getAllWorkouts } from "@/server/functions/workout";
 import WorkoutControls from "./_components/WorkoutControls";
 
+export const dynamic = "force-dynamic";
+
 export default async function WorkoutsPage({
 	searchParams,
 }: {

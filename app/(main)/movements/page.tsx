@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Search, Filter } from "lucide-react";
 import { getAllMovements } from "@/server/functions/movement";
 
+export const dynamic = "force-dynamic";
+
 export default async function MovementsPage() {
 	const movements = await getAllMovements();
 	return (
