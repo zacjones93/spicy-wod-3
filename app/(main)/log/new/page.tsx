@@ -6,10 +6,11 @@ import { auth } from "@/auth";
 export default async function LogNewResultPage({
 	searchParams,
 }: {
-	searchParams?: { workoutId?: string; redirectUrl?: string };
+	searchParams?: Promise<{ workoutId?: string; redirectUrl?: string }>;
 }) {
 	console.log("[log/new] Fetching workouts for log form");
 	let session = await auth();
+	const mySearchParams = await searchParams;
 
 	if (!session || !session?.user?.email) {
 		console.log("[log/page] No user found");
@@ -28,8 +29,8 @@ export default async function LogNewResultPage({
 		<LogFormClient
 			workouts={workouts}
 			userId={user.id}
-			selectedWorkoutId={searchParams?.workoutId}
-			redirectUrl={searchParams?.redirectUrl}
+			selectedWorkoutId={mySearchParams?.workoutId}
+			redirectUrl={mySearchParams?.redirectUrl}
 		/>
 	);
 }

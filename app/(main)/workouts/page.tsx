@@ -6,13 +6,14 @@ import WorkoutControls from "./_components/WorkoutControls";
 export default async function WorkoutsPage({
 	searchParams,
 }: {
-	searchParams?: { search?: string; tag?: string; movement?: string };
+	searchParams?: Promise<{ search?: string; tag?: string; movement?: string }>;
 }) {
+	const mySearchParams = await searchParams;
 	const allWorkouts = await getAllWorkouts();
 
-	const searchTerm = searchParams?.search?.toLowerCase() || "";
-	const selectedTag = searchParams?.tag || "";
-	const selectedMovement = searchParams?.movement || "";
+	const searchTerm = mySearchParams?.search?.toLowerCase() || "";
+	const selectedTag = mySearchParams?.tag || "";
+	const selectedMovement = mySearchParams?.movement || "";
 
 	const workouts = allWorkouts.filter((workout) => {
 		const nameMatch = workout.name.toLowerCase().includes(searchTerm);
