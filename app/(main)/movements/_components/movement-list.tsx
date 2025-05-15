@@ -1,0 +1,111 @@
+"use client";
+
+import { useState, useMemo } from "react";
+import Link from "next/link";
+import { Search, Filter, ChevronDown } from "lucide-react";
+
+// Define a type for the movement object for better type safety
+interface Movement {
+	id: string;
+	name: string;
+	type: string;
+	// Add other properties of movement if any
+}
+
+interface MovementListProps {
+	movements: Movement[];
+}
+
+export default function MovementList({ movements }: MovementListProps) {
+	const [searchTerm, setSearchTerm] = useState("");
+	const [selectedType, setSelectedType] = useState<string | null>(null);
+	const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+	const movementTypes = useMemo(() => {
+		const types = new Set(movements.map((m) => m.type));
+		return ["All", ...Array.from(types)];
+	}, [movements]);
+
+	const filteredMovements = useMemo(() => {
+		return movements.filter((movement) => {
+			const nameMatches = movement.name
+				.toLowerCase()
+				.includes(searchTerm.toLowerCase());
+			const typeMatches =
+				selectedType && selectedType !== "All"
+					? movement.type === selectedType
+					: true;
+			return nameMatches && typeMatches;
+		});
+	}, [movements, searchTerm, selectedType]);
+
+	return (
+		<div>
+			<div className="flex flex-col sm:flex-row gap-4 mb-6">
+				<div className="relative flex-1">
+					<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+					<input
+						type="text"
+						placeholder="Search movements..."
+						className="input pl-10 w-full"
+						value={searchTerm}
+						onChange={(e) => setSearchTerm(e.target.value)}
+					/>
+				</div>
+				<div className="relative">
+					<button
+						className="btn-outline  flex items-center gap-2 w-full sm:w-auto justify-between"
+						onClick={() => setIsFilterOpen(!isFilterOpen)}
+					>
+						<Filter className="h-5 w-5" />
+						<span>{selectedType || "Filter by Type"}</span>
+						<ChevronDown
+							className={`h-5 w-5 transition-transform ${
+								isFilterOpen ? "rotate-180" : ""
+							}`}
+						/>
+					</button>
+					{isFilterOpen && (
+						<div className="absolute z-10 mt-1 w-full sm:w-auto min-w-[150px] bg-white border border-gray-200 rounded-md shadow-lg right-0 sm:right-auto">
+							{movementTypes.map((type) => (
+								<button
+									key={type}
+									className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+									onClick={() => {
+										setSelectedType(type === "All" ? null : type);
+										setIsFilterOpen(false);
+									}}
+								>
+									{type}
+								</button>
+							))}
+						</div>
+					)}
+				</div>
+			</div>
+
+			{filteredMovements.length === 0 && (searchTerm || selectedType) && (
+				<p className="text-center text-gray-500">
+					No movements found for your criteria.
+				</p>
+			)}
+
+			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+				{filteredMovements.map((movement) => (
+					<Link
+						key={movement.id}
+						href={`/movements/${movement.id}`}
+						className="card hover:bg-gray-50 transition-colors"
+					>
+						<div className="flex justify-between items-center">
+							<h3 className="mb-2">{movement.name}</h3>
+							<span className="px-2 py-1 text-xs font-bold bg-black text-white uppercase">
+								{movement.type}
+							</span>
+						</div>
+					</Link>
+				))}
+			</div>
+		</div>
+	);
+}
