@@ -1,20 +1,10 @@
-"use client"
-
 import type React from "react"
 
-import { useState } from "react"
 import Link from "next/link"
 import { Dumbbell } from "lucide-react"
+import { signIn } from "@/auth"
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Handle login logic here
-    console.log("Login attempt with:", { email, password })
-  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -34,25 +24,36 @@ export default function LoginPage() {
               <h2 className="text-xl font-bold uppercase">Login</h2>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
-              <div>
-                <label className="block font-bold uppercase mb-2">Email</label>
-                <input
-                  type="email"
-                  className="input"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
+            <form action={async (formData: FormData) => {
+              "use server";
+              await signIn("credentials", {
+                redirectTo: "/",
+                email: formData.get("email") as string,
+                password: formData.get("password") as string,
+              });
+              }}
+              className="p-6 space-y-6"
+            >
+            <div>
+              <label className="block font-bold uppercase mb-2">Email</label>
+              <input
+                className="input"
+                id="email"
+                name="email"
+                type="email"
+                placeholder="user@acme.com"
+                autoComplete="email"
+                required
                 />
               </div>
 
               <div>
                 <label className="block font-bold uppercase mb-2">Password</label>
                 <input
-                  type="password"
                   className="input"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  id="password"
+                  name="password"
+                  type="password"
                   required
                 />
               </div>

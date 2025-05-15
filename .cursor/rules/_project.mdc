@@ -1,0 +1,11 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+## Server vs. Client Component Boundaries in next.js
+- Do all server-only logic (like database access) in server components or api routes.
+- Fetch data on the server, then pass it as props to client components.
+- Handle all client-side logic and UI in client components.
+- Colocate client components in a _components folder for clarity.
+- Keep server/client boundaries explicit to avoid context errors and improve maintainability.
