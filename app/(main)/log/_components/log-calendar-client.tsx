@@ -18,22 +18,25 @@ export default function LogCalendarClient({ logs }: LogCalendarClientProps) {
 	const [date, setDate] = React.useState<Date | undefined>(new Date());
 	const [selectedLog, setSelectedLog] = React.useState<LogEntry[] | null>(null);
 
-	const handleDateSelect = (selectedDate: Date | undefined) => {
-		setDate(selectedDate);
-		if (selectedDate) {
-			const logsForDay = logs.filter(
-				(log) =>
-					new Date(log.date).toDateString() === selectedDate.toDateString()
-			);
-			setSelectedLog(logsForDay.length > 0 ? logsForDay : null);
-		} else {
-			setSelectedLog(null);
-		}
-	};
+	const handleDateSelect = React.useCallback(
+		(selectedDate: Date | undefined) => {
+			setDate(selectedDate);
+			if (selectedDate) {
+				const logsForDay = logs.filter(
+					(log) =>
+						new Date(log.date).toDateString() === selectedDate.toDateString()
+				);
+				setSelectedLog(logsForDay.length > 0 ? logsForDay : null);
+			} else {
+				setSelectedLog(null);
+			}
+		},
+		[logs, setDate, setSelectedLog]
+	);
 
 	React.useEffect(() => {
 		handleDateSelect(date);
-	}, [logs, date]);
+	}, [logs, date, handleDateSelect]);
 
 	const loggedDates = logs.map((log) => new Date(log.date));
 
@@ -113,7 +116,7 @@ export default function LogCalendarClient({ logs }: LogCalendarClientProps) {
 					</p>
 				</div>
 			)}
-      {!date && (
+			{!date && (
 				<div className="border p-4 rounded-md md:w-1/3 min-w-[358px]">
 					<h3 className="font-bold text-sm mb-2 text-balance w-fit">
 						Select a date to view workout results.
