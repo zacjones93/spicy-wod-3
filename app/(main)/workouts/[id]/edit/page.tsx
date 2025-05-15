@@ -6,9 +6,10 @@ import EditWorkoutClient from "./_components/edit-workout-client";
 export default async function EditWorkoutPage({
 	params,
 }: {
-	params: { id: string };
+	params: Promise<{ id: string }>;
 }) {
-	const workout = await getWorkoutById(params.id);
+	const myParams = await params;
+	const workout = await getWorkoutById(myParams.id);
 	const movements = await getAllMovements();
 	const tags = await getAllTags();
 
@@ -21,7 +22,7 @@ export default async function EditWorkoutPage({
 			workout={workout}
 			movements={movements}
 			tags={tags}
-			workoutId={params.id}
+			workoutId={myParams.id}
 		/>
 	);
 }
