@@ -1,5 +1,6 @@
 import { getLogsByUser } from "@/server/functions/log";
-import LogListClient from "./_components/logs-list-client";
+// import LogListClient from "./_components/logs-list-client"; // Comment out or remove old list
+import LogCalendarClient from "./_components/log-calendar-client"; // Import new calendar
 import { auth } from "@/auth";
 import { getUser } from "@/server/functions/user";
 
@@ -11,12 +12,12 @@ export default async function LogPage() {
 		return <div>Please log in to view your workout log.</div>;
 	}
 
-  const user = await getUser(session?.user?.email);
+	const user = await getUser(session?.user?.email);
 
-  if (!user) {
-    console.log("[log/page] No user found");
-    return <div>Please log in to view your workout log.</div>;
-  }
+	if (!user) {
+		console.log("[log/page] No user found");
+		return <div>Please log in to view your workout log.</div>;
+	}
 
 	console.log(`[log/page] Fetching logs for user ${user.id}`);
 	const logs = await getLogsByUser(user.id);
@@ -28,7 +29,31 @@ export default async function LogPage() {
 					Log New Result
 				</a>
 			</div>
-			<LogListClient logs={logs} />
+			{/* <LogListClient logs={logs} /> */}
+			{/* Display recent results for now, calendar will be added here */}
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="mb-8 flex-1">
+          <h2 className="text-xl font-semibold mb-4">RECENT RESULTS</h2>
+          {/* Placeholder for recent results if needed, or remove if calendar is sufficient */}
+          {logs.length > 0 ? (
+            <div className="space-y-4">
+              {logs.slice(0, 3).map((log) => (
+                <div key={log.id} className="border p-4 rounded-md">
+                  <h3 className="font-bold">{log.workoutName || "Workout"}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {new Date(log.date).toLocaleDateString()}
+                  </p>
+                  <p className="mt-1">{log.notes}</p>
+                  {/* Add more log details here as needed */}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p>No recent results.</p>
+          )}
+        </div>
+			<LogCalendarClient logs={logs} />
+      </div>
 		</div>
 	);
 }

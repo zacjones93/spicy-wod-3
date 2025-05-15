@@ -4,8 +4,24 @@ import { getDb } from "../db";
 import { results, workouts } from "../db/schema";
 import { sql, eq, and, gte, lt, desc, getTableColumns } from "drizzle-orm";
 
+export type LogEntry = {
+  id: string;
+  userId: string;
+  date: Date;
+  workoutId: string | null;
+  movementId: string | null;
+  type: "wod" | "strength" | "monostructural";
+  notes: string | null;
+  scale: "rx" | "scaled" | "rx+" | null;
+  wodScore: string | null;
+  setCount: number | null;
+  distance: number | null;
+  time: number | null;
+  workoutName: string | null;
+};
+
 // Fetch all logs for a user (optionally filter by month)
-export async function getLogsByUser(userId: string, month?: number, year?: number) {
+export async function getLogsByUser(userId: string, month?: number, year?: number): Promise<LogEntry[]> {
   if (userId === undefined) {
     console.error("[log] getLogsByUser called with undefined userId. Returning empty array.");
     return [];
@@ -29,7 +45,7 @@ export async function getLogsByUser(userId: string, month?: number, year?: numbe
       // Select all columns from results
       ...getTableColumns(results),
       // Select workout name and alias it
-      workout: workouts.name,
+      workoutName: workouts.name,
     })
     .from(results)
     .leftJoin(workouts, eq(results.workoutId, workouts.id))
