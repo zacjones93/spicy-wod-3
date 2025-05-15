@@ -105,6 +105,20 @@ The application's UI will be key for surfacing workout history. Provide features
 - **Movement History**: Allow users to search for specific movements and see all workouts where they were performed and the associated results.
 - **Filtering and Sorting**: Provide options to filter results by workout type, scale, date range, etc., and sort them in meaningful ways.
 
+## Workout Schemes and result types
+
+'time',
+'time-with-cap',
+'pass-fail',
+'rounds-reps',
+'reps',
+'emom',
+'load',
+'calories',
+'meters',
+'feet',
+'points',
+
 
 ## Full Database Schema
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';

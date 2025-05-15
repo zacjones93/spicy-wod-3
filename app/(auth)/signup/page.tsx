@@ -1,110 +1,66 @@
-"use client"
-
-import type React from "react"
-
-import { useState } from "react"
-import Link from "next/link"
-import { Dumbbell } from "lucide-react"
+import Link from "next/link";
+import { Dumbbell } from "lucide-react";
+import { redirect } from "next/navigation";
+import { createUser, getUser } from "@/server/functions/user";
+import SignupFormClient from "./_components/signup-form-client";
 
 export default function SignupPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
+	async function register(formData: FormData) {
+		"use server";
+		const email = formData.get("email") as string;
+		const password = formData.get("password") as string;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Handle signup logic here
-    console.log("Signup attempt with:", { email, password, confirmPassword })
-  }
+		// Basic validation (consider more robust validation)
+		if (!email || !password) {
+			return "Email and password are required.";
+		}
+		// Add more validation for email format, password complexity etc.
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      <header className="border-b-2 border-black p-4">
-        <div className="container mx-auto">
-          <Link href="/" className="flex items-center gap-2">
-            <Dumbbell className="h-8 w-8" />
-            <h1 className="text-2xl font-black uppercase">spicy wod</h1>
-          </Link>
-        </div>
-      </header>
+		const user = await getUser(email);
 
-      <main className="flex-1 flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <div className="border-2 border-black">
-            <div className="bg-black text-white p-4">
-              <h2 className="text-xl font-bold uppercase">Sign Up</h2>
-            </div>
+		if (user) {
+			return "User already exists"; // TODO: Handle errors with useFormStatus in client component
+		} else {
+			console.log(
+				`[register] Creating user with email: ${email} and password: ${password.substring(
+					0,
+					3
+				)}...`
+			);
+			await createUser(email, password);
+			redirect("/login"); // Redirect on successful creation
+		}
+	}
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
-              <div>
-                <label className="block font-bold uppercase mb-2">Email</label>
-                <input
-                  type="email"
-                  className="input"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
+	return (
+		<div className="min-h-screen flex flex-col">
+			<header className="border-b-2 border-black p-4">
+				<div className="container mx-auto">
+					<Link href="/" className="flex items-center gap-2">
+						<Dumbbell className="h-8 w-8" />
+						<h1 className="text-2xl font-black uppercase">spicy wod</h1>
+					</Link>
+				</div>
+			</header>
 
-              <div>
-                <label className="block font-bold uppercase mb-2">Password</label>
-                <input
-                  type="password"
-                  className="input"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
+			<main className="flex-1 flex items-center justify-center p-4">
+				<div className="w-full max-w-md">
+					<div className="border-2 border-black">
+						<div className="bg-black text-white p-4">
+							<h2 className="text-xl font-bold uppercase">Sign Up</h2>
+						</div>
+						<SignupFormClient register={register} />
+					</div>
+				</div>
+			</main>
 
-              <div>
-                <label className="block font-bold uppercase mb-2">Confirm Password</label>
-                <input
-                  type="password"
-                  className="input"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="flex items-center gap-2">
-                <input type="checkbox" className="h-5 w-5" required />
-                <span>
-                  I agree to the{" "}
-                  <Link href="/terms" className="underline">
-                    Terms of Service
-                  </Link>{" "}
-                  and{" "}
-                  <Link href="/privacy" className="underline">
-                    Privacy Policy
-                  </Link>
-                </span>
-              </div>
-
-              <button type="submit" className="btn w-full">
-                Create Account
-              </button>
-
-              <div className="text-center">
-                <p>
-                  Already have an account?{" "}
-                  <Link href="/login" className="underline font-bold">
-                    Login
-                  </Link>
-                </p>
-              </div>
-            </form>
-          </div>
-        </div>
-      </main>
-
-      <footer className="border-t-2 border-black p-4">
-        <div className="container mx-auto">
-          <p className="text-center">&copy; {new Date().getFullYear()} spicy wod. All rights reserved.</p>
-        </div>
-      </footer>
-    </div>
-  )
+			<footer className="border-t-2 border-black p-4">
+				<div className="container mx-auto">
+					<p className="text-center">
+						&copy; {new Date().getFullYear()} spicy wod. All rights reserved.
+					</p>
+				</div>
+			</footer>
+		</div>
+	);
 }

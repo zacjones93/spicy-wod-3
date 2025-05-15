@@ -13,7 +13,7 @@ enabled = true
 [[d1_databases]]
 binding = "DB"
 database_name = "dev-spicy-db"
-database_id = "f866d06d-bc51-47de-ab43-9381a08b5c8a"
+database_id = "5d6470cf-e67e-4bc4-b133-51b5796921b4"
 migrations_table = "drizzle_migrations"
 migrations_dir = "./drizzle"
 

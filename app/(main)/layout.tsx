@@ -1,6 +1,7 @@
 import type React from "react"
 import Link from "next/link"
 import { Dumbbell, User, LogOut } from "lucide-react"
+import LogoutButton from "@/components/nav/logout-button"
 
 export default function MainLayout({
   children,
@@ -29,9 +30,7 @@ export default function MainLayout({
             <Link href="/profile" className="font-bold">
               <User className="h-5 w-5" />
             </Link>
-            <button className="font-bold">
-              <LogOut className="h-5 w-5" />
-            </button>
+            <LogoutButton />
           </nav>
         </div>
       </header>
