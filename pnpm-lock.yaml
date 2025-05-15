@@ -10,7 +10,10 @@ dependencies:
     version: 1.1.13(@types/react-dom@18.2.18)(@types/react@18.2.45)(react-dom@18.2.0)(react@18.2.0)
   '@radix-ui/react-slot':
     specifier: ^1.2.2
-    version: 1.2.2(@types/react@18.2.45)(react@18.2.0)
+    version: 1.2.2(@types/react@18.2.45)(react@19.1.0)
+  '@radix-ui/react-visually-hidden':
+    specifier: ^1.2.2
+    version: 1.2.2(@types/react-dom@18.2.18)(@types/react@18.2.45)(react-dom@19.1.0)(react@19.1.0)
   '@types/node':
     specifier: ^20.10.5
     version: 20.10.5
@@ -2234,6 +2237,17 @@ packages:
     optionalDependencies:
       '@img/sharp-libvips-darwin-arm64': 1.0.4
     dev: true
+    optional: true
+
+  /@img/sharp-darwin-arm64@0.34.1:
+    resolution: {integrity: sha512-pn44xgBtgpEbZsu+lWf2KNb6OAf70X68k+yk69Ic2Xz11zHR/w24/U49XT7AeRwJ0Px+mhALhU5LPci1Aymk7A==}
+    engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+    cpu: [arm64]
+    os: [darwin]
+    requiresBuild: true
+    optionalDependencies:
+      '@img/sharp-libvips-darwin-arm64': 1.1.0
+    dev: false
     optional: true
 
   /@img/sharp-darwin-x64@0.33.5:
