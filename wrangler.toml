@@ -2,7 +2,11 @@
 name = "spicy-wod"
 compatibility_date = "2024-12-24"
 compatibility_flags = ["nodejs_compat"]
-pages_build_output_dir = ".vercel/output/static"
+main = ".open-next/worker.js"
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
 
 # Workers Logs
 # Docs: https://developers.cloudflare.com/workers/observability/logs/workers-logs/
@@ -19,5 +23,5 @@ migrations_dir = "./drizzle"
 
 [[kv_namespaces]]
 binding = "USER_SESSIONS"
-id = "9ff4a16a8c094b10a4d980b92cd9a1d4"
+id = "1ad56718049c421f9d5712d2bb82d04e"
 

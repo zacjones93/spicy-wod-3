@@ -1,6 +1,7 @@
 {
   "name": "spicy-wod-3",
   "private": true,
+  "packageManager": "pnpm@9.10.0",
   "scripts": {
     "db:apply": "drizzle-kit generate && wrangler d1 migrations apply dev-spicy-db --local",
     "db:apply:prod": "drizzle-kit generate && wrangler d1 migrations apply dev-spicy-db --remote",
@@ -8,6 +9,10 @@
     "db:seed": "wrangler d1 execute dev-spicy-db --local --file ./seed.sql",
     "dev": "next dev",
     "build": "next build",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy:prod": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "start": "next start",
     "lint": "next lint"
   },
