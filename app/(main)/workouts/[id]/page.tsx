@@ -7,9 +7,10 @@ import { getWorkoutResultsByWorkoutAndUser } from "@/server/functions/workout-re
 export default async function WorkoutDetailPage({
 	params,
 }: {
-	params: { id: string };
+	params: Promise<{ id: string }>;
 }) {
-	const workout = await getWorkoutById(params.id);
+	const myParams = await params;
+	const workout = await getWorkoutById(myParams.id);
 
 	let session = await auth();
 
@@ -27,13 +28,16 @@ export default async function WorkoutDetailPage({
 
 	if (!workout) return <div>Workout not found.</div>;
 
-	const results = await getWorkoutResultsByWorkoutAndUser(params.id, user.id);
+	const results = await getWorkoutResultsByWorkoutAndUser(
+		myParams.id,
+		user.id
+	);
 
 	return (
 		<WorkoutDetailClient
 			userId={user.id}
 			workout={workout}
-			workoutId={params.id}
+			workoutId={myParams.id}
 			results={results}
 		/>
 	);
