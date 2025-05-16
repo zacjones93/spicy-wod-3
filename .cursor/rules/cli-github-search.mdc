@@ -1,8 +1,16 @@
 ---
-description:
+description: Search GitHub for examples
 globs:
 alwaysApply: false
 ---
+# How to Use the `ghx` CLI for GitHub Code Search
+
+**Your task: When you need to find code examples, files, or specific patterns on GitHub, use the `ghx` command-line tool. This document provides its usage instructions and examples.**
+
+## `ghx` Command Reference
+
+Find examples of files, code, etc on GitHub
+
 Usage: ghx [options]
 
 Commands:
@@ -56,3 +64,5 @@ Examples:
   ghx -l css "color NOT background-color"   Search for lines containing 'color'
                                             BUT NOT 'background-color' in CSS fi
                                             les
+
+**REMEMBER: Refer to these instructions and examples when constructing `ghx` commands to perform targeted and effective GitHub code searches.**
