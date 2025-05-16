@@ -1,5 +1,5 @@
 import { randomBytes, pbkdf2Sync } from "crypto";
-import { getUser } from "@/server/functions/user";  
+import { getUser } from "@/server/functions/user";
 
 
 const ITERATIONS = 100000;
@@ -30,3 +30,4 @@ export async function verifyPassword(email: string, candidatePassword: string): 
   console.log(`[verifyPassword] Hash match: ${match}`)
   return match
 }
+

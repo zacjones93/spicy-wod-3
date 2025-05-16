@@ -3,26 +3,22 @@ import { getLogsByUser } from "@/server/functions/log";
 import LogCalendarClient from "./_components/log-calendar-client"; // Import new calendar
 import { auth } from "@/auth";
 import { getUser } from "@/server/functions/user";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
 export default async function LogPage() {
 	let session = await auth();
 
-	if (!session || !session?.user?.email) {
+	console.log("[log/page] session", session);
+
+	if (!session || !session?.user?.id) {
 		console.log("[log/page] No user found");
-		return <div>Please log in to view your workout log.</div>;
+		redirect("/login");
 	}
 
-	const user = await getUser(session?.user?.email);
-
-	if (!user) {
-		console.log("[log/page] No user found");
-		return <div>Please log in to view your workout log.</div>;
-	}
-
-	console.log(`[log/page] Fetching logs for user ${user.id}`);
-	const logs = await getLogsByUser(user.id);
+	console.log(`[log/page] Fetching logs for user ${session.user.id}`);
+	const logs = await getLogsByUser(session.user.id);
 	return (
 		<div>
 			<div className="flex justify-between items-center mb-6">
