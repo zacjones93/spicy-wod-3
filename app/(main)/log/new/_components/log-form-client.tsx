@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Search } from "lucide-react";
 import { submitLogFormAction } from "../actions";
@@ -39,10 +39,17 @@ export default function LogFormClient({
 	const router = useRouter(); // Kept for "Cancel" button or other navigation
 	const [formError, setFormError] = useState<string | null>(null);
 	const prevSelectedWorkoutIdRef = useRef<string | null | undefined>(undefined); // Ref to track previous workout ID for scores effect
+	const pathname = usePathname(); // Get current pathname
 
-	const filteredWorkouts = workouts.filter((workout: Workout) =>
-		workout.name.toLowerCase().includes(searchQuery.toLowerCase())
-	);
+	const filteredWorkouts = workouts
+		.filter((workout: Workout) =>
+			workout.name.toLowerCase().includes(searchQuery.toLowerCase())
+		)
+		.sort((a, b) => {
+			if (a.id === selectedWorkout) return -1; // a comes first if it's the selected workout
+			if (b.id === selectedWorkout) return 1; // b comes first if it's the selected workout
+			return a.name.localeCompare(b.name); // otherwise, sort by name
+		});
 
 	const getSelectedWorkout = () => {
 		return workouts.find((w: Workout) => w.id === selectedWorkout);
@@ -87,6 +94,13 @@ export default function LogFormClient({
 		const newScores = [...scores];
 		newScores[index] = value;
 		setScores(newScores);
+	};
+
+	const handleWorkoutSelection = (workoutId: string) => {
+		const params = new URLSearchParams();
+		params.set("workoutId", workoutId);
+		// By not setting redirectUrl, it's effectively cleared from the query params
+		router.push(`${pathname}?${params.toString()}`);
 	};
 
 	// Client-side handler to call the server action
@@ -172,7 +186,7 @@ export default function LogFormClient({
 													? "bg-black text-white"
 													: "hover:bg-gray-100"
 											}`}
-											onClick={() => setSelectedWorkout(workout.id)}
+											onClick={() => handleWorkoutSelection(workout.id)}
 										>
 											<div className="flex justify-between items-center">
 												<h3 className="font-bold">{workout.name}</h3>
