@@ -1,16 +1,40 @@
 "use server";
 
 import { getDbAsync } from "../db";
-import { workouts, tags, movements, workoutTags, workoutMovements } from "../db/schema";
-import { eq, inArray, desc } from "drizzle-orm";
+import { workouts, tags, movements, workoutTags, workoutMovements, results } from "../db/schema";
+import { eq, inArray, desc, and, gte, lte } from "drizzle-orm";
+import { auth } from "@/auth"; // Added for user ID
 
-// Fetch all workouts with tags and movements
+// Define a type for results specific to today for a workout
+export type WorkoutResultToday = {
+  id: string;
+  userId: string;
+  date: Date;
+  workoutId: string | null;
+  type: "wod" | "strength" | "monostructural";
+  notes: string | null;
+  scale: "rx" | "scaled" | "rx+" | null;
+  wodScore: string | null;
+  // Add other relevant fields from the 'results' table if needed for display
+  // e.g., setCount, distance, time, though wodScore is primary for WODs
+};
+
+// Fetch all workouts with tags, movements, and today's results for the current user
 export async function getAllWorkouts() {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) {
+    console.warn("[getAllWorkouts] No user ID found in session. Cannot fetch results.");
+    // Optionally, still return workouts without results, or handle as an error
+    // For now, proceed to fetch workouts but results will be empty.
+  }
+
   const db = await getDbAsync();
   const allWorkouts = await db.select().from(workouts);
   const workoutIds = allWorkouts.map(w => w.id);
 
-  const allTags = await db.select().from(workoutTags).where(inArray(workoutTags.workoutId, workoutIds));
+  const allTags = workoutIds.length > 0 ? await db.select().from(workoutTags).where(inArray(workoutTags.workoutId, workoutIds)) : [];
   const tagIds = allTags.map(wt => wt.tagId);
   const tagsMap = Object.fromEntries(
     workoutIds.map(id => [id, allTags.filter(wt => wt.workoutId === id).map(wt => wt.tagId)])
@@ -18,10 +42,10 @@ export async function getAllWorkouts() {
   const tagObjsList = tagIds.length ? await db.select().from(tags).where(inArray(tags.id, tagIds)) : [];
   const tagObjMap = Object.fromEntries(tagObjsList.map(t => [t.id, t]));
 
-  const allMovements = await db.select().from(workoutMovements).where(inArray(workoutMovements.workoutId, workoutIds));
+  const allMovements = workoutIds.length > 0 ? await db.select().from(workoutMovements).where(inArray(workoutMovements.workoutId, workoutIds)) : [];
   const movementIds = allMovements.map(wm => wm.movementId).filter((id): id is string => id !== null);
-  const movementObjs = await db.select().from(movements).where(inArray(movements.id, movementIds));
-  const movementMap = Object.fromEntries(movementObjs.map(m => [m.id, m]));
+  const movementObjsList = movementIds.length > 0 ? await db.select().from(movements).where(inArray(movements.id, movementIds)) : [];
+  const movementMap = Object.fromEntries(movementObjsList.map(m => [m.id, m]));
   const movementsMap = Object.fromEntries(
     workoutIds.map(id => [
       id,
@@ -32,10 +56,63 @@ export async function getAllWorkouts() {
     ])
   );
 
+  // Fetch today's WOD results for the current user
+  let todaysWodResults: WorkoutResultToday[] = [];
+  if (userId && workoutIds.length > 0) {
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+
+    const rawResults = await db
+      .select({
+        id: results.id,
+        userId: results.userId,
+        date: results.date,
+        workoutId: results.workoutId,
+        type: results.type,
+        notes: results.notes,
+        scale: results.scale,
+        wodScore: results.wodScore,
+      })
+      .from(results)
+      .where(
+        and(
+          eq(results.userId, userId),
+          eq(results.type, "wod"),
+          inArray(results.workoutId, workoutIds), // Ensure workoutId is not null and in the list
+          gte(results.date, todayStart),
+          lte(results.date, todayEnd)
+        )
+      );
+
+    todaysWodResults = rawResults.map(r => ({
+      ...r,
+      // Ensure workoutId is not null before trying to use it, and provide a default or handle error
+      // The current select doesn't explicitly filter out null workoutId from results table,
+      // but inArray(results.workoutId, workoutIds) effectively does if workoutIds don't contain null.
+      // However, r.workoutId could still be null if the DB schema allows it and it wasn't filtered.
+      // For this transformation, we assume r.workoutId is valid if the query intended to link it.
+      date: new Date(r.date), // Corrected: r.date is likely already a Date object
+    })) as WorkoutResultToday[];
+
+    console.log(`[getAllWorkouts] Fetched ${todaysWodResults.length} results for today for user ${userId}`);
+  }
+
+  const resultsByWorkoutId = new Map<string, WorkoutResultToday[]>();
+  todaysWodResults.forEach(result => {
+    if (result.workoutId) {
+      const existing = resultsByWorkoutId.get(result.workoutId) || [];
+      existing.push(result);
+      resultsByWorkoutId.set(result.workoutId, existing);
+    }
+  });
+
   return allWorkouts.map(w => ({
     ...w,
     tags: (tagsMap[w.id] || []).map(tid => tagObjMap[tid]).filter(Boolean),
     movements: movementsMap[w.id] || [],
+    resultsToday: resultsByWorkoutId.get(w.id) || [], // Add today's results
   }));
 }
 

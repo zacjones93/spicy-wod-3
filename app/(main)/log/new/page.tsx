@@ -1,6 +1,5 @@
 import { getAllWorkouts } from "@/server/functions/workout";
 import LogFormClient from "./_components/log-form-client";
-import { getUser } from "@/server/functions/user";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 

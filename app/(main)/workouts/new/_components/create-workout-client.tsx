@@ -25,7 +25,7 @@ interface Props {
 			name: string;
 			description: string;
 			scheme: string;
-			createdAt: Date;
+			createdAt: string;
 			roundsToScore?: number;
 			repsPerRound?: number;
 		};
@@ -92,7 +92,7 @@ export default function CreateWorkoutClient({
 				name,
 				description,
 				scheme,
-				createdAt: new Date(),
+				createdAt: new Date().toISOString().split("T")[0],
 				roundsToScore,
 				repsPerRound,
 			},

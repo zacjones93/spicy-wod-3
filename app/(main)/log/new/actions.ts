@@ -2,6 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { addLog } from "@/server/functions/log";
+import { headers } from "next/headers";
+import { fromZonedTime } from 'date-fns-tz';
 
 // Define a basic Workout type. If a more specific type exists elsewhere,
 // it would be better to import and use that.
@@ -65,11 +67,15 @@ export async function submitLogFormAction(
   workouts: Workout[],
   formData: FormData
 ): Promise<{ error?: string } | void> {
+  const headerList = await headers();
+  const timezone = headerList.get("x-vercel-ip-timezone") ?? "America/Denver";
   const selectedWorkoutId = formData.get("selectedWorkoutId") as string | null;
   const dateStr = formData.get("date") as string;
   const scaleValue = formData.get("scale") as "rx" | "scaled" | "rx+";
   const notesValue = formData.get("notes") as string;
   const redirectUrl = formData.get("redirectUrl") as string | null;
+
+  console.log("[Action] Date:", dateStr);
 
   if (!selectedWorkoutId) {
     console.error("[Action] No workout selected");
@@ -160,14 +166,25 @@ export async function submitLogFormAction(
       sets: setsForDb, // This array of sets needs to be handled by addLog
     });
 
+    console.log("[Action] Date in timezone:", new Date(dateStr).getTime());
+
     try {
       // The addLog function will need to be updated to handle this new structure,
       // creating a result and then iterating through `setsForDb` to create related set entries.
       // This typically involves a database transaction.
+
+      // The dateStr is expected to be in "YYYY-MM-DD" format.
+      // We interpret this as the start of the day (midnight) in the timezone.
+      const dateInTargetTz = fromZonedTime(`${dateStr}T00:00:00`, timezone);
+      const timestamp = dateInTargetTz.getTime();
+
+      console.log(`[Action] Original date string: ${dateStr}, Target Timezone: ${timezone}, Timestamp: ${timestamp}`);
+
+
       await addLog({
         userId,
         workoutId: selectedWorkoutId,
-        date: new Date(dateStr).getTime(), // Convert date string to timestamp
+        date: timestamp, // Use the timezone-aware timestamp
         scale: scaleValue,
         wodScore: wodScoreSummary, // Pass the summary string
         notes: notesValue,
@@ -181,5 +198,5 @@ export async function submitLogFormAction(
     }
 
     redirect(redirectUrl || "/log");
-  } 
+  }
 }
