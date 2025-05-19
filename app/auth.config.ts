@@ -1,5 +1,6 @@
 import type { DefaultSession, NextAuthConfig } from "next-auth";
 import { getUserId } from "./server/functions/user";
+import deepmerge from "deepmerge";
 
 
 interface Session {
@@ -31,13 +32,11 @@ export const authConfig = {
         return session; // Or handle the case where user is not found appropriately
       }
 
-      return {
-        ...session,
+      return deepmerge(session, {
         user: {
           id: userId,
-          ...session.user,
         },
-      };
+      });
     },
   },
 } satisfies NextAuthConfig;
