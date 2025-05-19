@@ -58,19 +58,19 @@ export default function EditWorkoutClient({
 	const [scheme, setScheme] = useState(workout?.scheme || "");
 	const [tags, setTags] = useState<Tag[]>(initialTags);
 	const [selectedMovements, setSelectedMovements] = useState<string[]>(
-		(workout?.movements || []).map((m: Movement) => m.id),
+		(workout?.movements || []).map((m: Movement) => m.id)
 	);
 	const [selectedTags, setSelectedTags] = useState<string[]>(
 		(workout?.tags || []).map((t: Tag | string) =>
-			typeof t === "string" ? t : t.id,
-		),
+			typeof t === "string" ? t : t.id
+		)
 	);
 	const [newTag, setNewTag] = useState("");
 	const [repsPerRound, setRepsPerRound] = useState<number | undefined>(
-		workout?.repsPerRound === null ? undefined : workout?.repsPerRound,
+		workout?.repsPerRound === null ? undefined : workout?.repsPerRound
 	);
 	const [roundsToScore, setRoundsToScore] = useState<number | undefined>(
-		workout?.roundsToScore === null ? 1 : workout?.roundsToScore || 1,
+		workout?.roundsToScore === null ? 1 : workout?.roundsToScore || 1
 	);
 
 	const handleAddTag = () => {
@@ -209,7 +209,7 @@ export default function EditWorkoutClient({
 									setRepsPerRound(
 										e.target.value === ""
 											? undefined
-											: Number.parseInt(e.target.value),
+											: Number.parseInt(e.target.value)
 									)
 								}
 							/>
@@ -231,7 +231,7 @@ export default function EditWorkoutClient({
 									setRoundsToScore(
 										e.target.value === ""
 											? undefined
-											: Number.parseInt(e.target.value),
+											: Number.parseInt(e.target.value)
 									)
 								}
 							/>
