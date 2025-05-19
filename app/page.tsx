@@ -1,24 +1,35 @@
 import Link from "next/link";
 import { Dumbbell } from "lucide-react";
 import { getLatestWorkout } from "@/server/functions/workout";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import MainNav from "./components/nav/main-nav";
 
 export default async function Home() {
+	const session = await auth();
+
 	const latestWorkout = await getLatestWorkout();
 	return (
 		<div className="min-h-screen flex flex-col">
-			<header className="border-b-2 border-black p-4">
-				<div className="container mx-auto flex justify-between items-center">
-					<div className="flex items-center gap-2">
-						<Dumbbell className="h-8 w-8" />
-						<h1 className="text-2xl font-black uppercase">spicy wod</h1>
-					</div>
+			<header>
+				<div >
 					<nav>
-						<Link href="/login" className="btn-outline mr-2">
-							Login
-						</Link>
-						<Link href="/signup" className="btn">
-							Sign Up
-						</Link>
+						{session?.user ? (
+							<MainNav />
+						) : (
+							<div className="container mx-auto flex justify-between items-center">
+								<div className="flex items-center gap-2">
+									<Dumbbell className="h-8 w-8" />
+									<h1 className="text-2xl font-black uppercase">spicy wod</h1>
+								</div>
+								<Link href="/login" className="btn-outline mr-2">
+									Login
+								</Link>
+								<Link href="/signup" className="btn">
+									Sign Up
+								</Link>
+							</div>
+						)}
 					</nav>
 				</div>
 			</header>
@@ -58,7 +69,9 @@ export default async function Home() {
 											<h3 className="text-xl font-bold mb-2">
 												{latestWorkout.name}
 											</h3>
-											<p className="mb-2">{latestWorkout.description}</p>
+											<p className="mb-2 whitespace-pre-wrap">
+												{latestWorkout.description}
+											</p>
 											{latestWorkout.movements &&
 												latestWorkout.movements.length > 0 && (
 													<ul className="list-disc pl-5 mb-4">

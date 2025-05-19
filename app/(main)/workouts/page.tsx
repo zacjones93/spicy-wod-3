@@ -64,8 +64,8 @@ export default async function WorkoutsPage({
 	].sort() as string[];
 	return (
 		<div>
-			<div className="flex justify-between sm:items-center sm:flex-row flex-col mb-6">
-				<h1>WORKOUTS</h1>
+			<div className="flex justify-between items-center sm:flex-row flex-col mb-6">
+				<h1 className="mb-4">WORKOUTS</h1>
 				<Link
 					href="/workouts/new"
 					className="btn flex items-center gap-2 w-fit"
@@ -77,7 +77,7 @@ export default async function WorkoutsPage({
 
 			{todaysWorkouts.length > 0 && (
 				<div className="mb-12">
-					<h2 className="text-2xl font-bold mb-4 border-b pb-2">
+					<h2 className="text-2xl font-bold mb-4 border-b pb-2 sm:text-left text-center">
 						Workout{todaysWorkouts.length > 1 ? "s" : ""} of the Day
 					</h2>
 					<div className="space-y-6">
