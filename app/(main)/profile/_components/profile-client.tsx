@@ -1,0 +1,97 @@
+"use client";
+
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { updateUserNameAction } from "../actions";
+import { type User } from "@/types/user";
+
+
+interface ProfileClientProps {
+	user: User;
+}
+
+export default function ProfileClient({ user }: ProfileClientProps) {
+	const [name, setName] = useState(user.name || "");
+	const [loading, setLoading] = useState(false);
+	const [message, setMessage] = useState<string | null>(null);
+
+	const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setName(e.target.value);
+	};
+
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		// TODO: Implement actual name update logic
+		// console.log("Updating name to:", name);
+		// alert("Name update functionality not yet implemented.");
+
+		// New code for calling server action
+		if (!user.id) {
+			setMessage("Error: User ID is missing.");
+			return;
+		}
+
+		setLoading(true);
+		setMessage(null);
+
+		try {
+			const result = await updateUserNameAction(user.id, name);
+			if (result.success) {
+				setMessage(result.success);
+				// Optionally, update the user object in state if needed, or rely on revalidation
+			} else if (result.error) {
+				setMessage(result.error);
+			}
+		} catch (error) {
+			console.error("Failed to submit form:", error);
+			setMessage("An unexpected error occurred. Please try again.");
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return (
+		<div className="container max-w-xl mx-auto py-8">
+			<h1 className="text-2xl font-bold mb-6">User Profile</h1>
+			{message && (
+				<div
+					className={`mb-4 p-3 rounded-md ${
+						message.startsWith("Error") ||
+						message.startsWith("An unexpected error")
+							? "bg-red-100 text-red-700"
+							: "bg-green-100 text-green-700"
+					}`}
+				>
+					{message}
+				</div>
+			)}
+			<form onSubmit={handleSubmit} className="space-y-4">
+				<div>
+					<Label htmlFor="email">Email</Label>
+					<Input
+						id="email"
+						type="email"
+						value={user.email || ""}
+						disabled
+						className="mt-1"
+					/>
+				</div>
+				<div>
+					<Label htmlFor="name">Name</Label>
+					<Input
+						id="name"
+						type="text"
+						value={name}
+						onChange={handleNameChange}
+						className="mt-1"
+					/>
+				</div>
+				<Button className="bg-black text-white" type="submit" disabled={loading}>
+					{loading ? "Saving..." : "Save Changes"}
+				</Button>
+			</form>
+		</div>
+	);
+}

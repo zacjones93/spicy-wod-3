@@ -59,6 +59,12 @@ spicy wod is a brutalist-style workout tracking app focused on CrossFit-style wo
 - `public/` - Static assets (images, fonts, etc.).
 - `db/`, `drizzle/` - Database migration files and Drizzle Kit config.
 
+## Proposed User Stories
+- "as a gym owner, I want to manage coaches"
+- "as a gym owner, I want to program and schedule workouts"
+- "as a coach I want to see the schedule" 
+"as a gym member I want to see the workout schedule"
+
 ## Data Model (Simplified)
 
 - **User**: id, email, joinedAt, hashedPassword, passwordSalt, etc.

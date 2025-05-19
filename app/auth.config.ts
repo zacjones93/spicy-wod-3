@@ -3,7 +3,7 @@ import { getUserId } from "./server/functions/user";
 import deepmerge from "deepmerge";
 
 
-interface Session {
+export interface Session {
   user: {
     id: string;
   } & DefaultSession["user"];
