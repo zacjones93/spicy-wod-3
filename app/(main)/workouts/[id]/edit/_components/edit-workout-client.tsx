@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
+import type { Prettify } from "@/lib/utils";
 import { ArrowLeft, Plus, X } from "lucide-react";
-import { Prettify } from "@/lib/utils";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 type Movement = Prettify<{
 	id: string;
@@ -58,17 +58,19 @@ export default function EditWorkoutClient({
 	const [scheme, setScheme] = useState(workout?.scheme || "");
 	const [tags, setTags] = useState<Tag[]>(initialTags);
 	const [selectedMovements, setSelectedMovements] = useState<string[]>(
-		(workout?.movements || []).map((m: any) => m.id)
+		(workout?.movements || []).map((m: Movement) => m.id),
 	);
 	const [selectedTags, setSelectedTags] = useState<string[]>(
-		(workout?.tags || []).map((t: any) => (typeof t === "string" ? t : t.id))
+		(workout?.tags || []).map((t: Tag | string) =>
+			typeof t === "string" ? t : t.id,
+		),
 	);
 	const [newTag, setNewTag] = useState("");
 	const [repsPerRound, setRepsPerRound] = useState<number | undefined>(
-		workout?.repsPerRound === null ? undefined : workout?.repsPerRound
+		workout?.repsPerRound === null ? undefined : workout?.repsPerRound,
 	);
 	const [roundsToScore, setRoundsToScore] = useState<number | undefined>(
-		workout?.roundsToScore === null ? 1 : workout?.roundsToScore || 1
+		workout?.roundsToScore === null ? 1 : workout?.roundsToScore || 1,
 	);
 
 	const handleAddTag = () => {
@@ -100,7 +102,7 @@ export default function EditWorkoutClient({
 		}
 	};
 
-	const handleSubmit = async (e: any) => {
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		await updateWorkoutAction({
 			id: workoutId,
@@ -131,10 +133,14 @@ export default function EditWorkoutClient({
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 					<div className="space-y-6">
 						<div>
-							<label className="block font-bold uppercase mb-2">
+							<label
+								htmlFor="workout-name"
+								className="block font-bold uppercase mb-2"
+							>
 								Workout Name
 							</label>
 							<input
+								id="workout-name"
 								type="text"
 								className="input"
 								value={name}
@@ -144,21 +150,31 @@ export default function EditWorkoutClient({
 						</div>
 
 						<div>
-							<label className="block font-bold uppercase mb-2">
+							<label
+								htmlFor="workout-description"
+								className="block font-bold uppercase mb-2"
+							>
 								Description
 							</label>
 							<textarea
+								id="workout-description"
 								className="textarea"
 								rows={10}
 								value={description}
 								onChange={(e) => setDescription(e.target.value)}
 								required
-							></textarea>
+							/>
 						</div>
 
 						<div>
-							<label className="block font-bold uppercase mb-2">Scheme</label>
+							<label
+								htmlFor="workout-scheme"
+								className="block font-bold uppercase mb-2"
+							>
+								Scheme
+							</label>
 							<select
+								id="workout-scheme"
 								className="select"
 								value={scheme}
 								onChange={(e) => setScheme(e.target.value)}
@@ -178,41 +194,59 @@ export default function EditWorkoutClient({
 						</div>
 
 						<div>
-							<label className="block font-bold uppercase mb-2">
+							<label
+								htmlFor="reps-per-round"
+								className="block font-bold uppercase mb-2"
+							>
 								Reps Per Round
 							</label>
 							<input
+								id="reps-per-round"
 								type="number"
 								className="input"
 								value={repsPerRound === undefined ? "" : repsPerRound}
 								onChange={(e) =>
 									setRepsPerRound(
-										e.target.value === "" ? undefined : parseInt(e.target.value)
+										e.target.value === ""
+											? undefined
+											: Number.parseInt(e.target.value),
 									)
 								}
 							/>
 						</div>
 
 						<div>
-							<label className="block font-bold uppercase mb-2">
+							<label
+								htmlFor="rounds-to-score"
+								className="block font-bold uppercase mb-2"
+							>
 								Rounds to Score
 							</label>
 							<input
+								id="rounds-to-score"
 								type="number"
 								className="input"
 								value={roundsToScore === undefined ? "" : roundsToScore}
 								onChange={(e) =>
 									setRoundsToScore(
-										e.target.value === "" ? undefined : parseInt(e.target.value)
+										e.target.value === ""
+											? undefined
+											: Number.parseInt(e.target.value),
 									)
 								}
 							/>
 						</div>
 
 						<div>
-							<label className="block font-bold uppercase mb-2">Tags</label>
+							<label
+								htmlFor="add-tag-input"
+								className="block font-bold uppercase mb-2"
+							>
+								Tags
+							</label>
 							<div className="flex gap-2 mb-2">
 								<input
+									id="add-tag-input"
 									type="text"
 									className="input flex-1"
 									placeholder="Add a tag"
@@ -232,9 +266,10 @@ export default function EditWorkoutClient({
 
 							<div className="flex flex-wrap gap-2 mt-2">
 								{tags.map((tag) => (
-									<div
+									<button
+										type="button"
 										key={tag.id}
-										className={`flex items-center border-2 border-black px-2 py-1 cursor-pointer ${
+										className={`flex items-center border-2 border-black px-2 py-1 cursor-pointer text-left ${
 											selectedTags.includes(tag.id) ? "bg-black text-white" : ""
 										}`}
 										onClick={() => handleTagToggle(tag.id)}
@@ -252,20 +287,29 @@ export default function EditWorkoutClient({
 												<X className="h-4 w-4" />
 											</button>
 										)}
-									</div>
+									</button>
 								))}
 							</div>
 						</div>
 					</div>
 
 					<div>
-						<label className="block font-bold uppercase mb-2">Movements</label>
-						<div className="border-2 border-black p-4 h-[500px] overflow-y-auto">
+						<label
+							htmlFor="movements-list"
+							className="block font-bold uppercase mb-2"
+						>
+							Movements
+						</label>
+						<div
+							id="movements-list"
+							className="border-2 border-black p-4 h-[500px] overflow-y-auto"
+						>
 							<div className="space-y-2">
 								{movements.map((movement) => (
-									<div
+									<button
+										type="button"
 										key={movement.id}
-										className={`p-3 border-2 ${
+										className={`p-3 border-2 w-full text-left ${
 											selectedMovements.includes(movement.id)
 												? "border-black bg-black text-white"
 												: "border-gray-300"
@@ -276,7 +320,7 @@ export default function EditWorkoutClient({
 											<span className="font-bold">{movement.name}</span>
 											<span className="text-xs uppercase">{movement.type}</span>
 										</div>
-									</div>
+									</button>
 								))}
 							</div>
 						</div>

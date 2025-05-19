@@ -1,11 +1,11 @@
-import { getWorkoutById } from "@/server/functions/workout";
-import { getAllTags } from "@/server/functions/tag";
-import { getAllMovements } from "@/server/functions/movement";
-import EditWorkoutClient from "./_components/edit-workout-client";
 import { auth } from "@/auth";
+import { getAllMovements } from "@/server/functions/movement";
+import { getAllTags } from "@/server/functions/tag";
 import { getUser } from "@/server/functions/user";
-import { redirect } from "next/navigation";
+import { getWorkoutById } from "@/server/functions/workout";
 import { updateWorkout } from "@/server/functions/workout";
+import { redirect } from "next/navigation";
+import EditWorkoutClient from "./_components/edit-workout-client";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +19,7 @@ export default async function EditWorkoutPage({
 	const movements = await getAllMovements();
 	const tags = await getAllTags();
 
-	let session = await auth();
+	const session = await auth();
 
 	if (!session || !session?.user?.email) {
 		console.log("[log/page] No user found");
