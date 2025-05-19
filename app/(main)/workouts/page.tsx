@@ -83,11 +83,11 @@ export default async function WorkoutsPage({
 					<div className="space-y-6">
 						{todaysWorkouts.map((workout) => (
 							<div key={workout.id} className="card p-6">
-								<div className="flex justify-between items-start">
+								<div className="flex flex-col sm:flex-row justify-between items-start">
 									<h3 className="text-xl font-semibold mb-2">{workout.name}</h3>
 									<Link
 										href={`/log/new?workoutId=${workout.id}&redirectUrl=/workouts`}
-										className="btn btn-primary btn-sm"
+										className="btn btn-primary btn-sm mb-2"
 									>
 										Log Result
 									</Link>
