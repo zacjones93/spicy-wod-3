@@ -61,33 +61,17 @@ export default function WorkoutDetailClient({
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
 							<h2 className="mb-4">DESCRIPTION</h2>
-							<p className="text-lg mb-6">{workout.description}</p>
-
-							<div className="flex items-center gap-2 mb-4">
-								<Clock className="h-5 w-5" />
-								<h3>SCHEME</h3>
-							</div>
-							<div className="border-2 border-black p-4 mb-6">
-								<p className="text-lg font-bold uppercase">{workout.scheme}</p>
-							</div>
-
-							<div className="flex items-center gap-2 mb-4">
-								<Tag className="h-5 w-5" />
-								<h3>TAGS</h3>
-							</div>
-							<div className="flex flex-wrap gap-2 mb-6">
-								{(workout.tags || []).map((tag: any) => (
-									<span
-										key={tag.id || tag}
-										className="inline-block px-3 py-1 border-2 border-black"
-									>
-										{tag.name || tag}
-									</span>
-								))}
-							</div>
+							<p className="text-lg mb-6 whitespace-pre-wrap">{workout.description}</p>
 						</div>
 
 						<div>
+							<div className="flex items-center gap-2 my-4">
+								<Clock className="h-5 w-5" />
+								<h3>SCHEME</h3>
+							</div>
+							<div className="border-2 border-black p-4 mb-6 w-fit">
+								<p className="text-lg font-bold uppercase w-fit">{workout.scheme}</p>
+							</div>
 							<div className="flex items-center gap-2 mb-4">
 								<Dumbbell className="h-5 w-5" />
 								<h3>MOVEMENTS</h3>
@@ -104,6 +88,25 @@ export default function WorkoutDetailClient({
 									</div>
 								))}
 							</div>
+							
+							{workout.tags && workout.tags.length > 0 && (
+								<>
+									<div className="flex items-center gap-2 my-4">
+										<Tag className="h-5 w-5" />
+											<h3>TAGS</h3>
+									</div>
+									<div className="flex flex-wrap gap-2 mb-6">
+										{(workout.tags || []).map((tag: any) => (
+											<span
+												key={tag.id || tag}
+												className="inline-block px-3 py-1 border-2 border-black"
+											>
+												{tag.name || tag}
+											</span>
+										))}
+									</div>
+								</>
+							)}
 						</div>
 					</div>
 				</div>

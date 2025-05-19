@@ -68,29 +68,33 @@ export default async function WorkoutsPage({
           <Link
             key={workout.id}
             href={`/workouts/${workout.id}`}
-            className="card hover:bg-gray-50 transition-colors"
+            className="card hover:bg-gray-50 transition-colors min-h-[300px] flex flex-col justify-between"
           >
-            <h3 className="mb-2">{workout.name}</h3>
-            <p className="text-sm mb-3">{workout.description}</p>
-            <div className="flex flex-wrap gap-2 mb-3">
-              {workout.movements.map((movement) => (
-                <span
-                  key={movement?.id || movement?.name}
-                  className="inline-block px-2 py-1 text-xs font-bold bg-black text-white"
-                >
-                  {movement?.name}
-                </span>
-              ))}
+            <div className="">
+              <h3 className="mb-2">{workout.name}</h3>
+              <p className="text-sm mb-3 whitespace-pre-wrap line-clamp-6">{workout.description}</p>
             </div>
-            <div className="flex flex-wrap gap-1">
-              {workout.tags.map((tag) => (
-                <span
-                  key={tag.id}
-                  className="inline-block px-2 py-1 text-xs border border-black"
-                >
-                  {tag.name}
-                </span>
-              ))}
+            <div>
+              <div className="flex flex-wrap gap-2 mb-3">
+                {workout.movements.map((movement) => (
+                  <span
+                    key={movement?.id || movement?.name}
+                    className="inline-block px-2 py-1 text-xs font-bold bg-black text-white"
+                  >
+                    {movement?.name}
+                  </span>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {workout.tags.map((tag) => (
+                  <span
+                    key={tag.id}
+                    className="inline-block px-2 py-1 text-xs border border-black"
+                  >
+                    {tag.name}
+                  </span>
+                ))}
+              </div>
             </div>
           </Link>
         ))}
