@@ -3,61 +3,73 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, Plus, X } from "lucide-react";
-import { updateWorkout } from "@/server/functions/workout";
-import { useRouter } from "next/navigation";
+import { Prettify } from "@/lib/utils";
 
-interface Movement {
+type Movement = Prettify<{
 	id: string;
 	name: string;
 	type: string;
-}
+}>;
 
-interface Tag {
+type Tag = Prettify<{
 	id: string;
 	name: string;
-}
+}>;
 
-interface Workout {
+type Workout = Prettify<{
 	id: string;
 	name: string;
 	description: string;
 	scheme: string;
 	movements: Movement[];
 	tags: (Tag | string)[];
-}
+	repsPerRound?: number | null;
+	roundsToScore?: number | null;
+}>;
 
-interface Props {
+type Props = Prettify<{
 	workout: Workout;
 	movements: Movement[];
 	tags: Tag[];
 	workoutId: string;
-}
+	updateWorkoutAction: (data: {
+		id: string;
+		workout: {
+			name: string;
+			description: string;
+			scheme: string;
+			repsPerRound?: number | null;
+			roundsToScore?: number | null;
+		};
+		tagIds: string[];
+		movementIds: string[];
+	}) => Promise<void>;
+}>;
 
 export default function EditWorkoutClient({
 	workout,
 	movements,
 	tags: initialTags,
 	workoutId,
+	updateWorkoutAction,
 }: Props) {
-	const [name, setName] = useState("");
-	const [description, setDescription] = useState("");
-	const [scheme, setScheme] = useState("");
+	const [name, setName] = useState(workout?.name || "");
+	const [description, setDescription] = useState(workout?.description || "");
+	const [scheme, setScheme] = useState(workout?.scheme || "");
 	const [tags, setTags] = useState<Tag[]>(initialTags);
-	const [selectedMovements, setSelectedMovements] = useState<string[]>([]);
-	const [selectedTags, setSelectedTags] = useState<string[]>([]);
+	const [selectedMovements, setSelectedMovements] = useState<string[]>(
+		(workout?.movements || []).map((m: any) => m.id)
+	);
+	const [selectedTags, setSelectedTags] = useState<string[]>(
+		(workout?.tags || []).map((t: any) => (typeof t === "string" ? t : t.id))
+	);
 	const [newTag, setNewTag] = useState("");
-	const router = useRouter();
-
-	useEffect(() => {
-		setName(workout?.name || "");
-		setDescription(workout?.description || "");
-		setScheme(workout?.scheme || "");
-		setSelectedMovements((workout?.movements || []).map((m: any) => m.id));
-		setSelectedTags(
-			(workout?.tags || []).map((t: any) => (typeof t === "string" ? t : t.id))
-		);
-		setTags(initialTags);
-	}, [workout, initialTags]);
+	const [repsPerRound, setRepsPerRound] = useState<number | undefined>(
+		workout?.repsPerRound === null ? undefined : workout?.repsPerRound
+	);
+	const [roundsToScore, setRoundsToScore] = useState<number | undefined>(
+		workout?.roundsToScore === null ? 1 : workout?.roundsToScore || 1
+	);
 
 	const handleAddTag = () => {
 		if (newTag && !tags.some((t) => t.name === newTag)) {
@@ -90,17 +102,18 @@ export default function EditWorkoutClient({
 
 	const handleSubmit = async (e: any) => {
 		e.preventDefault();
-		await updateWorkout({
+		await updateWorkoutAction({
 			id: workoutId,
 			workout: {
 				name,
 				description,
 				scheme,
+				repsPerRound: repsPerRound === undefined ? null : repsPerRound,
+				roundsToScore: roundsToScore === undefined ? null : roundsToScore,
 			},
 			tagIds: selectedTags,
 			movementIds: selectedMovements,
 		});
-		router.push(`/workouts/${workoutId}`);
 	};
 
 	return (
@@ -136,7 +149,7 @@ export default function EditWorkoutClient({
 							</label>
 							<textarea
 								className="textarea"
-								rows={4}
+								rows={10}
 								value={description}
 								onChange={(e) => setDescription(e.target.value)}
 								required
@@ -162,6 +175,38 @@ export default function EditWorkoutClient({
 								<option value="meters">Meters</option>
 								<option value="pass-fail">Pass/Fail</option>
 							</select>
+						</div>
+
+						<div>
+							<label className="block font-bold uppercase mb-2">
+								Reps Per Round
+							</label>
+							<input
+								type="number"
+								className="input"
+								value={repsPerRound === undefined ? "" : repsPerRound}
+								onChange={(e) =>
+									setRepsPerRound(
+										e.target.value === "" ? undefined : parseInt(e.target.value)
+									)
+								}
+							/>
+						</div>
+
+						<div>
+							<label className="block font-bold uppercase mb-2">
+								Rounds to Score
+							</label>
+							<input
+								type="number"
+								className="input"
+								value={roundsToScore === undefined ? "" : roundsToScore}
+								onChange={(e) =>
+									setRoundsToScore(
+										e.target.value === "" ? undefined : parseInt(e.target.value)
+									)
+								}
+							/>
 						</div>
 
 						<div>

@@ -5,6 +5,7 @@ import EditWorkoutClient from "./_components/edit-workout-client";
 import { auth } from "@/auth";
 import { getUser } from "@/server/functions/user";
 import { redirect } from "next/navigation";
+import { updateWorkout } from "@/server/functions/workout";
 
 export const dynamic = "force-dynamic";
 
@@ -40,12 +41,41 @@ export default async function EditWorkoutPage({
 		return <div>Workout not found</div>;
 	}
 
+	async function updateWorkoutAction(data: {
+		id: string;
+		workout: {
+			name: string;
+			description: string;
+			scheme: string;
+			repsPerRound?: number | null;
+			roundsToScore?: number | null;
+		};
+		tagIds: string[];
+		movementIds: string[];
+	}) {
+		"use server";
+		try {
+			await updateWorkout({
+				id: data.id,
+				workout: data.workout,
+				tagIds: data.tagIds,
+				movementIds: data.movementIds,
+			});
+		} catch (error) {
+			console.error("[EditWorkoutPage] Error updating workout", error);
+			// Optionally, re-throw or return an error object to the client
+			throw new Error("Error updating workout");
+		}
+		redirect(`/workouts/${data.id}`);
+	}
+
 	return (
 		<EditWorkoutClient
 			workout={workout}
 			movements={movements}
 			tags={tags}
 			workoutId={myParams.id}
+			updateWorkoutAction={updateWorkoutAction}
 		/>
 	);
 }
