@@ -5,16 +5,17 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Search } from "lucide-react";
 import { submitLogFormAction } from "../actions";
-
+import { Prettify } from "@/lib/utils";
 // Minimal Workout type matching the one in actions.ts
 // Ideally, this would be a shared type imported from a central location.
-interface Workout {
+type Workout = Prettify<{
 	id: string;
 	name: string;
 	scheme: string;
-	roundsToScore?: number | null; // Added roundsToScore
-	// any other relevant properties
-}
+	roundsToScore?: number | null;
+	repsPerRound?: number | null;
+	createdAt?: Date | null;
+}>;
 
 export default function LogFormClient({
 	workouts,
@@ -33,7 +34,7 @@ export default function LogFormClient({
 	const [searchQuery, setSearchQuery] = useState("");
 	const [scale, setScale] = useState<"rx" | "scaled" | "rx+">("rx");
 	const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
-	const [scores, setScores] = useState<string[]>([]); // Added scores array state
+	const [scores, setScores] = useState<string[][]>([]); // Changed to string[][] for multi-part scores
 	const [notes, setNotes] = useState("");
 	const [isPending, startTransition] = useTransition();
 	const router = useRouter(); // Kept for "Cancel" button or other navigation
@@ -48,7 +49,18 @@ export default function LogFormClient({
 		.sort((a, b) => {
 			if (a.id === selectedWorkout) return -1; // a comes first if it's the selected workout
 			if (b.id === selectedWorkout) return 1; // b comes first if it's the selected workout
-			return a.name.localeCompare(b.name); // otherwise, sort by name
+			// Sort by createdAt descending (newest first)
+			// Treat null or undefined createdAt as older than any workout with a date
+			if (a.createdAt && b.createdAt) {
+				return b.createdAt.getTime() - a.createdAt.getTime();
+			}
+			if (a.createdAt) {
+				return -1; // a has a date, b does not, so a is newer
+			}
+			if (b.createdAt) {
+				return 1; // b has a date, a does not, so b is newer
+			}
+			return a.name.localeCompare(b.name); // fallback to name sort if no dates
 		});
 
 	const getSelectedWorkout = () => {
@@ -65,34 +77,60 @@ export default function LogFormClient({
 
 	// Update scores state when selected workout changes, preserving input during Fast Refresh
 	useEffect(() => {
-		const currentWorkoutData = workouts.find((w) => w.id === selectedWorkout);
-		const numRounds = currentWorkoutData?.roundsToScore || 1;
-
+		// Handling the case where no workout is selected
 		if (!selectedWorkout) {
-			// No workout selected
-			if (scores.length > 0) {
+			if (scores.length !== 0) {
+				// Only update if scores are not already empty
 				setScores([]);
 			}
-			prevSelectedWorkoutIdRef.current = null;
+			// Ensure ref reflects that scores are for "no workout"
+			if (prevSelectedWorkoutIdRef.current !== null) {
+				prevSelectedWorkoutIdRef.current = null;
+			}
 			return;
 		}
 
-		// Reset scores if the selected workout ID has actually changed,
-		// or if the current number of score inputs doesn't match the required rounds.
-		if (
-			selectedWorkout !== prevSelectedWorkoutIdRef.current ||
-			scores.length !== numRounds
-		) {
-			setScores(Array(numRounds).fill(""));
+		// Handling the case where a workout IS selected
+		const currentWorkoutData = workouts.find((w) => w.id === selectedWorkout);
+		// currentWorkoutData might be undefined if selectedWorkout ID is stale/invalid
+		// Default values handle this for numRoundsForInputs, etc.
+		const numRoundsForInputs = currentWorkoutData?.roundsToScore || 1;
+		const hasRepsPerRound = !!currentWorkoutData?.repsPerRound;
+		const expectedPartsPerScore = hasRepsPerRound ? 2 : 1; // 2 parts for rounds+reps, 1 otherwise
+
+		// Determine if scores need to be reset or initialized
+		const workoutIdContextChanged =
+			prevSelectedWorkoutIdRef.current !== selectedWorkout;
+		const scoresNeedRestructure =
+			scores.length !== numRoundsForInputs ||
+			scores.some((parts) => parts.length !== expectedPartsPerScore);
+
+		if (workoutIdContextChanged || scoresNeedRestructure) {
+			const newInitialScores = Array(numRoundsForInputs)
+				.fill(null)
+				.map(() => Array(expectedPartsPerScore).fill(""));
+			setScores(newInitialScores);
+			// After scores are set/reset for the current selectedWorkout, update the ref.
 			prevSelectedWorkoutIdRef.current = selectedWorkout;
 		}
-		// If selectedWorkout is same as prevRef and scores.length matches numRounds,
-		// do nothing to preserve user input (e.g. during Fast Refresh).
-	}, [selectedWorkout, workouts, scores.length]); // Using scores.length as dependency
+		// If workoutIdContextChanged is false AND scoresNeedRestructure is false,
+		// it means prevSelectedWorkoutIdRef.current is already selectedWorkout,
+		// and scores are correctly structured. No action needed, preventing a loop.
+	}, [selectedWorkout, workouts, scores]); // scores is included to re-validate if its structure is somehow externally changed or inconsistent
 
-	const handleScoreChange = (index: number, value: string) => {
-		const newScores = [...scores];
-		newScores[index] = value;
+	const handleScoreChange = (
+		roundIndex: number,
+		partIndex: number,
+		value: string
+	) => {
+		const newScores = scores.map((parts, rIndex) => {
+			if (rIndex === roundIndex) {
+				const newParts = [...parts];
+				newParts[partIndex] = value;
+				return newParts;
+			}
+			return parts;
+		});
 		setScores(newScores);
 	};
 
@@ -117,8 +155,10 @@ export default function LogFormClient({
 		}
 
 		// Add scores to formData
-		scores.forEach((score, index) => {
-			formData.append(`scores[${index}]`, score);
+		scores.forEach((scoreParts, roundIndex) => {
+			scoreParts.forEach((partValue, partIndex) => {
+				formData.append(`scores[${roundIndex}][${partIndex}]`, partValue || "");
+			});
 		});
 
 		// Ensure selectedWorkoutId is on formData if not already explicitly set by a hidden field
@@ -267,39 +307,94 @@ export default function LogFormClient({
 										<label className="block font-bold uppercase mb-2">
 											Score
 										</label>
-										{scores.map((score, index) => (
-											<div key={index} className="flex gap-2 items-center mb-2">
-												{getSelectedWorkout()?.roundsToScore &&
-													getSelectedWorkout()!.roundsToScore! > 1 && (
-														<span className="font-semibold">
-															Round {index + 1}:
-														</span>
+										{scores.map((scoreParts, roundIndex) => {
+											const currentWorkoutDetails = getSelectedWorkout();
+											const hasRepsPerRound =
+												!!currentWorkoutDetails?.repsPerRound;
+											const repsPerRoundValue =
+												currentWorkoutDetails?.repsPerRound;
+
+											return (
+												<div key={roundIndex} className="mb-3">
+													{" "}
+													{/* Wrapper for each score entry/round */}
+													{currentWorkoutDetails?.roundsToScore &&
+														currentWorkoutDetails.roundsToScore > 1 && (
+															<label className="block text-sm font-medium text-gray-700 mb-1">
+																Round {roundIndex + 1} Score
+															</label>
+														)}
+													{hasRepsPerRound ? (
+														<div className="flex items-center gap-2">
+															<input
+																type="number"
+																className="input w-full"
+																placeholder="Rounds"
+																value={scoreParts[0] || ""}
+																onChange={(e) =>
+																	handleScoreChange(
+																		roundIndex,
+																		0,
+																		e.target.value
+																	)
+																}
+																name={`scores[${roundIndex}][0]`}
+																min="0"
+															/>
+															<span className="text-gray-600">+</span>
+															<input
+																type="number"
+																className="input w-full"
+																placeholder={`Reps (max ${
+																	repsPerRoundValue
+																		? repsPerRoundValue - 1
+																		: "N/A"
+																})`}
+																value={scoreParts[1] || ""}
+																onChange={(e) =>
+																	handleScoreChange(
+																		roundIndex,
+																		1,
+																		e.target.value
+																	)
+																}
+																name={`scores[${roundIndex}][1]`}
+																min="0"
+																max={
+																	repsPerRoundValue
+																		? repsPerRoundValue - 1
+																		: undefined
+																}
+															/>
+														</div>
+													) : (
+														<input
+															type={
+																currentWorkoutDetails?.scheme === "time"
+																	? "text"
+																	: "number"
+															}
+															className="input w-full"
+															placeholder={
+																currentWorkoutDetails?.scheme === "time"
+																	? "e.g. 3:21"
+																	: "Reps/Load"
+															}
+															value={scoreParts[0] || ""}
+															onChange={(e) =>
+																handleScoreChange(roundIndex, 0, e.target.value)
+															}
+															name={`scores[${roundIndex}][0]`}
+															min={
+																currentWorkoutDetails?.scheme !== "time"
+																	? "0"
+																	: undefined
+															}
+														/>
 													)}
-												<input
-													type={
-														getSelectedWorkout()?.scheme === "time"
-															? "text"
-															: "number"
-													}
-													className="input w-full"
-													placeholder={
-														getSelectedWorkout()?.scheme === "time"
-															? "e.g. 3:21"
-															: "Reps/Load"
-													}
-													value={score}
-													onChange={(e) =>
-														handleScoreChange(index, e.target.value)
-													}
-													name={`scores[${index}]`}
-													min={
-														getSelectedWorkout()?.scheme !== "time"
-															? "0"
-															: undefined
-													}
-												/>
-											</div>
-										))}
+												</div>
+											);
+										})}
 									</div>
 									<div>
 										<label className="block font-bold uppercase mb-2">

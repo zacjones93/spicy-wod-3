@@ -78,8 +78,7 @@ export default async function WorkoutsPage({
 			{todaysWorkouts.length > 0 && (
 				<div className="mb-12">
 					<h2 className="text-2xl font-bold mb-4 border-b pb-2">
-						Workout of the Day
-						{todaysWorkouts.length > 1 ? "S" : ""}
+						Workout{todaysWorkouts.length > 1 ? "s" : ""} of the Day
 					</h2>
 					<div className="space-y-6">
 						{todaysWorkouts.map((workout) => (
