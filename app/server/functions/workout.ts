@@ -2,7 +2,7 @@
 
 import { getDbAsync } from "../db";
 import { workouts, tags, movements, workoutTags, workoutMovements } from "../db/schema";
-import { eq, inArray } from "drizzle-orm";
+import { eq, inArray, desc } from "drizzle-orm";
 
 // Fetch all workouts with tags and movements
 export async function getAllWorkouts() {
@@ -145,4 +145,25 @@ export async function getWorkoutsByMovementId(movementId: string) {
 
   console.log(`[server/functions/workout] Found ${result.length} workouts for movementId: ${movementId}`);
   return result;
+}
+
+// Fetch the latest workout (by createdAt desc)
+export async function getLatestWorkout() {
+  const db = await getDbAsync();
+  const latestWorkout = await db.select().from(workouts).orderBy(desc(workouts.createdAt)).limit(1).get();
+  if (!latestWorkout) return null;
+
+  const workoutTagRows = await db.select().from(workoutTags).where(eq(workoutTags.workoutId, latestWorkout.id));
+  const tagIds = workoutTagRows.map(wt => wt.tagId);
+  const tagObjs = tagIds.length ? await db.select().from(tags).where(inArray(tags.id, tagIds)) : [];
+
+  const workoutMovementRows = await db.select().from(workoutMovements).where(eq(workoutMovements.workoutId, latestWorkout.id));
+  const movementIds = workoutMovementRows.map(wm => wm.movementId).filter((id): id is string => id !== null);
+  const movementObjs = movementIds.length ? await db.select().from(movements).where(inArray(movements.id, movementIds)) : [];
+
+  return {
+    ...latestWorkout,
+    tags: tagObjs,
+    movements: movementObjs,
+  };
 } 

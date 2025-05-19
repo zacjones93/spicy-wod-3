@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { Dumbbell } from "lucide-react";
+import { getLatestWorkout } from "@/server/functions/workout";
 
-export default function Home() {
+export default async function Home() {
+	const latestWorkout = await getLatestWorkout();
 	return (
 		<div className="min-h-screen flex flex-col">
 			<header className="border-b-2 border-black p-4">
@@ -50,13 +52,28 @@ export default function Home() {
 							<div className="border-2 border-black p-8 bg-red-500 text-white">
 								<h2 className="text-3xl font-black mb-4">WORKOUT OF THE DAY</h2>
 								<div className="border-2 border-white p-4 mb-4">
-									<h3 className="text-xl font-bold mb-2">FRAN</h3>
-									<p className="mb-2">21-15-9 reps for time:</p>
-									<ul className="list-disc pl-5 mb-4">
-										<li>Thrusters (95/65 lb)</li>
-										<li>Pull-ups</li>
-									</ul>
-									<p className="text-sm">Time cap: 10 minutes</p>
+									{!latestWorkout && <p>No workouts found.</p>}
+									{latestWorkout && (
+										<>
+											<h3 className="text-xl font-bold mb-2">
+												{latestWorkout.name}
+											</h3>
+											<p className="mb-2">{latestWorkout.description}</p>
+											{latestWorkout.movements &&
+												latestWorkout.movements.length > 0 && (
+													<ul className="list-disc pl-5 mb-4">
+														{latestWorkout.movements.map((m: any) => (
+															<li key={m.id}>{m.name}</li>
+														))}
+													</ul>
+												)}
+											{latestWorkout.scheme && (
+												<p className="text-sm">
+													Scheme: {latestWorkout.scheme}
+												</p>
+											)}
+										</>
+									)}
 								</div>
 								<Link
 									href="/workouts"
