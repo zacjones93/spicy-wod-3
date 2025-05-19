@@ -94,7 +94,6 @@ export const results = sqliteTable('results', {
     .notNull(),
   date: integer('date', { mode: 'timestamp' }).notNull(),
   workoutId: text('workout_id').references(() => workouts.id), // Optional, for WOD results
-  movementId: text('movement_id').references(() => movements.id), // Optional, for strength/mono results
   type: text('type', {
     enum: ['wod', 'strength', 'monostructural'],
   }).notNull(),

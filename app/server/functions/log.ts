@@ -9,7 +9,6 @@ export type LogEntry = {
   userId: string;
   date: Date;
   workoutId: string | null;
-  movementId: string | null;
   type: "wod" | "strength" | "monostructural";
   notes: string | null;
   scale: "rx" | "scaled" | "rx+" | null;
