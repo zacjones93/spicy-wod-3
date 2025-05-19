@@ -48,17 +48,17 @@ export default async function CreateWorkoutPage() {
 
 		const headerList = await headers();
 		const timezone = headerList.get("x-vercel-ip-timezone") ?? "America/Denver";
-		const createdAtTimestamp = fromZonedTime(
+		const createdAtDate = fromZonedTime(
 			`${data.workout.createdAt}T00:00:00`,
 			timezone
-		).getTime();
+		);
 
 		try {
 			await createWorkout({
 				...data,
 				workout: {
 					...data.workout,
-					createdAt: createdAtTimestamp,
+					createdAt: createdAtDate,
 				},
 				userId: user.id,
 			});
