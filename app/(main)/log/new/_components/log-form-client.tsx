@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useTransition, useEffect, useRef } from "react";
-import { useRouter, usePathname } from "next/navigation";
-import Link from "next/link";
+import type { Prettify } from "@/lib/utils";
 import { ArrowLeft, Search } from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { submitLogFormAction } from "../actions";
-import { Prettify } from "@/lib/utils";
 // Minimal Workout type matching the one in actions.ts
 // Ideally, this would be a shared type imported from a central location.
 type Workout = Prettify<{
@@ -29,7 +29,7 @@ export default function LogFormClient({
 	redirectUrl?: string;
 }) {
 	const [selectedWorkout, setSelectedWorkout] = useState<string | null>(
-		selectedWorkoutId || null
+		selectedWorkoutId || null,
 	);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [scale, setScale] = useState<"rx" | "scaled" | "rx+">("rx");
@@ -44,7 +44,7 @@ export default function LogFormClient({
 
 	const filteredWorkouts = workouts
 		.filter((workout: Workout) =>
-			workout.name.toLowerCase().includes(searchQuery.toLowerCase())
+			workout.name.toLowerCase().includes(searchQuery.toLowerCase()),
 		)
 		.sort((a, b) => {
 			if (a.id === selectedWorkout) return -1; // a comes first if it's the selected workout
@@ -121,7 +121,7 @@ export default function LogFormClient({
 	const handleScoreChange = (
 		roundIndex: number,
 		partIndex: number,
-		value: string
+		value: string,
 	) => {
 		const newScores = scores.map((parts, rIndex) => {
 			if (rIndex === roundIndex) {
@@ -335,7 +335,7 @@ export default function LogFormClient({
 																	handleScoreChange(
 																		roundIndex,
 																		0,
-																		e.target.value
+																		e.target.value,
 																	)
 																}
 																name={`scores[${roundIndex}][0]`}
@@ -355,7 +355,7 @@ export default function LogFormClient({
 																	handleScoreChange(
 																		roundIndex,
 																		1,
-																		e.target.value
+																		e.target.value,
 																	)
 																}
 																name={`scores[${roundIndex}][1]`}
@@ -407,7 +407,7 @@ export default function LogFormClient({
 											value={notes}
 											onChange={(e) => setNotes(e.target.value)}
 											name="notes"
-										></textarea>
+										/>
 									</div>
 								</div>
 							</div>

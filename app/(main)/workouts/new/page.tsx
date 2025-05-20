@@ -1,24 +1,23 @@
 import { auth } from "@/auth";
-import CreateWorkoutClient from "./_components/create-workout-client";
 import { getAllMovements } from "@/server/functions/movement";
 import { getAllTags } from "@/server/functions/tag";
 import { createWorkout } from "@/server/functions/workout";
-import { headers } from "next/headers";
 import { fromZonedTime } from "date-fns-tz";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import CreateWorkoutClient from "./_components/create-workout-client";
 export const dynamic = "force-dynamic";
 
 export default async function CreateWorkoutPage() {
 	const movements = await getAllMovements();
 	const tags = await getAllTags();
 
-	let session = await auth();
+	const session = await auth();
 
 	if (!session?.user?.id) {
 		console.log("[log/page] No user found");
 		redirect("/login");
 	}
-
 
 	async function createWorkoutAction(data: {
 		workout: {
@@ -43,7 +42,7 @@ export default async function CreateWorkoutPage() {
 		const timezone = headerList.get("x-vercel-ip-timezone") ?? "America/Denver";
 		const createdAtDate = fromZonedTime(
 			`${data.workout.createdAt}T00:00:00`,
-			timezone
+			timezone,
 		);
 
 		try {

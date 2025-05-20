@@ -1,6 +1,6 @@
-import Link from "next/link";
-import { getLatestWorkout } from "@/server/functions/workout";
 import { auth } from "@/auth";
+import { getLatestWorkout } from "@/server/functions/workout";
+import Link from "next/link";
 import MainNav from "./components/nav/main-nav";
 
 export default async function Home() {
@@ -10,7 +10,7 @@ export default async function Home() {
 	return (
 		<div className="min-h-screen flex flex-col">
 			<header>
-				<div >
+				<div>
 					<MainNav />
 				</div>
 			</header>

@@ -37,7 +37,7 @@ function eraseCookie(name: string) {
 interface LoginFormProps {
 	authenticateAction: (
 		prevState: string | undefined,
-		formData: FormData
+		formData: FormData,
 	) => Promise<string | undefined>;
 }
 
@@ -73,7 +73,7 @@ export function LoginForm({ authenticateAction }: LoginFormProps) {
 
 	const [errorMessage, dispatch] = useActionState(
 		authenticateAction,
-		undefined
+		undefined,
 	);
 
 	return (

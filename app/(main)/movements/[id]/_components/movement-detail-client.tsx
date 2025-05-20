@@ -1,9 +1,9 @@
 "use client";
 
-import { type Movement, type WorkoutWithRelations } from "@/types/workout";
-import { type WorkoutResult } from "@/server/functions/workout-results";
-import Link from "next/link";
+import type { WorkoutResult } from "@/server/functions/workout-results";
+import type { Movement, WorkoutWithRelations } from "@/types/workout";
 import { ListChecks, Plus } from "lucide-react";
+import Link from "next/link";
 
 interface MovementDetailClientProps {
 	movement: Movement;

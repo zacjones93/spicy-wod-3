@@ -1,7 +1,7 @@
 import { getAllMovements } from "@/server/functions/movement";
-import MovementList from "./_components/movement-list";
-import Link from "next/link";
 import { Plus } from "lucide-react";
+import Link from "next/link";
+import MovementList from "./_components/movement-list";
 
 export const dynamic = "force-dynamic";
 

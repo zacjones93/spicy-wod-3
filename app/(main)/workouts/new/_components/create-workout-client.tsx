@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
 import { ArrowLeft, Plus, X } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface Movement {
 	id: string;
@@ -26,6 +26,7 @@ interface Props {
 			description: string;
 			scheme: string;
 			createdAt: string;
+			scope: string;
 			roundsToScore?: number;
 			repsPerRound?: number;
 		};
@@ -46,11 +47,12 @@ export default function CreateWorkoutClient({
 	const [name, setName] = useState("");
 	const [description, setDescription] = useState("");
 	const [scheme, setScheme] = useState("");
+	const [scope, setScope] = useState("private");
 	const [roundsToScore, setRoundsToScore] = useState<number | undefined>(
-		undefined
+		undefined,
 	);
 	const [repsPerRound, setRepsPerRound] = useState<number | undefined>(
-		undefined
+		undefined,
 	);
 	const router = useRouter();
 
@@ -93,6 +95,7 @@ export default function CreateWorkoutClient({
 				description,
 				scheme,
 				createdAt: new Date().toISOString().split("T")[0],
+				scope,
 				roundsToScore,
 				repsPerRound,
 			},
@@ -141,7 +144,7 @@ export default function CreateWorkoutClient({
 								value={description}
 								onChange={(e) => setDescription(e.target.value)}
 								required
-							></textarea>
+							/>
 						</div>
 
 						<div>
@@ -166,6 +169,19 @@ export default function CreateWorkoutClient({
 						</div>
 
 						<div>
+							<label className="block font-bold uppercase mb-2">Scope</label>
+							<select
+								className="select"
+								value={scope}
+								onChange={(e) => setScope(e.target.value)}
+								required
+							>
+								<option value="private">Private</option>
+								<option value="public">Public</option>
+							</select>
+						</div>
+
+						<div>
 							<label className="block font-bold uppercase mb-2">
 								Rounds to Score
 							</label>
@@ -176,7 +192,9 @@ export default function CreateWorkoutClient({
 								value={roundsToScore === undefined ? "" : roundsToScore}
 								onChange={(e) =>
 									setRoundsToScore(
-										e.target.value ? parseInt(e.target.value) : undefined
+										e.target.value
+											? Number.parseInt(e.target.value)
+											: undefined,
 									)
 								}
 								min="0"
@@ -194,7 +212,9 @@ export default function CreateWorkoutClient({
 								value={repsPerRound === undefined ? "" : repsPerRound}
 								onChange={(e) =>
 									setRepsPerRound(
-										e.target.value ? parseInt(e.target.value) : undefined
+										e.target.value
+											? Number.parseInt(e.target.value)
+											: undefined,
 									)
 								}
 								min="0"

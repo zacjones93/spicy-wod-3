@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import type { User } from "@/types/user";
+import { useState } from "react";
 import { updateUserNameAction } from "../actions";
-import { type User } from "@/types/user";
-
 
 interface ProfileClientProps {
 	user: User;
@@ -88,7 +87,11 @@ export default function ProfileClient({ user }: ProfileClientProps) {
 						className="mt-1"
 					/>
 				</div>
-				<Button className="bg-black text-white" type="submit" disabled={loading}>
+				<Button
+					className="bg-black text-white"
+					type="submit"
+					disabled={loading}
+				>
 					{loading ? "Saving..." : "Save Changes"}
 				</Button>
 			</form>

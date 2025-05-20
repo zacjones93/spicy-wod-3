@@ -28,8 +28,8 @@ export default function LogListClient({ logs }: { logs: any[] }) {
 											log.scale === "rx"
 												? "bg-black text-white"
 												: log.scale === "rx+"
-												? "bg-red-500 text-white"
-												: "border border-black"
+													? "bg-red-500 text-white"
+													: "border border-black"
 										}`}
 									>
 										{log.scale}

@@ -21,6 +21,7 @@ type Workout = Prettify<{
 	name: string;
 	description: string;
 	scheme: string;
+	scope: string;
 	movements: Movement[];
 	tags: (Tag | string)[];
 	repsPerRound?: number | null;
@@ -38,6 +39,7 @@ type Props = Prettify<{
 			name: string;
 			description: string;
 			scheme: string;
+			scope: string;
 			repsPerRound?: number | null;
 			roundsToScore?: number | null;
 		};
@@ -56,21 +58,22 @@ export default function EditWorkoutClient({
 	const [name, setName] = useState(workout?.name || "");
 	const [description, setDescription] = useState(workout?.description || "");
 	const [scheme, setScheme] = useState(workout?.scheme || "");
+	const [scope, setScope] = useState(workout?.scope || "private");
 	const [tags, setTags] = useState<Tag[]>(initialTags);
 	const [selectedMovements, setSelectedMovements] = useState<string[]>(
-		(workout?.movements || []).map((m: Movement) => m.id)
+		(workout?.movements || []).map((m: Movement) => m.id),
 	);
 	const [selectedTags, setSelectedTags] = useState<string[]>(
 		(workout?.tags || []).map((t: Tag | string) =>
-			typeof t === "string" ? t : t.id
-		)
+			typeof t === "string" ? t : t.id,
+		),
 	);
 	const [newTag, setNewTag] = useState("");
 	const [repsPerRound, setRepsPerRound] = useState<number | undefined>(
-		workout?.repsPerRound === null ? undefined : workout?.repsPerRound
+		workout?.repsPerRound === null ? undefined : workout?.repsPerRound,
 	);
 	const [roundsToScore, setRoundsToScore] = useState<number | undefined>(
-		workout?.roundsToScore === null ? 1 : workout?.roundsToScore || 1
+		workout?.roundsToScore === null ? 1 : workout?.roundsToScore || 1,
 	);
 
 	const handleAddTag = () => {
@@ -110,6 +113,7 @@ export default function EditWorkoutClient({
 				name,
 				description,
 				scheme,
+				scope,
 				repsPerRound: repsPerRound === undefined ? null : repsPerRound,
 				roundsToScore: roundsToScore === undefined ? null : roundsToScore,
 			},
@@ -195,6 +199,25 @@ export default function EditWorkoutClient({
 
 						<div>
 							<label
+								htmlFor="workout-scope"
+								className="block font-bold uppercase mb-2"
+							>
+								Scope
+							</label>
+							<select
+								id="workout-scope"
+								className="select"
+								value={scope}
+								onChange={(e) => setScope(e.target.value)}
+								required
+							>
+								<option value="private">Private</option>
+								<option value="public">Public</option>
+							</select>
+						</div>
+
+						<div>
+							<label
 								htmlFor="reps-per-round"
 								className="block font-bold uppercase mb-2"
 							>
@@ -209,7 +232,7 @@ export default function EditWorkoutClient({
 									setRepsPerRound(
 										e.target.value === ""
 											? undefined
-											: Number.parseInt(e.target.value)
+											: Number.parseInt(e.target.value),
 									)
 								}
 							/>
@@ -231,7 +254,7 @@ export default function EditWorkoutClient({
 									setRoundsToScore(
 										e.target.value === ""
 											? undefined
-											: Number.parseInt(e.target.value)
+											: Number.parseInt(e.target.value),
 									)
 								}
 							/>

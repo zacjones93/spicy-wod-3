@@ -1,14 +1,14 @@
-import { getLogsByUser } from "@/server/functions/log";
-// import LogListClient from "./_components/logs-list-client"; // Comment out or remove old list
-import LogCalendarClient from "./_components/log-calendar-client"; // Import new calendar
 import { auth } from "@/auth";
+import { getLogsByUser } from "@/server/functions/log";
 import { getUser } from "@/server/functions/user";
 import { redirect } from "next/navigation";
+// import LogListClient from "./_components/logs-list-client"; // Comment out or remove old list
+import LogCalendarClient from "./_components/log-calendar-client"; // Import new calendar
 
 export const dynamic = "force-dynamic";
 
 export default async function LogPage() {
-	let session = await auth();
+	const session = await auth();
 
 	console.log("[log/page] session", session);
 
@@ -36,7 +36,10 @@ export default async function LogPage() {
 					{logs.length > 0 ? (
 						<div className="space-y-4">
 							{logs.map((log) => (
-								<div key={log.id} className="border-2 border-black p-4 rounded-md">
+								<div
+									key={log.id}
+									className="border-2 border-black p-4 rounded-md"
+								>
 									<h3 className="font-bold">{log.workoutName || "Workout"}</h3>
 									<p className="text-sm text-muted-foreground">
 										{new Date(log.date).toLocaleDateString()}

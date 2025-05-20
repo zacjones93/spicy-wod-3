@@ -1,13 +1,13 @@
 "use client";
 
-import * as React from "react";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
+import * as React from "react";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { LogEntry } from "@/server/functions/log";
+import { cn } from "@/lib/utils";
+import type { LogEntry } from "@/server/functions/log";
 import Link from "next/link";
 
 interface LogCalendarClientProps {
@@ -24,14 +24,14 @@ export default function LogCalendarClient({ logs }: LogCalendarClientProps) {
 			if (selectedDate) {
 				const logsForDay = logs.filter(
 					(log) =>
-						new Date(log.date).toDateString() === selectedDate.toDateString()
+						new Date(log.date).toDateString() === selectedDate.toDateString(),
 				);
 				setSelectedLog(logsForDay.length > 0 ? logsForDay : null);
 			} else {
 				setSelectedLog(null);
 			}
 		},
-		[logs, setDate, setSelectedLog]
+		[logs, setDate, setSelectedLog],
 	);
 
 	React.useEffect(() => {

@@ -1,7 +1,7 @@
-import Link from "next/link";
-import { Dumbbell } from "lucide-react";
-import { redirect } from "next/navigation";
 import { createUser, getUser } from "@/server/functions/user";
+import { Dumbbell } from "lucide-react";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 import SignupFormClient from "./_components/signup-form-client";
 
 export default function SignupPage() {
@@ -20,16 +20,15 @@ export default function SignupPage() {
 
 		if (user) {
 			return "User already exists"; // TODO: Handle errors with useFormStatus in client component
-		} else {
-			console.log(
-				`[register] Creating user with email: ${email} and password: ${password.substring(
-					0,
-					3
-				)}...`
-			);
-			await createUser(email, password);
-			redirect("/login"); // Redirect on successful creation
 		}
+		console.log(
+			`[register] Creating user with email: ${email} and password: ${password.substring(
+				0,
+				3,
+			)}...`,
+		);
+		await createUser(email, password);
+		redirect("/login"); // Redirect on successful creation
 	}
 
 	return (

@@ -1,12 +1,12 @@
 import { auth } from "@/auth";
-import CreateMovementForm from "./_components/create-movement-form";
 import { createMovement } from "@/server/functions/movement";
 import { redirect } from "next/navigation";
+import CreateMovementForm from "./_components/create-movement-form";
 
 export const dynamic = "force-dynamic";
 
 export default async function CreateMovementPage() {
-	let session = await auth();
+	const session = await auth();
 
 	if (!session || !session?.user?.id) {
 		console.log("[movements/new/page] No user found");

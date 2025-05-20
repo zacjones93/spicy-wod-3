@@ -1,8 +1,8 @@
 "use client";
 
-import { Search, Filter } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { Filter, Search } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface WorkoutControlsProps {
 	allTags: string[];
@@ -17,11 +17,11 @@ export default function WorkoutControls({
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 	const [searchTerm, setSearchTerm] = useState(
-		searchParams.get("search") || ""
+		searchParams.get("search") || "",
 	);
 	const [selectedTag, setSelectedTag] = useState(searchParams.get("tag") || "");
 	const [selectedMovement, setSelectedMovement] = useState(
-		searchParams.get("movement") || ""
+		searchParams.get("movement") || "",
 	);
 
 	useEffect(() => {

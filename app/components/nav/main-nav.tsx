@@ -2,8 +2,8 @@ import { auth } from "@/auth";
 import LogoutButton from "@/components/nav/logout-button";
 import MobileNav from "@/components/nav/mobile-nav";
 import { Dumbbell, User } from "lucide-react";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 
 export default async function MainNav() {
 	const session = await auth();

@@ -21,19 +21,12 @@ export default async function EditWorkoutPage({
 
 	const session = await auth();
 
-	if (!session || !session?.user?.email) {
+	if (!session || !session?.user?.id) {
 		console.log("[log/page] No user found");
-		return <div>Please log in to view your workout log.</div>;
+		redirect("/login");
 	}
 
-	const user = await getUser(session?.user?.email);
-
-	if (!user) {
-		console.log("[log/page] No user found");
-		return <div>Please log in to view your workout log.</div>;
-	}
-
-	if (workout?.userId !== user.id) {
+	if (workout?.userId !== session?.user?.id) {
 		redirect(`/workouts/${workout?.id}`);
 	}
 
@@ -47,6 +40,7 @@ export default async function EditWorkoutPage({
 			name: string;
 			description: string;
 			scheme: string;
+			scope: string;
 			repsPerRound?: number | null;
 			roundsToScore?: number | null;
 		};

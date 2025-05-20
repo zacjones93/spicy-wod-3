@@ -1,12 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import type React from "react";
 import { useState } from "react";
-import Link from "next/link";
 import { useFormStatus } from "react-dom";
 
 interface SignupFormClientProps {
-	register: (formData: FormData) => Promise<string | void>;
+	register: (formData: FormData) => Promise<string | undefined>;
 }
 
 export default function SignupFormClient({ register }: SignupFormClientProps) {

@@ -1,15 +1,15 @@
 "use client";
 
-import Link from "next/link";
+import type { WorkoutResult } from "@/server/functions/workout-results";
 import {
 	ArrowLeft,
-	Edit,
 	Clock,
-	Tag,
 	Dumbbell,
+	Edit,
 	ListChecks,
+	Tag,
 } from "lucide-react";
-import { type WorkoutResult } from "@/server/functions/workout-results";
+import Link from "next/link";
 
 export default function WorkoutDetailClient({
 	userId,
@@ -42,11 +42,10 @@ export default function WorkoutDetailClient({
 					<h1>{workout.name}</h1>
 				</div>
 				{canEditWorkout && (
-				<Link
-					href={`/workouts/${workoutId}/edit`}
-					className="btn flex items-center gap-2"
-				>
-						
+					<Link
+						href={`/workouts/${workoutId}/edit`}
+						className="btn flex items-center gap-2"
+					>
 						<>
 							<Edit className="h-5 w-5" />
 							Edit Workout
@@ -61,7 +60,9 @@ export default function WorkoutDetailClient({
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
 							<h2 className="mb-4">DESCRIPTION</h2>
-							<p className="text-lg mb-6 whitespace-pre-wrap">{workout.description}</p>
+							<p className="text-lg mb-6 whitespace-pre-wrap">
+								{workout.description}
+							</p>
 						</div>
 
 						<div>
@@ -70,7 +71,9 @@ export default function WorkoutDetailClient({
 								<h3>SCHEME</h3>
 							</div>
 							<div className="border-2 border-black p-4 mb-6 w-fit">
-								<p className="text-lg font-bold uppercase w-fit">{workout.scheme}</p>
+								<p className="text-lg font-bold uppercase w-fit">
+									{workout.scheme}
+								</p>
 							</div>
 							<div className="flex items-center gap-2 mb-4">
 								<Dumbbell className="h-5 w-5" />
@@ -88,12 +91,12 @@ export default function WorkoutDetailClient({
 									</div>
 								))}
 							</div>
-							
+
 							{workout.tags && workout.tags.length > 0 && (
 								<>
 									<div className="flex items-center gap-2 my-4">
 										<Tag className="h-5 w-5" />
-											<h3>TAGS</h3>
+										<h3>TAGS</h3>
 									</div>
 									<div className="flex flex-wrap gap-2 mb-6">
 										{(workout.tags || []).map((tag: any) => (

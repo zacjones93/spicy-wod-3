@@ -1,5 +1,5 @@
-import type React from "react";
 import MainNav from "@/components/nav/main-nav";
+import type React from "react";
 
 export default function MainLayout({
 	children,

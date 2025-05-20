@@ -1,15 +1,14 @@
 import type React from "react";
 
-import Link from "next/link";
-import { Dumbbell } from "lucide-react";
-import { LoginForm } from "./_components/login-form";
 import { signIn } from "@/auth";
+import { Dumbbell } from "lucide-react";
+import Link from "next/link";
+import { LoginForm } from "./_components/login-form";
 
 export default function LoginPage() {
-
 	async function authenticateAction(
 		prevState: string | undefined,
-		formData: FormData
+		formData: FormData,
 	) {
 		"use server";
 		try {
@@ -28,7 +27,7 @@ export default function LoginPage() {
 			throw error;
 		}
 	}
-	
+
 	return (
 		<div className="min-h-screen flex flex-col">
 			<header className="border-b-2 border-black p-4">
