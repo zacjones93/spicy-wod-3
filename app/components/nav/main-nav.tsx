@@ -3,6 +3,7 @@ import LogoutButton from "@/components/nav/logout-button";
 import MobileNav from "@/components/nav/mobile-nav";
 import { Dumbbell, User } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default async function MainNav() {
 	const session = await auth();
@@ -10,7 +11,12 @@ export default async function MainNav() {
 		<header className="border-b-2 border-black p-4">
 			<div className="container mx-auto flex justify-between items-center">
 				<Link href="/" className="flex items-center gap-2">
-					<Dumbbell className="h-8 w-8" />
+					<Image
+						src="/spicwod-logo-black.png"
+						alt="spicy wod"
+						width={32}
+						height={32}
+					/>
 					<h1 className="text-2xl font-black uppercase">spicy wod</h1>
 				</Link>
 				<nav className="hidden md:flex items-center gap-4">
@@ -39,16 +45,10 @@ export default async function MainNav() {
 						</>
 					) : (
 						<div className="flex items-center gap-2">
-							<Link
-								href="/login"
-								className="btn-outline"
-							>
+							<Link href="/login" className="btn-outline">
 								Login
 							</Link>
-							<Link
-								href="/signup"
-								className="btn"
-							>
+							<Link href="/signup" className="btn">
 								Sign Up
 							</Link>
 						</div>

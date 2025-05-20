@@ -2,10 +2,33 @@ import type React from "react";
 
 import Link from "next/link";
 import { Dumbbell } from "lucide-react";
+import { LoginForm } from "./_components/login-form";
 import { signIn } from "@/auth";
-import { headers } from "next/headers";
 
 export default function LoginPage() {
+
+	async function authenticateAction(
+		prevState: string | undefined,
+		formData: FormData
+	) {
+		"use server";
+		try {
+			await signIn("credentials", {
+				redirectTo: "/workouts",
+				email: formData.get("email") as string,
+				password: formData.get("password") as string,
+			});
+		} catch (error) {
+			if (
+				error instanceof Error &&
+				error.message.includes("CredentialsSignin")
+			) {
+				return "CredentialsSignin";
+			}
+			throw error;
+		}
+	}
+	
 	return (
 		<div className="min-h-screen flex flex-col">
 			<header className="border-b-2 border-black p-4">
@@ -23,68 +46,7 @@ export default function LoginPage() {
 						<div className="bg-black text-white p-4">
 							<h2 className="text-xl font-bold uppercase">Login</h2>
 						</div>
-
-						<form
-							action={async (formData: FormData) => {
-								"use server";
-								headers();
-								await signIn("credentials", {
-									redirectTo: "/workouts",
-									email: formData.get("email") as string,
-									password: formData.get("password") as string,
-								});
-							}}
-							className="p-6 space-y-6"
-						>
-							<div>
-								<label className="block font-bold uppercase mb-2">Email</label>
-								<input
-									className="input"
-									id="email"
-									name="email"
-									type="email"
-									placeholder="user@acme.com"
-									autoComplete="email"
-									required
-								/>
-							</div>
-
-							<div>
-								<label className="block font-bold uppercase mb-2">
-									Password
-								</label>
-								<input
-									className="input"
-									id="password"
-									name="password"
-									type="password"
-									required
-								/>
-							</div>
-
-							<div className="flex justify-between items-center">
-								<label className="flex items-center gap-2">
-									<input type="checkbox" className="h-5 w-5" />
-									<span>Remember me</span>
-								</label>
-								<Link href="/forgot-password" className="text-sm underline">
-									Forgot password?
-								</Link>
-							</div>
-
-							<button type="submit" className="btn w-full">
-								Login
-							</button>
-
-							<div className="text-center">
-								<p>
-									Don&apos;t have an account?{" "}
-									<Link href="/signup" className="underline font-bold">
-										Sign up
-									</Link>
-								</p>
-							</div>
-						</form>
+						<LoginForm authenticateAction={authenticateAction} />
 					</div>
 				</div>
 			</main>

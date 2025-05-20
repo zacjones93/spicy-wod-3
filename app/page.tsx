@@ -1,8 +1,6 @@
 import Link from "next/link";
-import { Dumbbell } from "lucide-react";
 import { getLatestWorkout } from "@/server/functions/workout";
 import { auth } from "@/auth";
-import { redirect } from "next/navigation";
 import MainNav from "./components/nav/main-nav";
 
 export default async function Home() {
