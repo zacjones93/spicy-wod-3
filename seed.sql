@@ -26,13 +26,13 @@ INSERT INTO tags (id, name) VALUES
   ('7', 'monostructural');
 
 -- Workouts
-INSERT INTO workouts (id, name, description, scheme) VALUES
-  ('1', 'Fran', '21-15-9 reps for time of Thrusters and Pull-ups', 'time'),
-  ('2', 'Cindy', 'AMRAP in 20 minutes of 5 Pull-ups, 10 Push-ups, 15 Squats', 'rounds-reps'),
-  ('3', 'Grace', '30 Clean & Jerks for time', 'time'),
-  ('4', 'Murph', 'For time: 1 mile Run, 100 Pull-ups, 200 Push-ups, 300 Squats, 1 mile Run', 'time'),
-  ('5', 'Karen', '150 Wall Balls for time', 'time'),
-  ('6', 'DT', '5 rounds for time of: 12 Deadlifts, 9 Hang Power Cleans, 6 Push Jerks', 'time');
+INSERT INTO workouts (id, name, description, scheme, created_at) VALUES
+  ('1', 'Fran', '21-15-9 reps for time of Thrusters and Pull-ups', 'time', CURRENT_TIMESTAMP),
+  ('2', 'Cindy', 'AMRAP in 20 minutes of 5 Pull-ups, 10 Push-ups, 15 Squats', 'rounds-reps', CURRENT_TIMESTAMP),
+  ('3', 'Grace', '30 Clean & Jerks for time', 'time', CURRENT_TIMESTAMP),
+  ('4', 'Murph', 'For time: 1 mile Run, 100 Pull-ups, 200 Push-ups, 300 Squats, 1 mile Run', 'time', CURRENT_TIMESTAMP),
+  ('5', 'Karen', '150 Wall Balls for time', 'time', CURRENT_TIMESTAMP),
+  ('6', 'DT', '5 rounds for time of: 12 Deadlifts, 9 Hang Power Cleans, 6 Push Jerks', 'time', CURRENT_TIMESTAMP);
 
 -- Workout Movements
 INSERT INTO workout_movements (id, workout_id, movement_id) VALUES
