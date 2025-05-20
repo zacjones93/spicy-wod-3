@@ -1,8 +1,8 @@
 import { getWorkoutById } from "@/server/functions/workout";
 import WorkoutDetailClient from "./_components/workout-detail-client";
-import { getUser } from "@/server/functions/user";
 import { auth } from "@/auth";
 import { getWorkoutResultsByWorkoutAndUser } from "@/server/functions/workout-results";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -16,28 +16,21 @@ export default async function WorkoutDetailPage({
 
 	let session = await auth();
 
-	if (!session || !session?.user?.email) {
+	if (!session?.user?.id) {
 		console.log("[log/page] No user found");
-		return <div>Please log in to view your workout log.</div>;
-	}
-
-	const user = await getUser(session?.user?.email);
-
-	if (!user) {
-		console.log("[log/page] No user found");
-		return <div>Please log in to view your workout log.</div>;
+		redirect("/login");
 	}
 
 	if (!workout) return <div>Workout not found.</div>;
 
 	const results = await getWorkoutResultsByWorkoutAndUser(
 		myParams.id,
-		user.id
+		session?.user?.id
 	);
 
 	return (
 		<WorkoutDetailClient
-			userId={user.id}
+			userId={session?.user?.id}
 			workout={workout}
 			workoutId={myParams.id}
 			results={results}

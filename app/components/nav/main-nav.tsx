@@ -38,20 +38,20 @@ export default async function MainNav() {
 							<LogoutButton />
 						</>
 					) : (
-						<>
+						<div className="flex items-center gap-2">
 							<Link
 								href="/login"
-								className="font-bold uppercase hover:underline"
+								className="btn-outline"
 							>
 								Login
 							</Link>
 							<Link
 								href="/signup"
-								className="font-bold uppercase hover:underline"
+								className="btn"
 							>
 								Sign Up
 							</Link>
-						</>
+						</div>
 					)}
 				</nav>
 				<MobileNav session={session} />

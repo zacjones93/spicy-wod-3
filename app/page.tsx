@@ -13,24 +13,7 @@ export default async function Home() {
 		<div className="min-h-screen flex flex-col">
 			<header>
 				<div >
-					<nav>
-						{session?.user ? (
-							<MainNav />
-						) : (
-							<div className="container mx-auto flex justify-between items-center">
-								<div className="flex items-center gap-2">
-									<Dumbbell className="h-8 w-8" />
-									<h1 className="text-2xl font-black uppercase">spicy wod</h1>
-								</div>
-								<Link href="/login" className="btn-outline mr-2">
-									Login
-								</Link>
-								<Link href="/signup" className="btn">
-									Sign Up
-								</Link>
-							</div>
-						)}
-					</nav>
+					<MainNav />
 				</div>
 			</header>
 

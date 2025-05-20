@@ -3,10 +3,9 @@ import CreateWorkoutClient from "./_components/create-workout-client";
 import { getAllMovements } from "@/server/functions/movement";
 import { getAllTags } from "@/server/functions/tag";
 import { createWorkout } from "@/server/functions/workout";
-import { getUser } from "@/server/functions/user";
 import { headers } from "next/headers";
 import { fromZonedTime } from "date-fns-tz";
-
+import { redirect } from "next/navigation";
 export const dynamic = "force-dynamic";
 
 export default async function CreateWorkoutPage() {
@@ -15,17 +14,11 @@ export default async function CreateWorkoutPage() {
 
 	let session = await auth();
 
-	if (!session || !session?.user?.email) {
+	if (!session?.user?.id) {
 		console.log("[log/page] No user found");
-		return <div>Please log in to view your workout log.</div>;
+		redirect("/login");
 	}
 
-	const user = await getUser(session?.user?.email);
-
-	if (!user || !user.id) {
-		console.log("[log/page] No user found");
-		return <div>Please log in to view your workout log.</div>;
-	}
 
 	async function createWorkoutAction(data: {
 		workout: {
@@ -41,7 +34,7 @@ export default async function CreateWorkoutPage() {
 		movementIds: string[];
 	}) {
 		"use server";
-		if (!user || !user.id) {
+		if (!session?.user?.id) {
 			console.log("[log/page] No user found");
 			throw new Error("No user found");
 		}
@@ -60,7 +53,7 @@ export default async function CreateWorkoutPage() {
 					...data.workout,
 					createdAt: createdAtDate,
 				},
-				userId: user.id,
+				userId: session?.user?.id,
 			});
 		} catch (error) {
 			console.error("[log/page] Error creating workout", error);
