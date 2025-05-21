@@ -41,12 +41,12 @@ export default function LogCalendarClient({ logs }: LogCalendarClientProps) {
 	const loggedDates = logs.map((log) => new Date(log.date));
 
 	return (
-		<div className="flex flex-col md:flex-row gap-4">
+		<div className="flex flex-col gap-4">
 			<Calendar
 				mode="single"
 				selected={date}
 				onSelect={handleDateSelect}
-				className="rounded-md border h-fit"
+				className=" border h-fit"
 				modifiers={{
 					logged: loggedDates,
 				}}

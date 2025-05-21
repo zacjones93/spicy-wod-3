@@ -9,18 +9,23 @@ import {
 	Tag,
 } from "lucide-react";
 import Link from "next/link";
-import type { WorkoutResult, WorkoutWithTagsAndMovements } from "@/types";
+import type { WorkoutResult, WorkoutWithTagsAndMovements, Set } from "@/types";
+import { Suspense } from "react";
+import { SetDetails } from "./set-details";
+
+// Define a new type for results with their sets
+export type WorkoutResultWithSets = WorkoutResult & { sets: Set[] | null };
 
 export default function WorkoutDetailClient({
 	userId,
 	workout,
 	workoutId,
-	results,
+	resultsWithSets, // Changed from results and resultSetDetails
 }: {
 	userId: string;
 	workout: WorkoutWithTagsAndMovements;
 	workoutId: string;
-	results: WorkoutResult[];
+	resultsWithSets: WorkoutResultWithSets[]; // Use the new type
 }) {
 	if (!workout) return <div>Loading...</div>;
 
@@ -128,28 +133,33 @@ export default function WorkoutDetailClient({
 							Log Result
 						</Link>
 					</div>
-					{results && results.length > 0 ? (
+					{resultsWithSets && resultsWithSets.length > 0 ? (
 						<div className="space-y-4">
-							{results.map((result) => (
-								<div key={result.id} className="border-2 border-black p-4">
-									<div className="flex justify-between items-center mb-2">
-										<p className="text-lg font-bold">
-											{formatDate(result.date)}
-										</p>
-										{result.scale && (
-											<span className="px-2 py-1 text-xs font-bold bg-gray-200 text-black uppercase">
-												{result.scale}
-											</span>
+							{resultsWithSets.map((result) => (
+								<div key={result.id} className="border-2 border-black">
+									<div className="p-4">
+										<div className="flex justify-between items-center mb-2">
+											<p className="text-lg font-bold">
+												{formatDate(result.date)}
+											</p>
+											{result.scale && (
+												<span className="px-2 py-1 text-xs font-bold bg-gray-200 text-black uppercase">
+													{result.scale}
+												</span>
+											)}
+										</div>
+										{result.wodScore && (
+											<p className="text-xl mb-1">{result.wodScore}</p>
+										)}
+										{result.notes && (
+											<p className="text-sm text-gray-600">
+												Notes: {result.notes}
+											</p>
 										)}
 									</div>
-									{result.wodScore && (
-										<p className="text-xl mb-1">{result.wodScore}</p>
-									)}
-									{result.notes && (
-										<p className="text-sm text-gray-600">
-											Notes: {result.notes}
-										</p>
-									)}
+									{workout.roundsToScore &&
+										workout.roundsToScore > 1 &&
+										result.sets && <SetDetails sets={result.sets} />}
 								</div>
 							))}
 						</div>

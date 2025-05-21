@@ -1,6 +1,6 @@
 import { getDbAsync } from "@/server/db";
-import { results } from "@/server/db/schema";
-import type { WorkoutResult } from "@/types";
+import { results, sets } from "@/server/db/schema";
+import type { WorkoutResult, Set } from "@/types";
 import { and, eq } from "drizzle-orm";
 
 export async function getWorkoutResultsByWorkoutAndUser(
@@ -27,6 +27,23 @@ export async function getWorkoutResultsByWorkoutAndUser(
 		return workoutResultsData;
 	} catch (error) {
 		console.error("Error fetching workout results:", error);
+		return [];
+	}
+}
+
+export async function getResultSetsById(resultId: string): Promise<Set[]> {
+	const db = await getDbAsync();
+	console.log(`Fetching sets for resultId: ${resultId}`);
+	try {
+		const setDetails = await db
+			.select()
+			.from(sets)
+			.where(eq(sets.resultId, resultId))
+			.orderBy(sets.setNumber);
+		console.log(`Found ${setDetails.length} sets for resultId ${resultId}.`);
+		return setDetails;
+	} catch (error) {
+		console.error(`Error fetching sets for resultId ${resultId}:`, error);
 		return [];
 	}
 }

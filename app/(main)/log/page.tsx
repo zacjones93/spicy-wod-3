@@ -2,6 +2,11 @@ import { auth } from "@/auth";
 import { getLogsByUser } from "@/server/functions/log";
 import { redirect } from "next/navigation";
 import LogCalendarClient from "./_components/log-calendar-client"; // Import new calendar
+import Link from "next/link";
+import { getResultSetsById } from "@/server/functions/workout-results";
+import type { Set, WorkoutResultWithWorkoutName } from "@/types";
+import { Suspense } from "react";
+import { formatSecondsToTime } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -32,33 +37,87 @@ export default async function LogPage() {
 					{/* Placeholder for recent results if needed, or remove if calendar is sufficient */}
 					{logs.length > 0 ? (
 						<div className="space-y-4">
-							{logs.map((log) => (
-								<div
-									key={log.id}
-									className="border-2 border-black p-4 rounded-md"
-								>
-									<h3 className="font-bold">{log.workoutName || "Workout"}</h3>
-									<p className="text-sm text-muted-foreground">
-										{new Date(log.date).toLocaleDateString()}
-									</p>
-									<p className="mt-1">{log.notes}</p>
-									{/* Add more log details here as needed */}
-									{log.type && <p className="text-sm">Type: {log.type}</p>}
-									{log.scale && (
-										<p className="text-sm">Scale: {log.scale.toUpperCase()}</p>
-									)}
-									{log.wodScore && (
-										<p className="text-sm">Score: {log.wodScore}</p>
-									)}
-									{log.setCount && (
-										<p className="text-sm">Sets: {log.setCount}</p>
-									)}
-									{log.distance && (
-										<p className="text-sm">Distance: {log.distance}m</p>
-									)}
-									{log.time && <p className="text-sm">Time: {log.time}s</p>}
-								</div>
-							))}
+							{await Promise.all(
+								logs.map(async (log) => {
+									return (
+										<div
+											key={log.id}
+											className="border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white"
+										>
+											<div className="p-4 flex justify-between items-start">
+												<div>
+													<Link href={`/workouts/${log.workoutId}`}>
+														<h3 className="text-xl font-bold uppercase tracking-tight hover:underline">
+															{log.workoutName || "Workout"}
+														</h3>
+													</Link>
+													<p className="text-xs font-mono text-neutral-600">
+														{new Date(log.date).toLocaleDateString()}
+													</p>
+												</div>
+												<div className="text-right text-xs font-mono">
+													{log.type && (
+														<p>
+															<span className="font-semibold">Type:</span>{" "}
+															{log.type}
+														</p>
+													)}
+													{log.scale && (
+														<p>
+															<span className="font-semibold">Scale:</span>{" "}
+															{log.scale.toUpperCase()}
+														</p>
+													)}
+												</div>
+											</div>
+
+											<div className="p-4 space-y-2">
+												{log.notes && (
+													<div className="p-2 bg-neutral-100 border border-neutral-300">
+														<p className="text-sm font-mono">{log.notes}</p>
+													</div>
+												)}
+
+												<div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm font-mono">
+													{log.wodScore && (
+														<p>
+															<span className="font-semibold">Score:</span>{" "}
+															{log.wodScore}
+														</p>
+													)}
+													{log.setCount && (
+														<p>
+															<span className="font-semibold">Sets:</span>{" "}
+															{log.setCount}
+														</p>
+													)}
+													{log.distance && (
+														<p>
+															<span className="font-semibold">Distance:</span>{" "}
+															{log.distance}m
+														</p>
+													)}
+													{log.time && (
+														<p>
+															<span className="font-semibold">Time:</span>{" "}
+															{formatSecondsToTime(log.time)}
+														</p>
+													)}
+												</div>
+											</div>
+											<Suspense
+												fallback={
+													<div className="p-4 border-t-2 border-black text-sm font-mono">
+														Loading details...
+													</div>
+												}
+											>
+												<SetDetails log={log} />
+											</Suspense>
+										</div>
+									);
+								})
+							)}
 						</div>
 					) : (
 						<p>No recent results.</p>
@@ -67,5 +126,52 @@ export default async function LogPage() {
 				<LogCalendarClient logs={logs} />
 			</div>
 		</div>
+	);
+}
+
+async function SetDetails({ log }: { log: WorkoutResultWithWorkoutName }) {
+	const setDetails: Set[] = await getResultSetsById(log.id);
+
+	// console.log({ setDetails }); // Keep console.log commented out or remove for production
+
+	return (
+		setDetails.length > 1 && (
+			<div className="p-4 border-t-2 border-black">
+				<h4 className="text-sm font-bold uppercase tracking-wider mb-2">
+					Set Details
+				</h4>
+				<ul className="space-y-1 list-none">
+					{setDetails.map((set, index) => {
+						const setInfo = [];
+						if (set.reps) {
+							setInfo.push(`${set.reps} reps`);
+						}
+						if (set.weight !== null && set.weight !== undefined) {
+							setInfo.push(`@ ${set.weight}kg`);
+						}
+						if (set.distance) {
+							setInfo.push(`${set.distance}m`);
+						}
+						if (set.time) {
+							setInfo.push(formatSecondsToTime(set.time));
+						}
+						if (set.score) {
+							setInfo.push(`Score: ${set.score}`);
+						}
+						return (
+							<li key={set.id || index} className="font-mono text-xs flex">
+								<span className="w-16 shrink-0">Set {set.setNumber}:</span>
+								<span className="flex-1">{setInfo.join(" / ")}</span>
+								{set.notes && (
+									<span className="ml-2 text-neutral-500 italic">
+										({set.notes})
+									</span>
+								)}
+							</li>
+						);
+					})}
+				</ul>
+			</div>
+		)
 	);
 }

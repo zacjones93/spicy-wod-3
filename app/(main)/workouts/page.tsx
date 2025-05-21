@@ -19,10 +19,10 @@ export default async function WorkoutsPage({
 			?.toLowerCase()
 			.includes(searchTerm);
 		const movementSearchMatch = workout.movements.some((movement) =>
-			movement?.name?.toLowerCase().includes(searchTerm),
+			movement?.name?.toLowerCase().includes(searchTerm)
 		);
 		const tagSearchMatch = workout.tags.some((tag) =>
-			tag.name.toLowerCase().includes(searchTerm),
+			tag.name.toLowerCase().includes(searchTerm)
 		);
 		const searchFilterPassed = searchTerm
 			? nameMatch || descriptionMatch || movementSearchMatch || tagSearchMatch
@@ -32,8 +32,8 @@ export default async function WorkoutsPage({
 			: true;
 		const movementFilterPassed = selectedMovement
 			? workout.movements.some(
-					(movement) => movement?.name === selectedMovement,
-				)
+					(movement) => movement?.name === selectedMovement
+			  )
 			: true;
 		return searchFilterPassed && tagFilterPassed && movementFilterPassed;
 	});
@@ -52,14 +52,14 @@ export default async function WorkoutsPage({
 	// Extract unique tags and movements for filter dropdowns
 	const allTags = [
 		...new Set(
-			allWorkouts.flatMap((workout) => workout.tags.map((tag) => tag.name)),
+			allWorkouts.flatMap((workout) => workout.tags.map((tag) => tag.name))
 		),
 	].sort() as string[];
 	const allMovements = [
 		...new Set(
 			allWorkouts.flatMap((workout) =>
-				workout.movements.map((m) => m?.name).filter(Boolean),
-			),
+				workout.movements.map((m) => m?.name).filter(Boolean)
+			)
 		),
 	].sort() as string[];
 	return (
@@ -84,7 +84,11 @@ export default async function WorkoutsPage({
 						{todaysWorkouts.map((workout) => (
 							<div key={workout.id} className="card p-6">
 								<div className="flex flex-col sm:flex-row justify-between items-start">
-									<h3 className="text-xl font-semibold mb-2">{workout.name}</h3>
+									<Link href={`/workouts/${workout.id}`}>
+										<h3 className="text-xl font-semibold mb-2 underline">
+											{workout.name}
+										</h3>
+									</Link>
 									<Link
 										href={`/log/new?workoutId=${workout.id}&redirectUrl=/workouts`}
 										className="btn btn-primary btn-sm mb-2"
@@ -142,8 +146,8 @@ export default async function WorkoutsPage({
 																	result.scale === "rx"
 																		? "bg-green-100 text-green-700"
 																		: result.scale === "rx+"
-																			? "bg-red-100 text-red-700"
-																			: "bg-yellow-100 text-yellow-700"
+																		? "bg-red-100 text-red-700"
+																		: "bg-yellow-100 text-yellow-700"
 																}`}
 															>
 																{result.scale.toUpperCase()}
