@@ -94,34 +94,30 @@ function formatSecondsToTime(totalSeconds: number): string {
 	return `${pad(minutes)}:${pad(seconds)}`;
 }
 
-export async function submitLogFormAction(
-	userId: string,
-	workouts: Workout[],
-	formData: FormData,
-): Promise<{ error?: string } | undefined> {
-	const headerList = await headers();
-	const timezone = headerList.get("x-vercel-ip-timezone") ?? "America/Denver";
+interface BasicFormData {
+	selectedWorkoutId: string | null;
+	dateStr: string;
+	scaleValue: "rx" | "scaled" | "rx+";
+	notesValue: string;
+	redirectUrl: string | null;
+}
+
+function parseBasicFormData(formData: FormData): BasicFormData {
 	const selectedWorkoutId = formData.get("selectedWorkoutId") as string | null;
 	const dateStr = formData.get("date") as string;
 	const scaleValue = formData.get("scale") as "rx" | "scaled" | "rx+";
 	const notesValue = formData.get("notes") as string;
 	const redirectUrl = formData.get("redirectUrl") as string | null;
+	return {
+		selectedWorkoutId,
+		dateStr,
+		scaleValue,
+		notesValue,
+		redirectUrl,
+	};
+}
 
-	console.log("[Action] Date:", dateStr);
-
-	if (!selectedWorkoutId) {
-		console.error("[Action] No workout selected");
-		return { error: "No workout selected. Please select a workout." };
-	}
-
-	const workout = workouts.find((w) => w.id === selectedWorkoutId);
-
-	if (!workout) {
-		console.error("[Action] Workout not found for ID:", selectedWorkoutId);
-		return { error: "Selected workout not found. Please try again." };
-	}
-
-	// New score parsing logic
+function parseScoreEntries(formData: FormData): Array<{ parts: string[] }> {
 	const parsedScoreEntries: Array<{ parts: string[] }> = [];
 	let roundIdx = 0;
 	// Check for scores like scores[0][0], scores[0][1], scores[1][0] etc.
@@ -139,19 +135,19 @@ export async function submitLogFormAction(
 		}
 		roundIdx++;
 	}
+	return parsedScoreEntries;
+}
 
-	console.log(
-		"[Action] Parsed Score Entries:",
-		JSON.stringify(parsedScoreEntries),
-	);
-
-	// Validation: Check if at least one part of one score entry is filled if scores are expected.
+function validateParsedScores(
+	parsedScoreEntries: Array<{ parts: string[] }>,
+	workoutScheme: Workout["scheme"],
+): { error?: string } | undefined {
 	const atLeastOneScorePartFilled = parsedScoreEntries.some((entry) =>
 		entry.parts.some((part) => part.trim() !== ""),
 	);
 
 	if (parsedScoreEntries.length === 0 || !atLeastOneScorePartFilled) {
-		if (workout.scheme !== undefined) {
+		if (workoutScheme !== undefined) {
 			// N/A scheme might not require scores
 			console.error(
 				"[Action] No valid score parts provided for a workout that expects scores.",
@@ -161,18 +157,24 @@ export async function submitLogFormAction(
 			};
 		}
 	}
+	return undefined; // Explicitly return undefined if no error
+}
 
-	let wodScoreSummary = "";
+interface ProcessedScoresOutput {
+	setsForDb: Set[];
+	totalSecondsForWodScore: number;
+	error?: { error: string };
+}
+
+function processScoreEntries(
+	parsedScoreEntries: Array<{ parts: string[] }>,
+	workout: Workout,
+	isTimeBasedWodScore: boolean,
+	isRoundsAndRepsWorkout: boolean,
+	atLeastOneScorePartFilled: boolean, // Added to resolve linter issues and use in logic
+): ProcessedScoresOutput {
 	const setsForDb: Set[] = [];
-	let totalSecondsForWodScore = 0; // For time and time-with-cap schemes
-	const wodScoreParts: string[] = []; // For other schemes
-
-	// Determine expected number of score parts based on workout type
-	const isRoundsAndRepsWorkout =
-		!!workout.repsPerRound && workout.repsPerRound > 0;
-
-	// Determine if the WOD score should be a sum of times
-	const isTimeBasedWodScore = workout.scheme === "time" || workout.scheme === "time-with-cap";
+	let totalSecondsForWodScore = 0;
 
 	for (let k = 0; k < parsedScoreEntries.length; k++) {
 		const entry = parsedScoreEntries[k];
@@ -182,16 +184,16 @@ export async function submitLogFormAction(
 		if (isRoundsAndRepsWorkout) {
 			// Expects two parts: scoreParts[0] = rounds, scoreParts[1] = reps
 			if (scoreParts.length < 2 && scoreParts[0].trim() === "") {
-				// If first part (rounds) is empty, skip this set potentially or error
-				// If roundsToScore is 1, and this is the only entry, and rounds is empty, this implies no score was entered.
-				// The overall check for !atLeastOneScorePartFilled should catch cases where nothing is entered at all.
-				// If rounds is empty but reps might be there, it's an invalid partial entry for R+R.
-				if (scoreParts.every((p) => p.trim() === "")) continue; // Skip fully empty entries if somehow missed by earlier check for multi-round
-				return { error: `For round ${setNumber}, rounds input is required.` };
+				if (scoreParts.every((p) => p.trim() === "")) continue; // Skip fully empty entries
+				return {
+					setsForDb: [],
+					totalSecondsForWodScore: 0,
+					error: { error: `For round ${setNumber}, rounds input is required.` },
+				};
 			}
 
-			const roundsStr = scoreParts[0] || "0"; // Default to 0 if empty, though validation should catch truly missing essential parts.
-			const repsStr = scoreParts[1] || "0"; // Default to 0 for reps if not provided.
+			const roundsStr = scoreParts[0] || "0";
+			const repsStr = scoreParts[1] || "0";
 
 			const roundsCompleted = Number.parseInt(roundsStr, 10);
 			const repsCompleted = Number.parseInt(repsStr, 10);
@@ -201,51 +203,68 @@ export async function submitLogFormAction(
 				(scoreParts[1] !== undefined && Number.isNaN(repsCompleted))
 			) {
 				return {
-					error: `Invalid number for rounds or reps for set ${setNumber}. Rounds: '${roundsStr}', Reps: '${repsStr}'.`,
+					setsForDb: [],
+					totalSecondsForWodScore: 0,
+					error: {
+						error: `Invalid number for rounds or reps for set ${setNumber}. Rounds: '${roundsStr}', Reps: '${repsStr}'.`,
+					},
 				};
 			}
 			if (roundsCompleted < 0 || repsCompleted < 0) {
 				return {
-					error: `Rounds and reps for set ${setNumber} cannot be negative.`,
+					setsForDb: [],
+					totalSecondsForWodScore: 0,
+					error: {
+						error: `Rounds and reps for set ${setNumber} cannot be negative.`,
+					},
 				};
 			}
-			// workout.repsPerRound is guaranteed to be > 0 here due to isRoundsAndRepsWorkout check
 			if (workout.repsPerRound && repsCompleted >= workout.repsPerRound) {
 				return {
-					error: `Reps for set ${setNumber} (${repsCompleted}) cannot exceed or equal reps per round (${workout.repsPerRound}). Adjust rounds or reps.`,
+					setsForDb: [],
+					totalSecondsForWodScore: 0,
+					error: {
+						error: `Reps for set ${setNumber} (${repsCompleted}) cannot exceed or equal reps per round (${workout.repsPerRound}). Adjust rounds or reps.`,
+					},
 				};
 			}
 
-			const totalReps = (roundsCompleted * workout.repsPerRound!) + repsCompleted;
+			const totalReps =
+				roundsCompleted * workout.repsPerRound! + repsCompleted;
 
 			setsForDb.push({
 				setNumber,
-				reps: totalReps, // Store total calculated reps
-				score: null,    // Rounds are incorporated into totalReps, so score is null here
-				// Ensure all required fields for Sets type are present, defaulting to null if not applicable
-				id: "", // Placeholder, will be generated by the DB
-				resultId: "", // Placeholder, will be linked when result is created
+				reps: totalReps,
+				score: null,
+				id: "",
+				resultId: "",
 				weight: null,
 				status: null,
 				distance: null,
 				time: null,
 			});
-			if (k > 0) wodScoreSummary += ", ";
-			wodScoreSummary += `${roundsCompleted} + ${repsCompleted}`; // Summary remains the same
 		} else if (workout.scheme === "time") {
 			const timeStr = scoreParts[0];
 			if (timeStr === undefined || timeStr.trim() === "") {
 				if (parsedScoreEntries.length === 1 && !atLeastOneScorePartFilled) {
-					// This case should be caught by the general empty check
+					// This case is handled by validateParsedScores
 				} else if (scoreParts.every((p) => p.trim() === "")) {
-					continue; // Skip if this specific score entry is completely empty (e.g. for an optional round)
+					continue; // Skip if this specific score entry is completely empty
 				}
-				return { error: `Time input for set ${setNumber} is missing.` };
+				return {
+					setsForDb: [],
+					totalSecondsForWodScore: 0,
+					error: { error: `Time input for set ${setNumber} is missing.` },
+				};
 			}
 			const timeInSeconds = parseTimeScoreToSeconds(timeStr);
 			if (timeInSeconds === null) {
 				return {
-					error: `Invalid time format for set ${setNumber}: '${timeStr}'. Please use MM:SS or total seconds.`,
+					setsForDb: [],
+					totalSecondsForWodScore: 0,
+					error: {
+						error: `Invalid time format for set ${setNumber}: '${timeStr}'. Please use MM:SS or total seconds.`,
+					},
 				};
 			}
 			if (isTimeBasedWodScore) {
@@ -254,70 +273,76 @@ export async function submitLogFormAction(
 			setsForDb.push({
 				setNumber,
 				time: timeInSeconds,
-				// Ensure all required fields for Sets type are present, defaulting to null if not applicable
-				id: "", // Placeholder
-				resultId: "", // Placeholder
+				id: "",
+				resultId: "",
 				reps: null,
 				weight: null,
 				status: null,
 				distance: null,
 				score: null,
 			});
-			if (k > 0) wodScoreSummary += ", ";
-			wodScoreSummary += timeStr;
 		} else {
-			// For schemes like 'reps', 'load', 'points' (single numeric score per set)
+			// For schemes like 'reps', 'load', 'points'
 			const scoreStr = scoreParts[0];
 			if (scoreStr === undefined || scoreStr.trim() === "") {
 				if (parsedScoreEntries.length === 1 && !atLeastOneScorePartFilled) {
-					// Caught by general empty check
+					// Handled by validateParsedScores
 				} else if (scoreParts.every((p) => p.trim() === "")) {
 					continue; // Skip if this specific score entry is completely empty
 				}
 				return {
-					error: `Score input for set ${setNumber} is missing for scheme '${workout.scheme}'.`,
+					setsForDb: [],
+					totalSecondsForWodScore: 0,
+					error: {
+						error: `Score input for set ${setNumber} is missing for scheme '${workout.scheme}'.`,
+					},
 				};
 			}
 			const numericScore = Number.parseInt(scoreStr, 10);
 			if (Number.isNaN(numericScore)) {
 				return {
-					error: `Score for set ${setNumber} ('${scoreStr}') must be a valid number for scheme '${workout.scheme}'.`,
+					setsForDb: [],
+					totalSecondsForWodScore: 0,
+					error: {
+						error: `Score for set ${setNumber} ('${scoreStr}') must be a valid number for scheme '${workout.scheme}'.`,
+					},
 				};
 			}
 			if (numericScore < 0) {
 				return {
-					error: `Score for set ${setNumber} ('${numericScore}') cannot be negative.`,
+					setsForDb: [],
+					totalSecondsForWodScore: 0,
+					error: {
+						error: `Score for set ${setNumber} ('${numericScore}') cannot be negative.`,
+					},
 				};
 			}
 			setsForDb.push({
 				setNumber,
 				score: numericScore,
-				// Ensure all required fields for Sets type are present, defaulting to null if not applicable
-				id: "", // Placeholder
-				resultId: "", // Placeholder
+				id: "",
+				resultId: "",
 				reps: null,
 				weight: null,
 				status: null,
 				distance: null,
 				time: null,
 			});
-			if (k > 0) wodScoreSummary += ", ";
-			wodScoreSummary += scoreStr;
 		}
 	}
+	return { setsForDb, totalSecondsForWodScore };
+}
 
-	// After the loop, if setsForDb is empty due to all entries being skipped (e.g. empty optional rounds),
-	// and the workout expects scores, this is an error.
+function validateProcessedSets(
+	setsForDb: Set[],
+	workoutScheme: Workout["scheme"],
+	atLeastOneScorePartFilled: boolean,
+): { error?: string } | undefined {
 	if (
 		setsForDb.length === 0 &&
-		workout.scheme !== undefined &&
+		workoutScheme !== undefined &&
 		atLeastOneScorePartFilled
 	) {
-		// This condition means some parts were filled, but they didn't result in valid sets (e.g. only reps in R+R)
-		// Or if all were skipped due to being empty optional rounds, but main validation passed because there WERE entries.
-		// This should ideally be caught by more specific per-type validation inside the loop.
-		// If atLeastOneScorePartFilled was false, it's caught earlier.
-		// If it was true, but setsForDb is empty, it implies all *provided* scores were invalid or led to skips.
 		console.error(
 			"[Action] All provided score entries resulted in no valid sets to save, but some input was detected.",
 		);
@@ -328,10 +353,9 @@ export async function submitLogFormAction(
 	}
 	if (
 		setsForDb.length === 0 &&
-		workout.scheme !== undefined &&
+		workoutScheme !== undefined &&
 		!atLeastOneScorePartFilled
 	) {
-		// This repeats the earlier check, but is a failsafe after processing.
 		console.error(
 			"[Action] No score entries provided or all were empty, and workout expects scores.",
 		);
@@ -339,81 +363,87 @@ export async function submitLogFormAction(
 			error: "At least one score input is required and must not be empty.",
 		};
 	}
+	return undefined;
+}
 
+function generateWodScoreSummary(
+	isTimeBasedWodScore: boolean,
+	totalSecondsForWodScore: number,
+	parsedScoreEntries: Array<{ parts: string[] }>,
+	isRoundsAndRepsWorkout: boolean,
+	workoutScheme: Workout["scheme"],
+	setsForDb: Set[], // Added to check conditions for time-based summary
+	atLeastOneScorePartFilled: boolean, // Added for conditional logic
+): string {
 	let finalWodScoreSummary = "";
 	if (isTimeBasedWodScore) {
 		finalWodScoreSummary = formatSecondsToTime(totalSecondsForWodScore);
-		// If all time entries were skipped, resulting in 0 total seconds,
-		// and the workout expects a time score, reflect this appropriately.
-		// An empty string might be better if no time was actually logged.
 		if (totalSecondsForWodScore === 0 && setsForDb.some(set => set.time !== null && set.time > 0)) {
 			// This means valid times were logged, but somehow total is still 0. Should not happen.
-			// If setsForDb is empty or only contains sets with null/0 time, then 00:00 is fine.
 		} else if (totalSecondsForWodScore === 0 && parsedScoreEntries.length > 0 && !atLeastOneScorePartFilled) {
 			// No score parts filled, an error should have been caught earlier
+			// For safety, can return empty or specific string like "No Score"
+			finalWodScoreSummary = ""; // Or "No Score"
 		} else if (totalSecondsForWodScore === 0 && setsForDb.length === 0 && atLeastOneScorePartFilled) {
 			// some input, but no valid sets. Error should be caught.
-			// If all sets were valid but resulted in 0 time (e.g. user entered "0" for all sets) then "00:00" is correct
+			// For safety, can return empty or specific string like "No Score"
+			finalWodScoreSummary = ""; // Or "No Score"
 		}
 	} else {
-		// Build wodScoreSummary from individual set scores for non-time-based WODs
 		const scoreSummaries: string[] = [];
 		for (let k = 0; k < parsedScoreEntries.length; k++) {
 			const entry = parsedScoreEntries[k];
 			const scoreParts = entry.parts;
-			const setNumber = k + 1; // For error messages or detailed summaries if needed
 
 			if (isRoundsAndRepsWorkout) {
 				const roundsStr = scoreParts[0] || "0";
 				const repsStr = scoreParts[1] || "0";
-				// Basic check to ensure we don't add "0 + 0" if the entry was meant to be skipped
-				// This assumes that if a R+R entry is present but empty, it might be an optional round not performed.
-				// The `atLeastOneScorePartFilled` and `setsForDb.length === 0` checks handle overall missing data.
 				if (roundsStr === "0" && repsStr === "0" && scoreParts.every(p => p.trim() === "")) {
-					// Potentially skip adding this to summary if it represents an unperformed optional round
-					// However, if it's the *only* round and it's empty, earlier validation should catch it.
-					// For simplicity now, we'll include it if it was parsed.
+					// Potentially skip
+				} else {
+					scoreSummaries.push(`${roundsStr} + ${repsStr}`);
 				}
-				scoreSummaries.push(`${roundsStr} + ${repsStr}`);
-			} else if (workout.scheme === "time") { // This set was processed as time, but WOD score is not sum of times
-				// This case should not happen if isTimeBasedWodScore is false.
-				// If it's a mixed workout (not currently supported by this logic for summary)
-				// or if a specific set is 'time' but the overall WOD is not summarized as total time.
-				// We'll use the raw time string input.
+			} else if (workoutScheme === "time") {
 				const timeStr = scoreParts[0];
 				if (timeStr && timeStr.trim() !== "") {
 					scoreSummaries.push(timeStr);
 				}
-			} else { // 'reps', 'load', 'points', etc.
+			} else {
 				const scoreStr = scoreParts[0];
 				if (scoreStr && scoreStr.trim() !== "") {
-					// Only add if there's a non-empty score string.
 					scoreSummaries.push(scoreStr);
 				}
 			}
 		}
 		finalWodScoreSummary = scoreSummaries.join(", ");
 	}
+	return finalWodScoreSummary;
+}
 
+async function submitLogToDatabase(
+	userId: string,
+	selectedWorkoutId: string,
+	dateStr: string,
+	timezone: string,
+	scaleValue: "rx" | "scaled" | "rx+",
+	finalWodScoreSummary: string,
+	notesValue: string,
+	setsForDb: Set[],
+	redirectUrl: string | null,
+): Promise<{ error?: string } | undefined> {
 	console.log("[Action] Submitting log with sets:", {
 		userId,
 		selectedWorkoutId,
 		date: dateStr,
 		scale: scaleValue,
-		wodScoreSummary: finalWodScoreSummary, // This goes to results.wod_score
+		wodScoreSummary: finalWodScoreSummary,
 		notes: notesValue,
-		sets: setsForDb, // This array of sets needs to be handled by addLog
+		sets: setsForDb,
 	});
 
 	console.log("[Action] Date in timezone:", new Date(dateStr).getTime());
 
 	try {
-		// The addLog function will need to be updated to handle this new structure,
-		// creating a result and then iterating through `setsForDb` to create related set entries.
-		// This typically involves a database transaction.
-
-		// The dateStr is expected to be in "YYYY-MM-DD" format.
-		// We interpret this as the start of the day (midnight) in the timezone.
 		const dateInTargetTz = fromZonedTime(`${dateStr}T00:00:00`, timezone);
 		const timestamp = dateInTargetTz.getTime();
 
@@ -424,12 +454,12 @@ export async function submitLogFormAction(
 		await addLog({
 			userId,
 			workoutId: selectedWorkoutId,
-			date: timestamp, // Use the timezone-aware timestamp
+			date: timestamp,
 			scale: scaleValue,
-			wodScore: finalWodScoreSummary, // Pass the summary string
+			wodScore: finalWodScoreSummary,
 			notes: notesValue,
-			sets: setsForDb, // Pass the structured set data
-			type: "wod", // Explicitly set type for WOD results
+			sets: setsForDb,
+			type: "wod",
 		});
 		console.log("[Action] Log and sets added successfully. Redirecting...");
 	} catch (error) {
@@ -440,4 +470,102 @@ export async function submitLogFormAction(
 	}
 
 	redirect(redirectUrl || "/log");
+	// redirect is special, it doesn't return, so we might need a dummy return here for type safety if ESLint complains
+	// However, Next.js redirect throws an error, so this line might not be reached.
+	return undefined;
+}
+
+export async function submitLogFormAction(
+	userId: string,
+	workouts: Workout[],
+	formData: FormData,
+): Promise<{ error?: string } | undefined> {
+	const headerList = await headers();
+	const timezone = headerList.get("x-vercel-ip-timezone") ?? "America/Denver";
+	const {
+		selectedWorkoutId,
+		dateStr,
+		scaleValue,
+		notesValue,
+		redirectUrl,
+	} = parseBasicFormData(formData);
+
+	console.log("[Action] Date:", dateStr);
+
+	if (!selectedWorkoutId) {
+		console.error("[Action] No workout selected");
+		return { error: "No workout selected. Please select a workout." };
+	}
+
+	const workout = workouts.find((w) => w.id === selectedWorkoutId);
+
+	if (!workout) {
+		console.error("[Action] Workout not found for ID:", selectedWorkoutId);
+		return { error: "Selected workout not found. Please try again." };
+	}
+
+	const parsedScoreEntries = parseScoreEntries(formData);
+	console.log(
+		"[Action] Parsed Score Entries:",
+		JSON.stringify(parsedScoreEntries),
+	);
+
+	const validationError = validateParsedScores(parsedScoreEntries, workout.scheme);
+	if (validationError) {
+		return validationError;
+	}
+
+	const atLeastOneScorePartFilled = parsedScoreEntries.some((entry) =>
+		entry.parts.some((part) => part.trim() !== ""),
+	);
+
+	const isRoundsAndRepsWorkout =
+		!!workout.repsPerRound && workout.repsPerRound > 0;
+
+	const isTimeBasedWodScore = workout.scheme === "time" || workout.scheme === "time-with-cap";
+
+	const processResult = processScoreEntries(
+		parsedScoreEntries,
+		workout,
+		isTimeBasedWodScore,
+		isRoundsAndRepsWorkout,
+		atLeastOneScorePartFilled,
+	);
+
+	if (processResult.error) {
+		return { error: processResult.error.error };
+	}
+
+	const { setsForDb, totalSecondsForWodScore } = processResult;
+
+	const processedSetsValidationError = validateProcessedSets(
+		setsForDb,
+		workout.scheme,
+		atLeastOneScorePartFilled,
+	);
+	if (processedSetsValidationError) {
+		return processedSetsValidationError;
+	}
+
+	const finalWodScoreSummary = generateWodScoreSummary(
+		isTimeBasedWodScore,
+		totalSecondsForWodScore,
+		parsedScoreEntries,
+		isRoundsAndRepsWorkout,
+		workout.scheme,
+		setsForDb,
+		atLeastOneScorePartFilled,
+	);
+
+	return submitLogToDatabase(
+		userId,
+		selectedWorkoutId,
+		dateStr,
+		timezone,
+		scaleValue,
+		finalWodScoreSummary,
+		notesValue,
+		setsForDb,
+		redirectUrl,
+	);
 }
