@@ -1,6 +1,5 @@
 "use client";
 
-import type { WorkoutResult } from "@/server/functions/workout-results";
 import {
 	ArrowLeft,
 	Clock,
@@ -10,6 +9,7 @@ import {
 	Tag,
 } from "lucide-react";
 import Link from "next/link";
+import type { WorkoutResult, WorkoutWithTagsAndMovements } from "@/types";
 
 export default function WorkoutDetailClient({
 	userId,
@@ -18,7 +18,7 @@ export default function WorkoutDetailClient({
 	results,
 }: {
 	userId: string;
-	workout: any;
+	workout: WorkoutWithTagsAndMovements;
 	workoutId: string;
 	results: WorkoutResult[];
 }) {

@@ -4,6 +4,8 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { movements } from "@/server/db/schema";
+import { Movement } from "@/types";
 
 interface Props {
 	createMovementAction: (data: {
@@ -13,11 +15,11 @@ interface Props {
 	}) => Promise<void>;
 }
 
-const MOVEMENT_TYPES = ["strength", "gymnastic", "monostructural"];
+const MOVEMENT_TYPES = movements.type.enumValues;
 
 export default function CreateMovementForm({ createMovementAction }: Props) {
 	const [name, setName] = useState("");
-	const [type, setType] = useState("");
+	const [type, setType] = useState<Movement["type"]>();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const router = useRouter();
@@ -41,7 +43,7 @@ export default function CreateMovementForm({ createMovementAction }: Props) {
 		} catch (err) {
 			console.error("Failed to create movement:", err);
 			setError(
-				err instanceof Error ? err.message : "An unknown error occurred.",
+				err instanceof Error ? err.message : "An unknown error occurred."
 			);
 		} finally {
 			setIsSubmitting(false);
@@ -93,7 +95,7 @@ export default function CreateMovementForm({ createMovementAction }: Props) {
 							id="movementType"
 							className="select"
 							value={type}
-							onChange={(e) => setType(e.target.value)}
+							onChange={(e) => setType(e.target.value as Movement["type"])}
 							required
 						>
 							<option value="">Select a type</option>

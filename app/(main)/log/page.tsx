@@ -1,8 +1,6 @@
 import { auth } from "@/auth";
 import { getLogsByUser } from "@/server/functions/log";
-import { getUser } from "@/server/functions/user";
 import { redirect } from "next/navigation";
-// import LogListClient from "./_components/logs-list-client"; // Comment out or remove old list
 import LogCalendarClient from "./_components/log-calendar-client"; // Import new calendar
 
 export const dynamic = "force-dynamic";
@@ -27,7 +25,6 @@ export default async function LogPage() {
 					Log New Result
 				</a>
 			</div>
-			{/* <LogListClient logs={logs} /> */}
 			{/* Display recent results for now, calendar will be added here */}
 			<div className="flex flex-col md:flex-row gap-4">
 				<div className="mb-8 flex-1">

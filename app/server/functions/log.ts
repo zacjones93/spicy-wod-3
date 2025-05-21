@@ -3,42 +3,15 @@
 import { and, desc, eq, getTableColumns, gte, lt, sql } from "drizzle-orm";
 import { getDbAsync } from "../db";
 import { results, sets as setsTable, workouts } from "../db/schema";
+import type { WorkoutResultWithWorkoutName, Set } from "@/types";
 
-export type LogEntry = {
-	id: string;
-	userId: string;
-	date: Date;
-	workoutId: string | null;
-	type: "wod" | "strength" | "monostructural";
-	notes: string | null;
-	scale: "rx" | "scaled" | "rx+" | null;
-	wodScore: string | null;
-	setCount: number | null;
-	distance: number | null;
-	time: number | null;
-	workoutName: string | null;
-};
-
-// Interface for structured set data, mirroring the one in actions.ts
-// Ideally, this would be a shared type.
-interface SetDataForDb {
-	setNumber: number;
-	score?: number | null;
-	time?: number | null; // in seconds
-	reps?: number | null;
-	weight?: number | null;
-	status?: "pass" | "fail" | null;
-	distance?: number | null;
-	// score is already there, but for WOD sets, it maps to sets.score
-	// time is already there, maps to sets.time
-}
 
 // Fetch all logs for a user (optionally filter by month)
 export async function getLogsByUser(
 	userId: string,
 	month?: number,
 	year?: number,
-): Promise<LogEntry[]> {
+): Promise<WorkoutResultWithWorkoutName[]> {
 	if (userId === undefined) {
 		console.error(
 			"[log] getLogsByUser called with undefined userId. Returning empty array.",
@@ -93,7 +66,7 @@ export async function addLog({
 	scale: "rx" | "scaled" | "rx+";
 	wodScore: string;
 	notes?: string;
-	sets?: SetDataForDb[]; // Optional for now, but WODs will pass it
+	sets?: Set[]; // Optional for now, but WODs will pass it
 	type: "wod" | "strength" | "monostructural"; // Added type
 }) {
 	const db = await getDbAsync();

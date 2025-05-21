@@ -2,7 +2,6 @@
 
 import { auth } from "@/auth"; // Added for user ID
 import {
-  type InferSelectModel,
   and,
   desc,
   eq,
@@ -20,32 +19,14 @@ import {
   workoutTags,
   workouts,
 } from "../db/schema";
-
-// Define inferred types
-type SelectWorkout = InferSelectModel<typeof workouts>;
-type SelectTag = InferSelectModel<typeof tags>;
-type SelectMovement = InferSelectModel<typeof movements>;
-
-// Define a type for results specific to today for a workout
-export type WorkoutResultToday = {
-  id: string;
-  userId: string;
-  date: Date;
-  workoutId: string | null;
-  type: "wod" | "strength" | "monostructural";
-  notes: string | null;
-  scale: "rx" | "scaled" | "rx+" | null;
-  wodScore: string | null;
-  // Add other relevant fields from the 'results' table if needed for display
-  // e.g., setCount, distance, time, though wodScore is primary for WODs
-};
+import type { WorkoutCreate, WorkoutUpdate, Tag, Movement, WorkoutResult } from "@/types";
 
 // Internal helper to fetch tag objects grouped by workout ID
 async function fetchTagsByWorkoutId(
   db: Awaited<ReturnType<typeof getDbAsync>>,
   workoutIds: string[],
-): Promise<Map<string, SelectTag[]>> {
-  if (workoutIds.length === 0) return new Map<string, SelectTag[]>();
+): Promise<Map<string, Tag[]>> {
+  if (workoutIds.length === 0) return new Map<string, Tag[]>();
 
   const allWorkoutTags = await db
     .select()
@@ -53,13 +34,13 @@ async function fetchTagsByWorkoutId(
     .where(inArray(workoutTags.workoutId, workoutIds));
 
   const tagIds = allWorkoutTags.map((wt) => wt.tagId);
-  const tagObjects: SelectTag[] = tagIds.length
+  const tagObjects: Tag[] = tagIds.length
     ? await db.select().from(tags).where(inArray(tags.id, tagIds))
     : [];
 
   const tagObjLookup = new Map(tagObjects.map((t) => [t.id, t]));
 
-  const tagsByWorkout = new Map<string, SelectTag[]>();
+  const tagsByWorkout = new Map<string, Tag[]>();
   for (const id of workoutIds) {
     const idsForWorkout = allWorkoutTags
       .filter((wt) => wt.workoutId === id)
@@ -67,7 +48,7 @@ async function fetchTagsByWorkoutId(
 
     const tagObjsForWorkout = idsForWorkout
       .map((tid) => tagObjLookup.get(tid))
-      .filter((tag): tag is SelectTag => Boolean(tag));
+      .filter((tag): tag is Tag => Boolean(tag));
 
     tagsByWorkout.set(id, tagObjsForWorkout);
   }
@@ -79,8 +60,8 @@ async function fetchTagsByWorkoutId(
 async function fetchMovementsByWorkoutId(
   db: Awaited<ReturnType<typeof getDbAsync>>,
   workoutIds: string[],
-): Promise<Map<string, SelectMovement[]>> {
-  if (workoutIds.length === 0) return new Map<string, SelectMovement[]>();
+): Promise<Map<string, Movement[]>> {
+  if (workoutIds.length === 0) return new Map<string, Movement[]>();
 
   const allWorkoutMovements = await db
     .select()
@@ -91,7 +72,7 @@ async function fetchMovementsByWorkoutId(
     .map((wm) => wm.movementId)
     .filter((id): id is string => id !== null);
 
-  const movementObjects: SelectMovement[] = movementIds.length
+  const movementObjects: Movement[] = movementIds.length
     ? await db
       .select()
       .from(movements)
@@ -100,7 +81,7 @@ async function fetchMovementsByWorkoutId(
 
   const movementLookup = new Map(movementObjects.map((m) => [m.id, m]));
 
-  const movementsByWorkout = new Map<string, SelectMovement[]>();
+  const movementsByWorkout = new Map<string, Movement[]>();
   for (const id of workoutIds) {
     const idsForWorkout = allWorkoutMovements
       .filter((wm) => wm.workoutId === id && wm.movementId !== null)
@@ -108,7 +89,7 @@ async function fetchMovementsByWorkoutId(
 
     const movementObjsForWorkout = idsForWorkout
       .map((mid) => movementLookup.get(mid))
-      .filter((movement): movement is SelectMovement => Boolean(movement));
+      .filter((movement): movement is Movement => Boolean(movement));
 
     movementsByWorkout.set(id, movementObjsForWorkout);
   }
@@ -123,7 +104,7 @@ async function fetchTodaysResultsByWorkoutId(
   workoutIds: string[],
 ) {
   if (!userId || workoutIds.length === 0)
-    return new Map<string, WorkoutResultToday[]>();
+    return new Map<string, WorkoutResult[]>();
 
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
@@ -155,9 +136,9 @@ async function fetchTodaysResultsByWorkoutId(
   const todayResults = rawResults.map((r) => ({
     ...r,
     date: new Date(r.date),
-  })) as WorkoutResultToday[];
+  })) as WorkoutResult[];
 
-  const map = new Map<string, WorkoutResultToday[]>();
+  const map = new Map<string, WorkoutResult[]>();
   for (const result of todayResults) {
     if (!result.workoutId) continue;
     const existing = map.get(result.workoutId) || [];
@@ -256,20 +237,19 @@ export async function createWorkout({
   movementIds,
   userId,
 }: {
-  workout: Omit<SelectWorkout, "id" | "createdAt" | "updatedAt" | "userId">;
+  workout: WorkoutCreate;
   tagIds: string[];
   movementIds: string[];
   userId: string;
 }) {
   const db = await getDbAsync();
-  const workoutId = crypto.randomUUID(); // Generate ID for the new workout
-  await db.insert(workouts).values({ ...workout, id: workoutId, userId });
+  await db.insert(workouts).values({ ...workout, userId });
 
   if (tagIds.length) {
     await db.insert(workoutTags).values(
       tagIds.map((tagId) => ({
         id: crypto.randomUUID(),
-        workoutId: workoutId,
+        workoutId: workout.id,
         tagId,
       })),
     );
@@ -278,7 +258,7 @@ export async function createWorkout({
     await db.insert(workoutMovements).values(
       movementIds.map((movementId) => ({
         id: crypto.randomUUID(),
-        workoutId: workoutId,
+        workoutId: workout.id,
         movementId,
       })),
     );
@@ -293,9 +273,7 @@ export async function updateWorkout({
   movementIds,
 }: {
   id: string;
-  workout: Partial<
-    Omit<SelectWorkout, "id" | "createdAt" | "updatedAt" | "userId">
-  >;
+  workout: WorkoutUpdate;
   tagIds: string[];
   movementIds: string[];
 }) {

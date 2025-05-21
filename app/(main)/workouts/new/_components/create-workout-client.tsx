@@ -1,37 +1,19 @@
 "use client";
 
+import type { Movement, Tag, Workout, WorkoutCreate } from "@/types";
 import { ArrowLeft, Plus, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-interface Movement {
-	id: string;
-	name: string;
-	type: string;
-}
-
-interface Tag {
-	id: string;
-	name: string;
-}
 
 interface Props {
 	movements: Movement[];
 	tags: Tag[];
 	createWorkoutAction: (data: {
-		workout: {
-			id: string;
-			name: string;
-			description: string;
-			scheme: string;
-			createdAt: string;
-			scope: string;
-			roundsToScore?: number;
-			repsPerRound?: number;
-		};
-		tagIds: string[];
-		movementIds: string[];
+		workout: Omit<WorkoutCreate, 'createdAt'>;
+		tagIds: Tag["id"][];
+		movementIds: Movement["id"][];
 	}) => Promise<void>;
 }
 
@@ -46,8 +28,8 @@ export default function CreateWorkoutClient({
 	const [newTag, setNewTag] = useState("");
 	const [name, setName] = useState("");
 	const [description, setDescription] = useState("");
-	const [scheme, setScheme] = useState("");
-	const [scope, setScope] = useState("private");
+	const [scheme, setScheme] = useState<Workout['scheme']>();
+	const [scope, setScope] = useState<Workout['scope']>("private");
 	const [roundsToScore, setRoundsToScore] = useState<number | undefined>(
 		undefined,
 	);
@@ -88,13 +70,15 @@ export default function CreateWorkoutClient({
 	const handleSubmit = async (e: any) => {
 		e.preventDefault();
 		const workoutId = crypto.randomUUID();
+
+		if (!scheme) throw new Error("Must provide a workout scheme")
+
 		await createWorkoutAction({
 			workout: {
 				id: workoutId,
 				name,
 				description,
 				scheme,
-				createdAt: new Date().toISOString().split("T")[0],
 				scope,
 				roundsToScore,
 				repsPerRound,
@@ -152,7 +136,7 @@ export default function CreateWorkoutClient({
 							<select
 								className="select"
 								value={scheme}
-								onChange={(e) => setScheme(e.target.value)}
+								onChange={(e) => setScheme(e.target.value as Workout["scheme"])}
 								required
 							>
 								<option value="">Select a scheme</option>
@@ -173,7 +157,7 @@ export default function CreateWorkoutClient({
 							<select
 								className="select"
 								value={scope}
-								onChange={(e) => setScope(e.target.value)}
+								onChange={(e) => setScope(e.target.value as Workout['scope'])}
 								required
 							>
 								<option value="private">Private</option>

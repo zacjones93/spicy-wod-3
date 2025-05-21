@@ -6,16 +6,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { submitLogFormAction } from "../actions";
-// Minimal Workout type matching the one in actions.ts
-// Ideally, this would be a shared type imported from a central location.
-type Workout = Prettify<{
-	id: string;
-	name: string;
-	scheme: string;
-	roundsToScore?: number | null;
-	repsPerRound?: number | null;
-	createdAt?: Date | null;
-}>;
+import type { Workout } from "@/types";
 
 export default function LogFormClient({
 	workouts,

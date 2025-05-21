@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import SignupFormClient from "./_components/signup-form-client";
 
 export default function SignupPage() {
-	async function register(formData: FormData) {
+	async function registerAction(formData: FormData) {
 		"use server";
 		const email = formData.get("email") as string;
 		const password = formData.get("password") as string;
@@ -48,7 +48,7 @@ export default function SignupPage() {
 						<div className="bg-black text-white p-4">
 							<h2 className="text-xl font-bold uppercase">Sign Up</h2>
 						</div>
-						<SignupFormClient register={register} />
+						<SignupFormClient registerAction={registerAction} />
 					</div>
 				</div>
 			</main>

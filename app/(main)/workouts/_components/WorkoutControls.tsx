@@ -3,10 +3,11 @@
 import { Filter, Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import type { Tag, Movement } from "@/types"
 
 interface WorkoutControlsProps {
-	allTags: string[];
-	allMovements: string[];
+	allTags: Tag["name"][];
+	allMovements: Movement["name"][];
 }
 
 export default function WorkoutControls({

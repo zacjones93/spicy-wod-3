@@ -6,6 +6,7 @@ import { getWorkoutById } from "@/server/functions/workout";
 import { updateWorkout } from "@/server/functions/workout";
 import { redirect } from "next/navigation";
 import EditWorkoutClient from "./_components/edit-workout-client";
+import { type WorkoutUpdate } from "@/types/workout";
 
 export const dynamic = "force-dynamic";
 
@@ -36,14 +37,7 @@ export default async function EditWorkoutPage({
 
 	async function updateWorkoutAction(data: {
 		id: string;
-		workout: {
-			name: string;
-			description: string;
-			scheme: string;
-			scope: string;
-			repsPerRound?: number | null;
-			roundsToScore?: number | null;
-		};
+		workout: WorkoutUpdate;
 		tagIds: string[];
 		movementIds: string[];
 	}) {

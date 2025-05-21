@@ -2,9 +2,9 @@ import { auth } from "@/auth";
 import { getMovementById } from "@/server/functions/movement";
 import { getWorkoutsByMovementId } from "@/server/functions/workout";
 import {
-	type WorkoutResult,
 	getWorkoutResultsByWorkoutAndUser,
 } from "@/server/functions/workout-results";
+import type { WorkoutResult } from "@/types";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import MovementDetailClient from "./_components/movement-detail-client"; // Will create this next

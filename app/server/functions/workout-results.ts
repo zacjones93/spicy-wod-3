@@ -1,8 +1,7 @@
 import { getDbAsync } from "@/server/db";
 import { results } from "@/server/db/schema";
+import type { WorkoutResult } from "@/types";
 import { and, eq } from "drizzle-orm";
-
-export type WorkoutResult = typeof results.$inferSelect;
 
 export async function getWorkoutResultsByWorkoutAndUser(
 	workoutId: string,

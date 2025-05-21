@@ -6,6 +6,7 @@ import { fromZonedTime } from "date-fns-tz";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import CreateWorkoutClient from "./_components/create-workout-client";
+import type { WorkoutCreate, Tag, Movement } from "@/types";
 export const dynamic = "force-dynamic";
 
 export default async function CreateWorkoutPage() {
@@ -20,17 +21,9 @@ export default async function CreateWorkoutPage() {
 	}
 
 	async function createWorkoutAction(data: {
-		workout: {
-			id: string;
-			name: string;
-			description: string;
-			scheme: string;
-			createdAt: string;
-			roundsToScore?: number;
-			repsPerRound?: number;
-		};
-		tagIds: string[];
-		movementIds: string[];
+		workout: Omit<WorkoutCreate, "createdAt">;
+		tagIds: Tag["id"][];
+		movementIds: Movement["id"][];
 	}) {
 		"use server";
 		if (!session?.user?.id) {
@@ -40,8 +33,9 @@ export default async function CreateWorkoutPage() {
 
 		const headerList = await headers();
 		const timezone = headerList.get("x-vercel-ip-timezone") ?? "America/Denver";
+		const date =  new Date().toISOString().split("T")[0]
 		const createdAtDate = fromZonedTime(
-			`${data.workout.createdAt}T00:00:00`,
+			`${date}T00:00:00`,
 			timezone,
 		);
 

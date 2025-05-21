@@ -7,16 +7,16 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import type { LogEntry } from "@/server/functions/log";
 import Link from "next/link";
+import type { WorkoutResultWithWorkoutName } from "@/types";
 
 interface LogCalendarClientProps {
-	logs: LogEntry[];
+	logs: WorkoutResultWithWorkoutName[];
 }
 
 export default function LogCalendarClient({ logs }: LogCalendarClientProps) {
 	const [date, setDate] = React.useState<Date | undefined>(new Date());
-	const [selectedLog, setSelectedLog] = React.useState<LogEntry[] | null>(null);
+	const [selectedLog, setSelectedLog] = React.useState<WorkoutResultWithWorkoutName[] | null>(null);
 
 	const handleDateSelect = React.useCallback(
 		(selectedDate: Date | undefined) => {

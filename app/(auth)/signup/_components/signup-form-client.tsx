@@ -6,10 +6,10 @@ import { useState } from "react";
 import { useFormStatus } from "react-dom";
 
 interface SignupFormClientProps {
-	register: (formData: FormData) => Promise<string | undefined>;
+	registerAction: (formData: FormData) => Promise<string | undefined>;
 }
 
-export default function SignupFormClient({ register }: SignupFormClientProps) {
+export default function SignupFormClient({ registerAction }: SignupFormClientProps) {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
@@ -28,7 +28,7 @@ export default function SignupFormClient({ register }: SignupFormClientProps) {
 		const formData = new FormData();
 		formData.append("email", email);
 		formData.append("password", password);
-		const result = await register(formData);
+		const result = await registerAction(formData);
 		if (result) {
 			setErrorMessage(result);
 		}

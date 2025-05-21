@@ -1,6 +1,5 @@
 "use client";
 
-import { signIn } from "@/auth"; // Assuming auth is configured for client-side use
 import Link from "next/link";
 import { useActionState, useEffect, useState } from "react";
 import type React from "react";

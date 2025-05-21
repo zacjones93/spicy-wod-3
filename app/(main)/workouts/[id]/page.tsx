@@ -4,8 +4,6 @@ import { getWorkoutResultsByWorkoutAndUser } from "@/server/functions/workout-re
 import { redirect } from "next/navigation";
 import WorkoutDetailClient from "./_components/workout-detail-client";
 
-export const dynamic = "force-dynamic";
-
 export default async function WorkoutDetailPage({
 	params,
 }: {

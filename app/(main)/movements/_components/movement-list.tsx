@@ -1,16 +1,10 @@
 "use client";
 
+import { Movement } from "@/types";
 import { ChevronDown, Filter, Search } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
-// Define a type for the movement object for better type safety
-interface Movement {
-	id: string;
-	name: string;
-	type: string;
-	// Add other properties of movement if any
-}
 
 interface MovementListProps {
 	movements: Movement[];

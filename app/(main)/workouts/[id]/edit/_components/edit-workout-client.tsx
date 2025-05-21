@@ -1,48 +1,19 @@
 "use client";
 
 import type { Prettify } from "@/lib/utils";
+import type { Workout, WorkoutUpdate, Movement, Tag, WorkoutWithTagsAndMovements } from "@/types";
 import { ArrowLeft, Plus, X } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-
-type Movement = Prettify<{
-	id: string;
-	name: string;
-	type: string;
-}>;
-
-type Tag = Prettify<{
-	id: string;
-	name: string;
-}>;
-
-type Workout = Prettify<{
-	id: string;
-	name: string;
-	description: string;
-	scheme: string;
-	scope: string;
-	movements: Movement[];
-	tags: (Tag | string)[];
-	repsPerRound?: number | null;
-	roundsToScore?: number | null;
-}>;
+import { useState } from "react";
 
 type Props = Prettify<{
-	workout: Workout;
+	workout: WorkoutWithTagsAndMovements;
 	movements: Movement[];
 	tags: Tag[];
 	workoutId: string;
 	updateWorkoutAction: (data: {
 		id: string;
-		workout: {
-			name: string;
-			description: string;
-			scheme: string;
-			scope: string;
-			repsPerRound?: number | null;
-			roundsToScore?: number | null;
-		};
+		workout: WorkoutUpdate;
 		tagIds: string[];
 		movementIds: string[];
 	}) => Promise<void>;
@@ -57,7 +28,7 @@ export default function EditWorkoutClient({
 }: Props) {
 	const [name, setName] = useState(workout?.name || "");
 	const [description, setDescription] = useState(workout?.description || "");
-	const [scheme, setScheme] = useState(workout?.scheme || "");
+	const [scheme, setScheme] = useState<WorkoutUpdate["scheme"]>(workout?.scheme);
 	const [scope, setScope] = useState(workout?.scope || "private");
 	const [tags, setTags] = useState<Tag[]>(initialTags);
 	const [selectedMovements, setSelectedMovements] = useState<string[]>(
@@ -181,7 +152,7 @@ export default function EditWorkoutClient({
 								id="workout-scheme"
 								className="select"
 								value={scheme}
-								onChange={(e) => setScheme(e.target.value)}
+								onChange={(e) => setScheme(e.target.value as WorkoutUpdate["scheme"])}
 								required
 							>
 								<option value="">Select a scheme</option>
@@ -208,7 +179,7 @@ export default function EditWorkoutClient({
 								id="workout-scope"
 								className="select"
 								value={scope}
-								onChange={(e) => setScope(e.target.value)}
+								onChange={(e) => setScope(e.target.value as Workout["scope"])}
 								required
 							>
 								<option value="private">Private</option>
@@ -299,8 +270,7 @@ export default function EditWorkoutClient({
 									>
 										<span className="mr-2">{tag.name}</span>
 										{selectedTags.includes(tag.id) && (
-											<button
-												type="button"
+											<div
 												onClick={(e) => {
 													e.stopPropagation();
 													handleRemoveTag(tag.id);
@@ -308,7 +278,7 @@ export default function EditWorkoutClient({
 												className="text-red-500"
 											>
 												<X className="h-4 w-4" />
-											</button>
+											</div>
 										)}
 									</button>
 								))}

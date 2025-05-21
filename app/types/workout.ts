@@ -1,16 +1,31 @@
+import { Prettify } from "@/lib/utils";
 import type { movements, tags, workouts } from "@/server/db/schema";
+import { Tag } from "./tag";
+import { Movement } from "./movement";
 
 // Base Workout type from schema
 export type Workout = typeof workouts.$inferSelect;
 
-// Movement type from schema
-export type Movement = typeof movements.$inferSelect;
-
-// Tag type from schema
-export type Tag = typeof tags.$inferSelect;
 
 // Extended workout type that includes relations for tags and movements
-export interface WorkoutWithRelations extends Workout {
+export interface WorkoutWithTagsAndMovements extends Workout {
 	tags: Tag[]; // Or string[] if only names are needed, but objects are better for flexibility
 	movements: Movement[];
 }
+
+// Type for the data payload when updating a workout
+export type WorkoutUpdate = Prettify<Pick<
+	Workout,
+	'name' | 'description' | 'scheme' | 'scope'
+> &
+	Partial<
+		Pick<Workout, 'repsPerRound' | 'roundsToScore'>
+	>>;
+
+export type WorkoutCreate = Prettify<Pick<
+Workout,
+'id' | 'name' | 'description' | 'scheme' | 'scope' | 'createdAt'
+> &
+Partial<
+	Pick<Workout, 'repsPerRound' | 'roundsToScore'>
+>>;
