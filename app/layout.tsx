@@ -4,6 +4,7 @@ import type React from "react";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,9 +27,11 @@ export default function RootLayout({
 					enableSystem
 					disableTransitionOnChange
 				>
-					<NuqsAdapter>
-						<div className="min-h-screen">{children}</div>
-					</NuqsAdapter>
+					<Suspense fallback={<div>Loading...</div>}>
+						<NuqsAdapter>
+							<div className="min-h-screen">{children}</div>
+						</NuqsAdapter>
+					</Suspense>
 				</ThemeProvider>
 			</body>
 		</html>
