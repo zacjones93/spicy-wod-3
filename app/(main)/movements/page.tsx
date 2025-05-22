@@ -10,7 +10,7 @@ export default async function MovementsPage() {
 	return (
 		<div>
 			<div className="flex justify-between items-center mb-6">
-				<h1>MOVEMENTS</h1>
+				<h1 className="text-2xl font-bold">MOVEMENTS</h1>
 				<Link href="/movements/new" className="btn flex items-center gap-2">
 					<Plus className="h-5 w-5" />
 					<span>Create Movement</span>

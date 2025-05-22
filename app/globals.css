@@ -6,7 +6,62 @@
 	--foreground: 0, 0, 0;
 	--background: 255, 255, 255;
 	--primary: 255, 0, 0;
+	--primary-foreground: 255, 255, 255;
 	--secondary: 0, 0, 0;
+
+	--card: 255, 255, 255;
+	--card-foreground: 0, 0, 0;
+	--popover: 255, 255, 255;
+	--popover-foreground: 0, 0, 0;
+	--muted: 240, 240, 240;
+	--muted-foreground: 100, 100, 100;
+	--accent: 240, 240, 240;
+	--accent-foreground: 0, 0, 0;
+	--destructive: 255, 0, 0;
+	--destructive-foreground: 255, 255, 255;
+	--border: 0, 0, 0;
+	--input: 0, 0, 0; /* Assuming input border color */
+	--ring: 0, 0, 0; /* Assuming ring color */
+
+	--dark-background: 0, 0, 0;
+	--dark-foreground: 255, 255, 255;
+	--dark-card: 20, 20, 20;
+	--dark-card-foreground: 255, 255, 255;
+	--dark-popover: 20, 20, 20;
+	--dark-popover-foreground: 255, 255, 255;
+	--dark-primary: 255, 50, 50; /* Lighter red for dark mode */
+	--dark-primary-foreground: 0, 0, 0;
+	--dark-secondary: 200, 200, 200; /* Lighter grey for dark mode text */
+	--dark-muted: 40, 40, 40;
+	--dark-muted-foreground: 150, 150, 150;
+	--dark-accent: 40, 40, 40;
+	--dark-accent-foreground: 255, 255, 255;
+	--dark-destructive: 255, 50, 50; /* Lighter red for dark mode */
+	--dark-destructive-foreground: 0, 0, 0;
+	--dark-border: 200, 200, 200; /* Lighter border for dark mode */
+	--dark-input: 200, 200, 200; /* Assuming input border for dark mode */
+	--dark-ring: 255, 50, 50; /* Lighter ring for dark mode */
+}
+
+html.dark {
+	--foreground: var(--dark-foreground);
+	--background: var(--dark-background);
+	--primary: var(--dark-primary);
+	--primary-foreground: var(--dark-primary-foreground);
+	--secondary: var(--dark-secondary);
+	--card: var(--dark-card);
+	--card-foreground: var(--dark-card-foreground);
+	--popover: var(--dark-popover);
+	--popover-foreground: var(--dark-popover-foreground);
+	--muted: var(--dark-muted);
+	--muted-foreground: var(--dark-muted-foreground);
+	--accent: var(--dark-accent);
+	--accent-foreground: var(--dark-accent-foreground);
+	--destructive: var(--dark-destructive);
+	--destructive-foreground: var(--dark-destructive-foreground);
+	--border: var(--dark-border);
+	--input: var(--dark-input);
+	--ring: var(--dark-ring);
 }
 
 body {
@@ -17,23 +72,23 @@ body {
 
 @layer base {
 	h1 {
-		@apply text-4xl font-black uppercase tracking-tight;
+		@apply text-4xl font-black uppercase tracking-tight text-foreground dark:text-dark-foreground;
 	}
 	h2 {
-		@apply text-2xl font-bold uppercase tracking-tight;
+		@apply text-2xl font-bold uppercase tracking-tight text-foreground dark:text-dark-foreground;
 	}
 	h3 {
-		@apply text-xl font-bold uppercase tracking-tight;
+		@apply text-xl font-bold uppercase tracking-tight text-foreground dark:text-dark-foreground;
 	}
 }
 
 @layer components {
 	.btn {
-		@apply inline-block px-4 py-2 font-bold uppercase bg-black text-white border-2 border-black hover:bg-white hover:text-black transition-colors;
+		@apply inline-block px-4 py-2 font-bold uppercase bg-primary text-[rgb(var(--primary-foreground))] border-2 border-primary hover:bg-primary/90 transition-colors dark:bg-dark-primary dark:text-[rgb(var(--dark-primary-foreground))] dark:border-dark-primary dark:hover:bg-dark-primary/80;
 	}
 
 	.btn-outline {
-		@apply inline-block px-4 py-2 font-bold uppercase bg-white text-black border-2 border-black hover:bg-black hover:text-white transition-colors;
+		@apply inline-block px-4 py-2 font-bold uppercase bg-transparent text-primary border-2 border-primary hover:bg-primary hover:text-[rgb(var(--primary-foreground))] transition-colors dark:text-dark-primary dark:border-dark-primary dark:hover:bg-dark-primary dark:hover:text-[rgb(var(--dark-primary-foreground))];
 	}
 
 	.input {
@@ -49,7 +104,7 @@ body {
 	}
 
 	.card {
-		@apply border-2 border-black p-4 bg-white;
+		@apply border-2 border-border p-4 bg-card text-card-foreground dark:border-dark-border dark:bg-dark-card dark:text-dark-card-foreground;
 	}
 
 	.grid-container {

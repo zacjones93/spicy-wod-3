@@ -114,7 +114,7 @@ export default async function WorkoutsPage({
 											{workout.movements.map((movement) => (
 												<span
 													key={movement?.id || movement?.name}
-													className="inline-block px-2 py-1 text-xs font-bold bg-black text-white"
+													className="inline-block px-2 py-1 text-xs font-bold bg-black text-white dark:bg-dark-foreground dark:text-dark-background"
 												>
 													{movement?.name}
 												</span>
@@ -125,8 +125,8 @@ export default async function WorkoutsPage({
 
 								{/* Display Today's Results if any */}
 								{workout.resultsToday && workout.resultsToday.length > 0 && (
-									<div className="mt-4 pt-4 border-t border-gray-200">
-										<h4 className="font-semibold mb-2 text-sm uppercase text-gray-600">
+									<div className="mt-4 pt-4 border-t border-gray-200 dark:border-dark-border/50">
+										<h4 className="font-semibold mb-2 text-sm uppercase text-gray-600 dark:text-dark-muted-foreground">
 											Your Logged Result
 											{workout.resultsToday.length > 1 ? "s" : ""} for Today:
 										</h4>
@@ -134,20 +134,20 @@ export default async function WorkoutsPage({
 											{workout.resultsToday.map((result: any) => (
 												<div
 													key={result.id}
-													className="p-3 bg-gray-50 rounded-md border border-gray-200 w-fit"
+													className="p-3 bg-gray-50 dark:bg-dark-accent rounded-md border border-gray-200 dark:border-dark-border w-fit"
 												>
 													<div className="flex gap-4 justify-between items-center">
-														<p className="font-bold text-lg">
+														<p className="font-bold text-lg text-foreground dark:text-dark-foreground">
 															{result.wodScore}
 														</p>
 														{result.scale && (
 															<span
 																className={`px-2 py-0.5 text-xs font-semibold ${
 																	result.scale === "rx"
-																		? "bg-green-100 text-green-700"
+																		? "bg-green-100 text-green-700 dark:bg-green-700 dark:text-green-100"
 																		: result.scale === "rx+"
-																		? "bg-red-100 text-red-700"
-																		: "bg-yellow-100 text-yellow-700"
+																		? "bg-red-100 text-red-700 dark:bg-red-700 dark:text-red-100"
+																		: "bg-yellow-100 text-yellow-700 dark:bg-yellow-700 dark:text-yellow-100"
 																}`}
 															>
 																{result.scale.toUpperCase()}
@@ -155,7 +155,7 @@ export default async function WorkoutsPage({
 														)}
 													</div>
 													{result.notes && (
-														<p className="text-sm text-gray-700 mt-1 italic">
+														<p className="text-sm text-gray-700 dark:text-dark-muted-foreground mt-1 italic">
 															Notes: {result.notes}
 														</p>
 													)}
@@ -178,7 +178,7 @@ export default async function WorkoutsPage({
 					<Link
 						key={workout.id}
 						href={`/workouts/${workout.id}`}
-						className="card hover:bg-gray-50 transition-colors min-h-[300px] flex flex-col justify-between"
+						className="card hover:bg-gray-50 dark:hover:bg-dark-accent transition-colors min-h-[300px] flex flex-col justify-between"
 					>
 						<div className="">
 							<h3 className="mb-2">{workout.name}</h3>
@@ -191,7 +191,7 @@ export default async function WorkoutsPage({
 								{workout.movements.map((movement) => (
 									<span
 										key={movement?.id || movement?.name}
-										className="inline-block px-2 py-1 text-xs font-bold bg-black text-white"
+										className="inline-block px-2 py-1 text-xs font-bold bg-black text-white dark:bg-dark-foreground dark:text-dark-background"
 									>
 										{movement?.name}
 									</span>
@@ -201,7 +201,7 @@ export default async function WorkoutsPage({
 								{workout.tags.map((tag) => (
 									<span
 										key={tag.id}
-										className="inline-block px-2 py-1 text-xs border border-black"
+										className="inline-block px-2 py-1 text-xs border border-black dark:border-dark-border dark:text-dark-foreground"
 									>
 										{tag.name}
 									</span>

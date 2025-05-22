@@ -5,7 +5,6 @@ import { ChevronDown, Filter, Search } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
-
 interface MovementListProps {
 	movements: Movement[];
 }
@@ -89,7 +88,7 @@ export default function MovementList({ movements }: MovementListProps) {
 					<Link
 						key={movement.id}
 						href={`/movements/${movement.id}`}
-						className="card hover:bg-gray-50 transition-colors"
+						className="card hover:bg-gray-50 dark:hover:text-black transition-colors"
 					>
 						<div className="flex justify-between items-center">
 							<h3 className="mb-2">{movement.name}</h3>

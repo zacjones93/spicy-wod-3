@@ -21,7 +21,8 @@ const config: Config = {
 					DEFAULT: "hsl(var(--popover))",
 					foreground: "hsl(var(--popover-foreground))",
 				},
-				primary: "rgb(var(--primary))",
+				primary: "rgb(0 0 0)",
+				"primary-foreground": "rgb(255 255 255)",
 				secondary: "rgb(var(--secondary))",
 				muted: {
 					DEFAULT: "hsl(var(--muted))",
@@ -38,6 +39,36 @@ const config: Config = {
 				border: "hsl(var(--border))",
 				input: "hsl(var(--input))",
 				ring: "hsl(var(--ring))",
+				dark: {
+					background: "hsl(var(--dark-background))",
+					foreground: "hsl(var(--dark-foreground))",
+					card: {
+						DEFAULT: "hsl(var(--dark-card))",
+						foreground: "hsl(var(--dark-card-foreground))",
+					},
+					popover: {
+						DEFAULT: "hsl(var(--dark-popover))",
+						foreground: "hsl(var(--dark-popover-foreground))",
+					},
+					primary: "rgb(255 255 255)",
+					"primary-foreground": "rgb(0 0 0)",
+					secondary: "rgb(var(--dark-secondary))",
+					muted: {
+						DEFAULT: "hsl(var(--dark-muted))",
+						foreground: "hsl(var(--dark-muted-foreground))",
+					},
+					accent: {
+						DEFAULT: "hsl(var(--dark-accent))",
+						foreground: "hsl(var(--dark-accent-foreground))",
+					},
+					destructive: {
+						DEFAULT: "hsl(var(--dark-destructive))",
+						foreground: "hsl(var(--dark-destructive-foreground))",
+					},
+					border: "hsl(var(--dark-border))",
+					input: "hsl(var(--dark-input))",
+					ring: "hsl(var(--dark-ring))",
+				},
 				chart: {
 					"1": "hsl(var(--chart-1))",
 					"2": "hsl(var(--chart-2))",

@@ -1,7 +1,13 @@
 "use client";
 
 import type { Prettify } from "@/lib/utils";
-import type { Workout, WorkoutUpdate, Movement, Tag, WorkoutWithTagsAndMovements } from "@/types";
+import type {
+	Workout,
+	WorkoutUpdate,
+	Movement,
+	Tag,
+	WorkoutWithTagsAndMovements,
+} from "@/types";
 import { ArrowLeft, Plus, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -28,23 +34,25 @@ export default function EditWorkoutClient({
 }: Props) {
 	const [name, setName] = useState(workout?.name || "");
 	const [description, setDescription] = useState(workout?.description || "");
-	const [scheme, setScheme] = useState<WorkoutUpdate["scheme"]>(workout?.scheme);
+	const [scheme, setScheme] = useState<WorkoutUpdate["scheme"]>(
+		workout?.scheme
+	);
 	const [scope, setScope] = useState(workout?.scope || "private");
 	const [tags, setTags] = useState<Tag[]>(initialTags);
 	const [selectedMovements, setSelectedMovements] = useState<string[]>(
-		(workout?.movements || []).map((m: Movement) => m.id),
+		(workout?.movements || []).map((m: Movement) => m.id)
 	);
 	const [selectedTags, setSelectedTags] = useState<string[]>(
 		(workout?.tags || []).map((t: Tag | string) =>
-			typeof t === "string" ? t : t.id,
-		),
+			typeof t === "string" ? t : t.id
+		)
 	);
 	const [newTag, setNewTag] = useState("");
 	const [repsPerRound, setRepsPerRound] = useState<number | undefined>(
-		workout?.repsPerRound === null ? undefined : workout?.repsPerRound,
+		workout?.repsPerRound === null ? undefined : workout?.repsPerRound
 	);
 	const [roundsToScore, setRoundsToScore] = useState<number | undefined>(
-		workout?.roundsToScore === null ? 1 : workout?.roundsToScore || 1,
+		workout?.roundsToScore === null ? 1 : workout?.roundsToScore || 1
 	);
 
 	const handleAddTag = () => {
@@ -104,7 +112,10 @@ export default function EditWorkoutClient({
 				</div>
 			</div>
 
-			<form className="border-2 border-black p-6" onSubmit={handleSubmit}>
+			<form
+				className="border-2 border-black dark:border-white p-6"
+				onSubmit={handleSubmit}
+			>
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 					<div className="space-y-6">
 						<div>
@@ -152,7 +163,9 @@ export default function EditWorkoutClient({
 								id="workout-scheme"
 								className="select"
 								value={scheme}
-								onChange={(e) => setScheme(e.target.value as WorkoutUpdate["scheme"])}
+								onChange={(e) =>
+									setScheme(e.target.value as WorkoutUpdate["scheme"])
+								}
 								required
 							>
 								<option value="">Select a scheme</option>
@@ -203,7 +216,7 @@ export default function EditWorkoutClient({
 									setRepsPerRound(
 										e.target.value === ""
 											? undefined
-											: Number.parseInt(e.target.value),
+											: Number.parseInt(e.target.value)
 									)
 								}
 							/>
@@ -225,7 +238,7 @@ export default function EditWorkoutClient({
 									setRoundsToScore(
 										e.target.value === ""
 											? undefined
-											: Number.parseInt(e.target.value),
+											: Number.parseInt(e.target.value)
 									)
 								}
 							/>
