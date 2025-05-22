@@ -342,7 +342,7 @@ export default function BarbellCalculator() {
 	}, [targetWeightQuery]);
 
 	return (
-		<>
+		<Suspense fallback={<div>Loading...</div>}>
 			{/* <Head> is not available here, so styles are applied globally or inline */}
 
 			<div className="font-mono max-w-2xl mx-auto border-4 border-black bg-white shadow-[8px_8px_0px_#000]">
@@ -485,6 +485,6 @@ export default function BarbellCalculator() {
 					Spicy WOD - Barbell Calculator
 				</div>
 			</div>
-		</>
+		</Suspense>
 	);
 }
