@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import type React from "react";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,7 +26,9 @@ export default function RootLayout({
 					enableSystem
 					disableTransitionOnChange
 				>
-					<div className="min-h-screen">{children}</div>
+					<NuqsAdapter>
+						<div className="min-h-screen">{children}</div>
+					</NuqsAdapter>
 				</ThemeProvider>
 			</body>
 		</html>

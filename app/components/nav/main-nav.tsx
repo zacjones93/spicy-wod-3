@@ -31,7 +31,6 @@ export default async function MainNav() {
 					</h1>
 				</Link>
 				<nav className="hidden md:flex items-center gap-4">
-					<DarkModeToggle />
 					{session?.user ? (
 						<>
 							<Link
@@ -52,6 +51,9 @@ export default async function MainNav() {
 							>
 								Log
 							</Link>
+							<Link href="/calculator" className="font-bold uppercase hover:underline text-foreground dark:text-dark-foreground">
+									Calculator
+							</Link>
 							<div className="border-l-2 border-black dark:border-dark-border h-6 mx-2" />
 							<Link
 								href="/profile"
@@ -59,16 +61,22 @@ export default async function MainNav() {
 							>
 								<User className="h-5 w-5" />
 							</Link>
+							<DarkModeToggle />
 							<LogoutButton />
 						</>
 					) : (
 						<div className="flex items-center gap-2">
+							<Link href="/calculator" className="font-bold uppercase hover:underline text-foreground dark:text-dark-foreground">
+								Calculator
+							</Link>
 							<Link href="/login" className="btn-outline">
 								Login
 							</Link>
 							<Link href="/signup" className="btn">
 								Sign Up
 							</Link>
+							<DarkModeToggle />
+						
 						</div>
 					)}
 				</nav>
