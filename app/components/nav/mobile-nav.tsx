@@ -13,6 +13,7 @@ import { Dumbbell, Menu, User } from "lucide-react";
 import type { Session } from "next-auth";
 import Link from "next/link";
 import Image from "next/image";
+import { DarkModeToggle } from "../ui/dark-mode-toggle";
 
 interface MobileNavProps {
 	session: Session | null;
@@ -74,6 +75,7 @@ export default function MobileNav({ session }: MobileNavProps) {
 								</div>
 							</Link>
 							<LogoutButton />
+							<DarkModeToggle />
 						</>
 					) : (
 						<>
@@ -86,6 +88,7 @@ export default function MobileNav({ session }: MobileNavProps) {
 							<Link href="/signup" className="hover:text-primary">
 								Sign Up
 							</Link>
+							<DarkModeToggle />
 						</>
 					)}
 				</nav>
