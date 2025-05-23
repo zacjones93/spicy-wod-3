@@ -3,7 +3,24 @@ import { createMovement } from "@/server/functions/movement";
 import { redirect } from "next/navigation";
 import CreateMovementForm from "./_components/create-movement-form";
 
-export const dynamic = "force-dynamic";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Spicy WOD | Create Movement",
+	description: "Track your spicy workouts and progress.",
+	openGraph: {
+		title: "Spicy WOD | Create Movement", // Default title for layout
+		description: "Track your spicy workouts and progress.", // Default description
+		images: [
+			{
+				url: `/api/og?title=${encodeURIComponent("Spicy WOD | Create Movement")}`,
+				width: 1200,
+				height: 630,
+				alt: "Spicy WOD | Create Movement",
+			},
+		],
+	},
+};
 
 export default async function CreateMovementPage() {
 	const session = await auth();

@@ -3,7 +3,24 @@ import { getAllWorkouts } from "@/server/functions/workout";
 import { redirect } from "next/navigation";
 import LogFormClient from "./_components/log-form-client";
 
-export const dynamic = "force-dynamic";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Spicy WOD | Log your Workout",
+	description: "Track your spicy workouts and progress.",
+	openGraph: {
+		title: "Spicy WOD | Log your Workout", // Default title for layout
+		description: "Track your spicy workouts and progress.", // Default description
+		images: [
+			{
+				url: `/api/og?title=${encodeURIComponent("Spicy WOD | Log your Workout")}`,
+				width: 1200,
+				height: 630,
+				alt: "Spicy WOD | Log your Workout",
+			},
+		],
+	},
+};
 
 export default async function LogNewResultPage({
 	searchParams,

@@ -6,7 +6,47 @@ import {
 } from "@/server/functions/workout-results";
 import { redirect } from "next/navigation";
 import WorkoutDetailClient from "./_components/workout-detail-client";
-import type { Set } from "@/types";
+import { Metadata, ResolvingMetadata } from "next";
+
+type Props = {
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+ 
+export async function generateMetadata(
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const id = (await params).id
+ 
+  // fetch post information
+
+  const workout = await getWorkoutById(id)
+
+  if (!workout) {
+    return {
+      title: "workout not found",
+      description: "workout not found",
+    }
+  }
+
+  return {
+    title: `Spicy WOD | ${workout.name}`,
+    description: `Spicy WOD | ${workout.name}`,
+		openGraph: {
+			title: `Spicy WOD | ${workout.name}`,
+			description: `Spicy WOD | ${workout.name}`,
+			images: [
+				{
+					url: `/api/og?title=${encodeURIComponent(`Spicy WOD | ${workout.name}`)}`,
+					width: 1200,		
+					height: 630,
+					alt: `Spicy WOD | ${workout.name}`,
+				},
+			],
+		},
+  }
+}
 
 export default async function WorkoutDetailPage({
 	params,

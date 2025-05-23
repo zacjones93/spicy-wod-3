@@ -2,7 +2,26 @@ import { getAllWorkouts } from "@/server/functions/workout";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import WorkoutControls from "./_components/WorkoutControls";
-export const dynamic = "force-dynamic";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Spicy Wod | Explore Workouts",
+	description: "Track your spicy workouts and progress.",
+	openGraph: {
+		title: "Spicy Wod | Explore Workouts", // Default title for layout
+		description: "Track your spicy workouts and progress.", // Default description
+		images: [
+			{
+				url: `/api/og?title=${encodeURIComponent("Spicy Wod | Explore Workouts")}`,
+				width: 1200,
+				height: 630,
+				alt: "Spicy Wod | Explore Workouts",
+			},
+		],
+	},
+};
+
+
 export default async function WorkoutsPage({
 	searchParams,
 }: {

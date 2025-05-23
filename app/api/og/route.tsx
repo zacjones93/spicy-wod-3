@@ -1,80 +1,62 @@
-import { ImageResponse } from \'next/og\';
-import { NextRequest } from \'next/server\';
-import fs from \'fs\';
-import path from \'path\';
+import { ImageResponse } from "next/og";
+import { NextRequest } from "next/server";
 
-export const runtime = \'edge\';
+export const runtime = "edge";
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const title = searchParams.get(\'title\') || \'Spicy WOD\'; // Default title
-
+export async function GET(request: Request) {
   try {
-    const logoPath = path.join(process.cwd(), \'public\', \'icon0.svg\');
-    console.debug(`Reading logo file: ${logoPath}`);
-    const logoSvg = fs.readFileSync(logoPath, \'utf-8\');
-
-    // Basic SVG to data URL conversion (simplified)
-    // A more robust solution might be needed for complex SVGs or specific styling.
-    const logoDataUrl = `data:image/svg+xml;base64,${Buffer.from(logoSvg).toString(\'base64\')}`;
-
-    console.info(`OG Image generated for title: ${title}`);
-    // Styling adheres to brutalist principles: high contrast, mono font, geometric layout.
-
+    const { searchParams } = new URL(request.url);
+ 
+    // ?title=<title>
+    const hasTitle = searchParams.has('title');
+    const title = hasTitle
+      ? searchParams.get('title')?.slice(0, 100)
+      : 'My default title';
+ 
     return new ImageResponse(
       (
         <div
-          style={{
-            height: \'100%\',
-            width: \'100%\',
-            display: \'flex\',
-            flexDirection: \'column\',
-            alignItems: \'center\',
-            justifyContent: \'center\',
-            backgroundColor: \'black\',
-            color: \'white\',
-            fontFamily: \'"SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace\', // System mono-spaced font
-            padding: \'40px\',
-            border: \'10px solid white\', // Brutalist border
-          }}
-        >
-          <img
-            src={logoDataUrl}
-            alt="Logo"
-            width="100" // Adjust size as needed
-            height="100" // Adjust size as needed
-            style={{ marginBottom: \'30px\' }}
-          />
-          <div
-            style={{
-              fontSize: 60,
-              textAlign: \'center\',
-              maxWidth: \'80%\',
-              wordWrap: \'break-word\',
-              overflowWrap: \'break-word\',
-            }}
-          >
-            {title}
+        style={{
+          height: '100%',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'black',
+          position: 'relative',
+          border: '2px solid #fff',
+        }}
+      >
+        <h2 tw="flex flex-row text-xl font-bold tracking-tight text-gray-900 text-left items-center absolute bottom-0 left-0">
+            <img
+              alt="spicy-wod"
+              height={40}
+              src="https://github.com/zacjones93/spicy-wod-3/blob/main/public/spicywod-logo-white.png?raw=true"
+              width={40}
+              tw="ml-10 mr-2"
+            />
+            <span tw="text-white">Spicy WOD</span>
+          </h2>
+        <div tw="bg-black flex">
+          
+          <div tw="flex flex-col md:flex-row w-full py-12 px-4 md:items-center justify-center p-8">
+            <div tw="mt-8 flex md:mt-0 text-white text-4xl">
+              {title}
+            </div>
           </div>
         </div>
+      </div>
       ),
       {
         width: 1200,
         height: 630,
-        // Supported options:
-        // emojis: \'twemoji\', // Twitter Emoji
-        // fonts: [
-        //   {
-        //     name: \'Typewriter\',
-        //     data: fontData,
-        //     weight: 400,
-        //     style: \'normal\',
-        //   },
-        // ],
-      }
+      },
     );
-  } catch (error: any) {
-    console.error(`Failed to generate OG image: ${error.message}`);
-    return new Response(\`Failed to generate image: ${error.message}\`, { status: 500 });
+  } catch (e: any) {
+    console.log(`${e.message}`);
+    return new Response(`Failed to generate the image`, {
+      status: 500,
+    });
   }
-} 
+}

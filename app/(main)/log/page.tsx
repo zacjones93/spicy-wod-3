@@ -8,7 +8,24 @@ import type { Set, WorkoutResultWithWorkoutName } from "@/types";
 import { Suspense } from "react";
 import { formatSecondsToTime } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Spicy WOD | Your Scores",
+	description: "Track your spicy workouts and progress.",
+	openGraph: {
+		title: "Spicy WOD | Your Scores", // Default title for layout
+		description: "Track your spicy workouts and progress.", // Default description
+		images: [
+			{
+				url: `/api/og?title=${encodeURIComponent("Spicy WOD | Your Scores")}`,
+				width: 1200,
+				height: 630,
+				alt: "Spicy WOD | Your Scores",
+			},
+		],
+	},
+};
 
 export default async function LogPage() {
 	const session = await auth();

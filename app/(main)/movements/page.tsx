@@ -3,7 +3,24 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import MovementList from "./_components/movement-list";
 
-export const dynamic = "force-dynamic";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Spicy WOD | Movements",
+	description: "Track your spicy workouts and progress.",
+	openGraph: {
+		title: "Spicy WOD | Movements", // Default title for layout
+		description: "Track your spicy workouts and progress.", // Default description
+		images: [
+			{
+				url: `/api/og?title=${encodeURIComponent("Spicy WOD | Movements")}`,
+				width: 1200,
+				height: 630,
+				alt: "Spicy WOD | Movements",
+			},
+		],
+	},
+};
 
 export default async function MovementsPage() {
 	const movements = await getAllMovements();

@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Suspense } from "react";
 
 export default function CalculatorLayout({
 	children,
@@ -41,7 +43,11 @@ export default function CalculatorLayout({
 					</li>
 				</ul>
 			</nav>
-			<main className="flex-grow p-4 h-full">{children}</main>
+      <Suspense fallback={<div>Loading...</div>}>
+        <NuqsAdapter>
+          <main className="flex-grow p-4 h-full">{children}</main>
+        </NuqsAdapter>
+      </Suspense>
 		</div>
 	);
 }

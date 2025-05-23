@@ -4,6 +4,25 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import SignupFormClient from "./_components/signup-form-client";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Spicy WOD | Sign up",
+	description: "Track your spicy workouts and progress.",
+	openGraph: {
+		title: "Spicy WOD | Sign up", // Default title for layout
+		description: "Track your spicy workouts and progress.", // Default description
+		images: [
+			{
+				url: `/api/og?title=${encodeURIComponent("Spicy WOD | Sign up")}`,
+				width: 1200,
+				height: 630,
+				alt: "Spicy WOD | Sign up",
+			},
+		],
+	},
+};
+
 export default function SignupPage() {
 	async function registerAction(formData: FormData) {
 		"use server";

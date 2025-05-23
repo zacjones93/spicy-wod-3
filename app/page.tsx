@@ -3,6 +3,25 @@ import { getLatestWorkout } from "@/server/functions/workout";
 import Link from "next/link";
 import MainNav from "./components/nav/main-nav";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Spicy WOD",
+	description: "Track your spicy workouts and progress.",
+	openGraph: {
+		title: "Spicy WOD", // Default title for layout
+		description: "Track your spicy workouts and progress.", // Default description
+		images: [
+			{
+				url: `/api/og?title=${encodeURIComponent("Spicy WOD")}`,
+				width: 1200,
+				height: 630,
+				alt: "Spicy WOD",
+			},
+		],
+	},
+};
+
 export default async function Home() {
 	const session = await auth();
 

@@ -5,6 +5,25 @@ import { Dumbbell } from "lucide-react";
 import Link from "next/link";
 import { LoginForm } from "./_components/login-form";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "Spicy WOD | Login",
+	description: "Track your spicy workouts and progress.",
+	openGraph: {
+		title: "Spicy WOD | Login", // Default title for layout
+		description: "Track your spicy workouts and progress.", // Default description
+		images: [
+			{
+				url: `/api/og?title=${encodeURIComponent("Spicy WOD | Login")}`,
+				width: 1200,
+				height: 630,
+				alt: "Spicy WOD | Login",
+			},
+		],
+	},
+};
+
 export default function LoginPage() {
 	async function authenticateAction(
 		prevState: string | undefined,
