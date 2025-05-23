@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
     const logoDataUrl = `data:image/svg+xml;base64,${Buffer.from(logoSvg).toString(\'base64\')}`;
 
     console.info(`OG Image generated for title: ${title}`);
+    // Styling adheres to brutalist principles: high contrast, mono font, geometric layout.
 
     return new ImageResponse(
       (
