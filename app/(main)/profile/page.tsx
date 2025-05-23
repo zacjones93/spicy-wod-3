@@ -5,6 +5,7 @@ import ProfileClient from "./_components/profile-client";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+	metadataBase: new URL("https://spicywod.com"),
 	title: "Spicy WOD | Profile",
 	description: "Track your spicy workouts and progress.",
 	openGraph: {

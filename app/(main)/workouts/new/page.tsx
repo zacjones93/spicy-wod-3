@@ -8,10 +8,10 @@ import { redirect } from "next/navigation";
 import CreateWorkoutClient from "./_components/create-workout-client";
 import type { WorkoutCreate, Tag, Movement } from "@/types";
 
-
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+	metadataBase: new URL("https://spicywod.com"),
 	title: "Spicy WOD | Create Workout",
 	description: "Track your spicy workouts and progress.",
 	openGraph: {
@@ -19,7 +19,9 @@ export const metadata: Metadata = {
 		description: "Track your spicy workouts and progress.", // Default description
 		images: [
 			{
-				url: `/api/og?title=${encodeURIComponent("Spicy WOD | Create Workout")}`,
+				url: `/api/og?title=${encodeURIComponent(
+					"Spicy WOD | Create Workout"
+				)}`,
 				width: 1200,
 				height: 630,
 				alt: "Spicy WOD | Create Workout",
@@ -52,11 +54,8 @@ export default async function CreateWorkoutPage() {
 
 		const headerList = await headers();
 		const timezone = headerList.get("x-vercel-ip-timezone") ?? "America/Denver";
-		const date =  new Date().toISOString().split("T")[0]
-		const createdAtDate = fromZonedTime(
-			`${date}T00:00:00`,
-			timezone,
-		);
+		const date = new Date().toISOString().split("T")[0];
+		const createdAtDate = fromZonedTime(`${date}T00:00:00`, timezone);
 
 		try {
 			await createWorkout({

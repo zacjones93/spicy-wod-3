@@ -1,7 +1,6 @@
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 
-export const runtime = "edge";
 
 export async function GET(request: Request) {
   try {
@@ -25,6 +24,7 @@ export async function GET(request: Request) {
           justifyContent: 'center',
           backgroundColor: 'black',
           position: 'relative',
+          borderRadius: '10px',
           border: '2px solid #fff',
         }}
       >

@@ -6,6 +6,7 @@ import CreateMovementForm from "./_components/create-movement-form";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+	metadataBase: new URL("https://spicywod.com"),
 	title: "Spicy WOD | Create Movement",
 	description: "Track your spicy workouts and progress.",
 	openGraph: {
@@ -13,7 +14,9 @@ export const metadata: Metadata = {
 		description: "Track your spicy workouts and progress.", // Default description
 		images: [
 			{
-				url: `/api/og?title=${encodeURIComponent("Spicy WOD | Create Movement")}`,
+				url: `/api/og?title=${encodeURIComponent(
+					"Spicy WOD | Create Movement"
+				)}`,
 				width: 1200,
 				height: 630,
 				alt: "Spicy WOD | Create Movement",

@@ -3,6 +3,7 @@ import type React from "react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+	metadataBase: new URL("https://spicywod.com"),
 	openGraph: {
 		title: "Spicy WOD", // Default title for layout
 		description: "Track your spicy workouts and progress.", // Default description

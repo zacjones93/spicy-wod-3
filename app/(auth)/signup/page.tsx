@@ -7,6 +7,7 @@ import SignupFormClient from "./_components/signup-form-client";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+	metadataBase: new URL("https://spicywod.com"),
 	title: "Spicy WOD | Sign up",
 	description: "Track your spicy workouts and progress.",
 	openGraph: {
@@ -43,8 +44,8 @@ export default function SignupPage() {
 		console.log(
 			`[register] Creating user with email: ${email} and password: ${password.substring(
 				0,
-				3,
-			)}...`,
+				3
+			)}...`
 		);
 		await createUser(email, password);
 		redirect("/login"); // Redirect on successful creation

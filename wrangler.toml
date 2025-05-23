@@ -21,7 +21,3 @@ database_id = "5d6470cf-e67e-4bc4-b133-51b5796921b4"
 migrations_table = "drizzle_migrations"
 migrations_dir = "./drizzle"
 
-[[kv_namespaces]]
-binding = "USER_SESSIONS"
-id = "1ad56718049c421f9d5712d2bb82d04e"
-

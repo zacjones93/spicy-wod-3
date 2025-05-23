@@ -11,6 +11,7 @@ import { formatSecondsToTime } from "@/lib/utils";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+	metadataBase: new URL("https://spicywod.com"),
 	title: "Spicy WOD | Your Scores",
 	description: "Track your spicy workouts and progress.",
 	openGraph: {

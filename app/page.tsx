@@ -6,6 +6,7 @@ import MainNav from "./components/nav/main-nav";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+	metadataBase: new URL("https://spicywod.com"),
 	title: "Spicy WOD",
 	description: "Track your spicy workouts and progress.",
 	openGraph: {

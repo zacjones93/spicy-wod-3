@@ -5,6 +5,7 @@ import WorkoutControls from "./_components/WorkoutControls";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+	metadataBase: new URL("https://spicywod.com"),
 	title: "Spicy Wod | Explore Workouts",
 	description: "Track your spicy workouts and progress.",
 	openGraph: {
@@ -12,7 +13,9 @@ export const metadata: Metadata = {
 		description: "Track your spicy workouts and progress.", // Default description
 		images: [
 			{
-				url: `/api/og?title=${encodeURIComponent("Spicy Wod | Explore Workouts")}`,
+				url: `/api/og?title=${encodeURIComponent(
+					"Spicy Wod | Explore Workouts"
+				)}`,
 				width: 1200,
 				height: 630,
 				alt: "Spicy Wod | Explore Workouts",
@@ -20,7 +23,6 @@ export const metadata: Metadata = {
 		],
 	},
 };
-
 
 export default async function WorkoutsPage({
 	searchParams,

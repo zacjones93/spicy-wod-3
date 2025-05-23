@@ -3,6 +3,7 @@ import BarbellCalculator from "./_components/barbell-calculator";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+	metadataBase: new URL("https://spicywod.com"),
 	title: "Spicy WOD - Calculator",
 	description: "Track your spicy workouts and progress.",
 	openGraph: {

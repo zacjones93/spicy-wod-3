@@ -314,9 +314,7 @@ export default function BarbellCalculator() {
 	}, [
 		targetWeightQuery,
 		barWeightOption,
-		isKg,
-		actualBarWeight,
-		availablePlates,
+		isKg
 	]);
 
 	const handleWeightSubmit = (e: React.FormEvent<HTMLFormElement>) => {

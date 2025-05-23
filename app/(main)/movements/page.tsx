@@ -6,6 +6,7 @@ import MovementList from "./_components/movement-list";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+	metadataBase: new URL("https://spicywod.com"),
 	title: "Spicy WOD | Movements",
 	description: "Track your spicy workouts and progress.",
 	openGraph: {

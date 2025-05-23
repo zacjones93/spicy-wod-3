@@ -8,6 +8,7 @@ import { LoginForm } from "./_components/login-form";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+	metadataBase: new URL("https://spicywod.com"),
 	title: "Spicy WOD | Login",
 	description: "Track your spicy workouts and progress.",
 	openGraph: {
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
 export default function LoginPage() {
 	async function authenticateAction(
 		prevState: string | undefined,
-		formData: FormData,
+		formData: FormData
 	) {
 		"use server";
 		try {

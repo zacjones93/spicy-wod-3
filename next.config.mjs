@@ -9,6 +9,13 @@ initOpenNextCloudflareForDev();
  */
 const nextConfig = {
 	/* config options here */
+	outputFileTracingExcludes: {
+		"*": [
+			"./**/*.js.map",
+			"./**/*.mjs.map",
+			"./**/*.cjs.map"
+		],
+	},
 };
 
 export default nextConfig;
