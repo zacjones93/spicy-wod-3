@@ -151,7 +151,7 @@ const BarbellGraphic = ({
 	isKg: boolean;
 }) => {
 	return (
-		<div className="flex items-center justify-center min-h-[150px] p-5 border-3 border-black my-5 overflow-x-auto relative w-full">
+		<div className="flex items-center justify-center min-h-[150px] p-5 border-3 border-black my-5 overflow-x-auto relative w-full max-w-[30rem] mx-auto">
 			{/* Left Collar */}
 			<div
 				className="w-2.5 bg-neutral-600 border border-neutral-800 rounded-sm mr-0.5 z-10"
