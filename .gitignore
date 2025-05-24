@@ -45,3 +45,7 @@ next-env.d.ts
 
 # drizzle
 drizzle
+
+# playwright
+playwright-report/
+test-results/
