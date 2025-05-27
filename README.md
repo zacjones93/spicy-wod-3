@@ -1,24 +1,79 @@
-# Next.js + PostgreSQL Auth Starter
+# Spicy WOD - Workout Tracker
 
-This is a [Next.js](https://nextjs.org/) starter kit that uses [NextAuth.js](https://next-auth.js.org/) for simple email + password login, [Drizzle](https://orm.drizzle.team) as the ORM, and a [Neon Postgres](https://vercel.com/postgres) database to persist the data.
+This is a [Next.js](https://nextjs.org/) workout tracking application that uses [NextAuth.js](https://next-auth.js.org/) for authentication, [Drizzle](https://orm.drizzle.team) as the ORM, and a SQLite database for data persistence. The app features a brutalist design philosophy with clear, functional interfaces.
 
-## Deploy Your Own
+## Tech Stack
 
-You can clone & deploy it to Vercel with one click:
+- **Framework**: Next.js 15 with App Router
+- **Authentication**: NextAuth.js
+- **Database**: SQLite with Drizzle ORM
+- **Styling**: Tailwind CSS with brutalist design principles
+- **Code Quality**: Biome for linting, formatting, and import organization
+- **Deployment**: Cloudflare Pages with OpenNext
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?demo-title=Next.js%20Prisma%20PostgreSQL%20Auth%20Starter&demo-description=Simple%20Next.js%2013%20starter%20kit%20that%20uses%20Next-Auth%20for%20auth%20and%20Prisma%20PostgreSQL%20as%20a%20database.&demo-url=https%3A%2F%2Fnextjs-postgres-auth.vercel.app%2F&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F7rsVQ1ZBSiWe9JGO6FUeZZ%2F210cba91036ca912b2770e0bd5d6cc5d%2Fthumbnail.png&project-name=Next.js%%20Prisma%20PostgreSQL%20Auth%20Starter&repository-name=nextjs-postgres-auth-starter&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnextjs-postgres-auth-starter&from=templates&skippable-integrations=1&env=AUTH_SECRET&envDescription=Generate%20a%20random%20secret%3A&envLink=https://generate-secret.vercel.app/&stores=%5B%7B"type"%3A"postgres"%7D%5D)
+## Code Quality & Development
 
-## Developing Locally
+This project uses [Biome](https://biomejs.dev/) for unified code formatting, linting, and import organization. Biome provides fast, consistent code quality enforcement with zero configuration.
 
-You can clone & create this repo with the following command
+### Available Scripts
 
 ```bash
-npx create-next-app nextjs-typescript-starter --example "https://github.com/vercel/nextjs-postgres-auth-starter"
+# Lint and format code (recommended for development)
+pnpm lint
+
+# Check code without making changes (dry-run)
+pnpm lint:check
+
+# Format code only
+pnpm format
+
+# Comprehensive check (lint + format + organize imports)
+pnpm check
+```
+
+### Editor Integration
+
+For the best development experience, install the Biome extension for your editor:
+
+- **VS Code**: Install the [Biome extension](https://marketplace.visualstudio.com/items?itemName=biomejs.biome)
+- **Other editors**: See [Biome editor integration guide](https://biomejs.dev/guides/integrate-in-editor/)
+
+Configure your editor to format on save for automatic code formatting.
+
+### Code Style Guidelines
+
+- **No rounded edges**: Maintains brutalist design consistency
+- **Tab indentation**: 4-space width for readability
+- **Double quotes**: For string literals
+- **Trailing commas**: Always included for cleaner diffs
+- **Import organization**: Automatic sorting and type imports
+
+### Pre-commit Recommendations
+
+Run `pnpm lint` before committing to ensure code quality. Consider setting up a pre-commit hook:
+
+```bash
+# Add to .git/hooks/pre-commit
+#!/bin/sh
+pnpm lint:check
 ```
 
 ## Getting Started
 
-First, run the development server:
+First, install dependencies:
+
+```bash
+pnpm install
+```
+
+Set up the database:
+
+```bash
+pnpm db:apply
+pnpm db:seed
+```
+
+Run the development server:
 
 ```bash
 pnpm dev
@@ -26,11 +81,34 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Database Management
+
+```bash
+# Apply database migrations
+pnpm db:apply
+
+# Open Drizzle Studio
+pnpm db:studio
+
+# Seed the database
+pnpm db:seed
+```
+
+## Deployment
+
+This project is configured for deployment on Cloudflare Pages:
+
+```bash
+# Build and preview locally
+pnpm preview
+
+# Deploy to production
+pnpm deploy:prod
+```
+
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API
+- [Biome Documentation](https://biomejs.dev/) - learn about code quality tools
+- [Drizzle ORM](https://orm.drizzle.team) - learn about the database ORM
+- [Cloudflare Pages](https://pages.cloudflare.com/) - learn about deployment platform
