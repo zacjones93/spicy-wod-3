@@ -2,6 +2,16 @@
 
 # Pre-commit hook for Biome
 # Runs Biome check on staged TypeScript, JavaScript, JSON, and React files
+#
+# Bypass options:
+# - Use 'git commit --no-verify' to skip all pre-commit hooks
+# - Set SKIP_BIOME_HOOK=1 to skip only this hook
+
+# Check for bypass environment variable
+if [ "$SKIP_BIOME_HOOK" = "1" ]; then
+    echo "Skipping Biome pre-commit hook (SKIP_BIOME_HOOK=1)"
+    exit 0
+fi
 
 # Enable verbose output if BIOME_HOOK_VERBOSE is set
 if [ "$BIOME_HOOK_VERBOSE" = "1" ]; then
@@ -44,16 +54,25 @@ if pnpm biome check --write $RELEVANT_FILES; then
     echo "✓ All files passed Biome checks"
     
     # Re-stage any files that were auto-fixed
+    RESTAGED_FILES=""
     for file in $RELEVANT_FILES; do
         if [ -f "$file" ]; then
             git add "$file"
+            RESTAGED_FILES="$RESTAGED_FILES $file"
         fi
     done
+    
+    if [ -n "$RESTAGED_FILES" ]; then
+        echo "Re-staging auto-fixed files:$RESTAGED_FILES"
+    fi
     
     exit 0
 else
     echo "✗ Biome found issues that could not be auto-fixed"
     echo "Please fix the issues manually and try again"
-    echo "Or use 'git commit --no-verify' to bypass this hook"
+    echo ""
+    echo "Bypass options:"
+    echo "  - Use 'git commit --no-verify' to skip all hooks"
+    echo "  - Set SKIP_BIOME_HOOK=1 to skip only this hook"
     exit 1
 fi
