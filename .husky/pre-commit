@@ -35,7 +35,9 @@ if [ -z "$RELEVANT_FILES" ]; then
     exit 0
 fi
 
-echo "Found files for Biome processing:$RELEVANT_FILES"
+# Count files for logging
+FILE_COUNT=$(echo $RELEVANT_FILES | wc -w | tr -d ' ')
+echo "Found $FILE_COUNT files for Biome processing:$RELEVANT_FILES"
 
 # Run Biome check with write flag on relevant files
 if pnpm biome check --write $RELEVANT_FILES; then
