@@ -1,0 +1,57 @@
+#!/bin/sh
+
+# Pre-commit hook for Biome
+# Runs Biome check on staged TypeScript, JavaScript, JSON, and React files
+
+# Enable verbose output if BIOME_HOOK_VERBOSE is set
+if [ "$BIOME_HOOK_VERBOSE" = "1" ]; then
+    set -x
+fi
+
+echo "Running Biome on staged files..."
+
+# Get list of staged files that are added, copied, or modified
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+
+if [ -z "$STAGED_FILES" ]; then
+    echo "No staged files found"
+    exit 0
+fi
+
+# Filter for relevant file extensions
+RELEVANT_FILES=""
+for file in $STAGED_FILES; do
+    case "$file" in
+        *.ts|*.tsx|*.js|*.jsx|*.json)
+            if [ -f "$file" ]; then
+                RELEVANT_FILES="$RELEVANT_FILES $file"
+            fi
+            ;;
+    esac
+done
+
+if [ -z "$RELEVANT_FILES" ]; then
+    echo "No files require Biome processing, skipping hook"
+    exit 0
+fi
+
+echo "Found files for Biome processing:$RELEVANT_FILES"
+
+# Run Biome check with write flag on relevant files
+if pnpm biome check --write $RELEVANT_FILES; then
+    echo "✓ All files passed Biome checks"
+    
+    # Re-stage any files that were auto-fixed
+    for file in $RELEVANT_FILES; do
+        if [ -f "$file" ]; then
+            git add "$file"
+        fi
+    done
+    
+    exit 0
+else
+    echo "✗ Biome found issues that could not be auto-fixed"
+    echo "Please fix the issues manually and try again"
+    echo "Or use 'git commit --no-verify' to bypass this hook"
+    exit 1
+fi
