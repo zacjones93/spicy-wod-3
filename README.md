@@ -48,15 +48,62 @@ Configure your editor to format on save for automatic code formatting.
 - **Trailing commas**: Always included for cleaner diffs
 - **Import organization**: Automatic sorting and type imports
 
-### Pre-commit Recommendations
+### Pre-commit Hook
 
-Run `pnpm lint` before committing to ensure code quality. Consider setting up a pre-commit hook:
+This project includes an automated pre-commit hook powered by [Husky](https://typicode.github.io/husky/) that runs Biome checks on staged files. The hook automatically:
+
+- Runs only on relevant file types (`.ts`, `.tsx`, `.js`, `.jsx`, `.json`)
+- Auto-fixes formatting issues and re-stages corrected files
+- Blocks commits when unfixable linting errors are found
+- Skips processing when no relevant files are staged
+
+#### Installation
+
+The pre-commit hook is automatically installed when you run:
 
 ```bash
-# Add to .git/hooks/pre-commit
-#!/bin/sh
-pnpm lint:check
+pnpm install
 ```
+
+#### Usage Examples
+
+```bash
+# Normal commit - hook runs automatically
+git commit -m "feat: add new feature"
+
+# Hook auto-fixes formatting and allows commit
+git add poorly-formatted.js
+git commit -m "fix: update logic"
+# Output: "Re-staging auto-fixed files: poorly-formatted.js"
+
+# Hook skips when no code files are staged
+git add README.md
+git commit -m "docs: update readme"
+# Output: "No files require Biome processing, skipping hook"
+```
+
+#### Bypass Options
+
+For emergency situations or when you need to bypass the hook:
+
+```bash
+# Skip all pre-commit hooks
+git commit --no-verify -m "emergency fix"
+
+# Skip only the Biome hook
+SKIP_BIOME_HOOK=1 git commit -m "skip biome check"
+```
+
+#### Troubleshooting
+
+If the hook fails due to linting errors:
+
+1. **Review the errors**: The hook will display specific issues found by Biome
+2. **Fix manually**: Address the linting errors in your code
+3. **Re-attempt commit**: Stage your fixes and commit again
+4. **Use bypass if needed**: For urgent fixes, use `--no-verify` or `SKIP_BIOME_HOOK=1`
+
+The hook integrates seamlessly with the existing Biome workflow (`pnpm lint`, `pnpm format`, `pnpm check`) and maintains the project's brutalist development philosophy of clear, functional tooling.
 
 ## Getting Started
 

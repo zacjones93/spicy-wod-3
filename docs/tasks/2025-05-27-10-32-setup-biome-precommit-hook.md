@@ -17,7 +17,7 @@ Create a pre-commit hook script at `.git/hooks/pre-commit` that runs Biome check
 
 ---
 
-## Commit 2: feat: add husky for cross-platform git hook management
+## Commit 2: feat: add husky for cross-platform git hook management ✅ 090a2ba
 
 **Description:**
 Install and configure Husky to manage git hooks in a cross-platform, team-friendly way. Add `husky` as a devDependency via `pnpm add -D husky`, initialize Husky with `pnpm dlx husky init`, and migrate the custom pre-commit script to `.husky/pre-commit`. Update the script to use `pnpm biome check --write` instead of direct biome calls to ensure consistent package manager usage. Configure Husky to automatically install hooks when team members run `pnpm install` by adding a `prepare` script to `package.json`. This approach ensures all developers get the same pre-commit behavior regardless of their operating system and aligns with the project's pnpm package management strategy.
@@ -34,7 +34,7 @@ Install and configure Husky to manage git hooks in a cross-platform, team-friend
 
 ---
 
-## Commit 3: feat: optimize hook to run Biome only on relevant file types
+## Commit 3: feat: optimize hook to run Biome only on relevant file types ✅ 92b39ae
 
 **Description:**
 Enhance the pre-commit hook to be more efficient by filtering staged files to only include those that Biome can process: TypeScript (`.ts`, `.tsx`), JavaScript (`.js`, `.jsx`), JSON (`.json`), and configuration files. Update `.husky/pre-commit` to use `git diff --cached --name-only --diff-filter=ACM` to get only added, copied, or modified files, then filter using grep for relevant extensions. Add logic to skip hook execution entirely if no relevant files are staged, improving performance for commits that only touch documentation, images, or other non-code files. Include file count logging to show how many files are being processed and maintain compatibility with the project's Biome configuration that ignores `.next/`, `.wrangler/`, and `node_modules/` directories.
@@ -51,7 +51,7 @@ Enhance the pre-commit hook to be more efficient by filtering staged files to on
 
 ---
 
-## Commit 4: feat: add hook bypass mechanism and error handling
+## Commit 4: feat: add hook bypass mechanism and error handling ✅ 3be15b4
 
 **Description:**
 Add a bypass mechanism for the pre-commit hook using `git commit --no-verify` documentation and environment variable `SKIP_BIOME_HOOK=1`. Enhance error handling to distinguish between Biome formatting fixes (which should re-stage files and continue) and actual linting errors (which should block the commit). Update `.husky/pre-commit` to capture Biome exit codes, re-stage files that were automatically formatted, and provide clear error messages when commits are blocked. Add documentation in comments within the hook script explaining the bypass options and error scenarios. This ensures developers can override the hook when necessary (e.g., emergency fixes) while maintaining code quality standards for normal development workflow.
