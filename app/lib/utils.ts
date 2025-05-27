@@ -9,7 +9,6 @@ export type Prettify<T> = {
 	[K in keyof T]: T[K];
 } & {};
 
-
 export function parseTimeScoreToSeconds(timeStr: string): number | null {
 	const trimmedTimeStr = timeStr.trim();
 	if (!trimmedTimeStr) return null;
@@ -27,8 +26,7 @@ export function parseTimeScoreToSeconds(timeStr: string): number | null {
 		timeParts.length > 3 ||
 		timeParts.some(
 			(part) =>
-				!/^\d{1,2}$/.test(part) &&
-				!(timeParts.indexOf(part) === 0 && /^\d+$/.test(part)),
+				!/^\d{1,2}$/.test(part) && !(timeParts.indexOf(part) === 0 && /^\d+$/.test(part)),
 		)
 	) {
 		// first part can be more than 2 digits if it's like 120:30
@@ -50,9 +48,7 @@ export function parseTimeScoreToSeconds(timeStr: string): number | null {
 					Number.parseInt(timeParts[2], 10) < 60
 				)
 			) {
-				console.warn(
-					`[Action] Invalid time format for parsing: ${trimmedTimeStr}`,
-				);
+				console.warn(`[Action] Invalid time format for parsing: ${trimmedTimeStr}`);
 				return null;
 			}
 		}
@@ -61,9 +57,7 @@ export function parseTimeScoreToSeconds(timeStr: string): number | null {
 	let seconds = 0;
 	if (timeParts.length === 2) {
 		// MM:SS
-		seconds =
-			Number.parseInt(timeParts[0], 10) * 60 +
-			Number.parseInt(timeParts[1], 10);
+		seconds = Number.parseInt(timeParts[0], 10) * 60 + Number.parseInt(timeParts[1], 10);
 	} else if (timeParts.length === 3) {
 		// HH:MM:SS
 		seconds =

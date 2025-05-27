@@ -1,6 +1,6 @@
 import MainNav from "@/components/nav/main-nav";
-import type React from "react";
 import type { Metadata } from "next";
+import type React from "react";
 
 export const metadata: Metadata = {
 	metadataBase: new URL("https://spicywod.com"),

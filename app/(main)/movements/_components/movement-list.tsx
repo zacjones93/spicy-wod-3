@@ -1,6 +1,6 @@
 "use client";
 
-import { Movement } from "@/types";
+import type { Movement } from "@/types";
 import { ChevronDown, Filter, Search } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -21,13 +21,9 @@ export default function MovementList({ movements }: MovementListProps) {
 
 	const filteredMovements = useMemo(() => {
 		return movements.filter((movement) => {
-			const nameMatches = movement.name
-				.toLowerCase()
-				.includes(searchTerm.toLowerCase());
+			const nameMatches = movement.name.toLowerCase().includes(searchTerm.toLowerCase());
 			const typeMatches =
-				selectedType && selectedType !== "All"
-					? movement.type === selectedType
-					: true;
+				selectedType && selectedType !== "All" ? movement.type === selectedType : true;
 			return nameMatches && typeMatches;
 		});
 	}, [movements, searchTerm, selectedType]);
@@ -78,9 +74,7 @@ export default function MovementList({ movements }: MovementListProps) {
 			</div>
 
 			{filteredMovements.length === 0 && (searchTerm || selectedType) && (
-				<p className="text-center text-gray-500">
-					No movements found for your criteria.
-				</p>
+				<p className="text-center text-gray-500">No movements found for your criteria.</p>
 			)}
 
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

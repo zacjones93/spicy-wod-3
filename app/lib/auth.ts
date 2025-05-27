@@ -13,10 +13,7 @@ export function hashPassword(password: string, salt: string): string {
 	return pbkdf2Sync(password, salt, ITERATIONS, KEYLEN, DIGEST).toString("hex");
 }
 
-export async function verifyPassword(
-	email: string,
-	candidatePassword: string,
-): Promise<boolean> {
+export async function verifyPassword(email: string, candidatePassword: string): Promise<boolean> {
 	console.log(`[verifyPassword] Verifying for email: ${email}`);
 	const user = await getUser(email);
 	if (!user) {

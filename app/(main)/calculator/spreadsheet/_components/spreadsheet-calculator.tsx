@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input"; // Assuming Input component is available
 import {
 	Table,
 	TableBody,
@@ -10,17 +11,14 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input"; // Assuming Input component is available
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 export default function SpreadsheetCalculator() {
 	const [oneRepMax, setOneRepMax] = useState<number | string>("");
-	const [percentages, setPercentages] = useState<
-		{ percentage: number; weight: number }[]
-	>([]);
+	const [percentages, setPercentages] = useState<{ percentage: number; weight: number }[]>([]);
 
 	const calculatePercentages = () => {
-		const max = parseFloat(oneRepMax as string);
+		const max = Number.parseFloat(oneRepMax as string);
 		if (isNaN(max) || max <= 0) {
 			setPercentages([]);
 			return;
@@ -30,7 +28,7 @@ export default function SpreadsheetCalculator() {
 		for (let i = 5; i <= 100; i += 5) {
 			newPercentages.push({
 				percentage: i,
-				weight: parseFloat(((max * i) / 100).toFixed(2)),
+				weight: Number.parseFloat(((max * i) / 100).toFixed(2)),
 			});
 		}
 		setPercentages(newPercentages.reverse()); // Show 100% at the top

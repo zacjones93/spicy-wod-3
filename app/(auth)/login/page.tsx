@@ -26,10 +26,7 @@ export const metadata: Metadata = {
 };
 
 export default function LoginPage() {
-	async function authenticateAction(
-		prevState: string | undefined,
-		formData: FormData
-	) {
+	async function authenticateAction(prevState: string | undefined, formData: FormData) {
 		"use server";
 		try {
 			await signIn("credentials", {
@@ -38,10 +35,7 @@ export default function LoginPage() {
 				password: formData.get("password") as string,
 			});
 		} catch (error) {
-			if (
-				error instanceof Error &&
-				error.message.includes("CredentialsSignin")
-			) {
+			if (error instanceof Error && error.message.includes("CredentialsSignin")) {
 				return "CredentialsSignin";
 			}
 			throw error;

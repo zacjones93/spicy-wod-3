@@ -4,48 +4,48 @@ import {
 	getResultSetsById,
 	getWorkoutResultsByWorkoutAndUser,
 } from "@/server/functions/workout-results";
+import type { Metadata, ResolvingMetadata } from "next";
 import { redirect } from "next/navigation";
 import WorkoutDetailClient from "./_components/workout-detail-client";
-import { Metadata, ResolvingMetadata } from "next";
 
 type Props = {
-  params: Promise<{ id: string }>
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-}
- 
+	params: Promise<{ id: string }>;
+	searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
 export async function generateMetadata(
-  { params, searchParams }: Props,
-  parent: ResolvingMetadata
+	{ params, searchParams }: Props,
+	parent: ResolvingMetadata,
 ): Promise<Metadata> {
-  const id = (await params).id
- 
-  // fetch post information
+	const id = (await params).id;
 
-  const workout = await getWorkoutById(id)
+	// fetch post information
 
-  if (!workout) {
-    return {
-      title: "workout not found",
-      description: "workout not found",
-    }
-  }
+	const workout = await getWorkoutById(id);
 
-  return {
-    title: `Spicy WOD | ${workout.name}`,
-    description: `Spicy WOD | ${workout.name}`,
+	if (!workout) {
+		return {
+			title: "workout not found",
+			description: "workout not found",
+		};
+	}
+
+	return {
+		title: `Spicy WOD | ${workout.name}`,
+		description: `Spicy WOD | ${workout.name}`,
 		openGraph: {
 			title: `Spicy WOD | ${workout.name}`,
 			description: `Spicy WOD | ${workout.name}`,
 			images: [
 				{
 					url: `/api/og?title=${encodeURIComponent(`Spicy WOD | ${workout.name}`)}`,
-					width: 1200,		
+					width: 1200,
 					height: 630,
 					alt: `Spicy WOD | ${workout.name}`,
 				},
 			],
 		},
-  }
+	};
 }
 
 export default async function WorkoutDetailPage({
@@ -65,17 +65,10 @@ export default async function WorkoutDetailPage({
 
 	if (!workout) return <div>Workout not found.</div>;
 
-	const results = await getWorkoutResultsByWorkoutAndUser(
-		myParams.id,
-		session?.user?.id
-	);
+	const results = await getWorkoutResultsByWorkoutAndUser(myParams.id, session?.user?.id);
 
 	const resultsWithSets = await (async () => {
-		if (
-			!workout?.roundsToScore ||
-			workout.roundsToScore <= 1 ||
-			results.length === 0
-		) {
+		if (!workout?.roundsToScore || workout.roundsToScore <= 1 || results.length === 0) {
 			return results.map((result) => ({ ...result, sets: null }));
 		}
 

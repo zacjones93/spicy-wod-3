@@ -1,6 +1,6 @@
 "use client";
 
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { useTheme } from "next-themes";
 import { DarkModeToggle } from "./dark-mode-toggle";
 

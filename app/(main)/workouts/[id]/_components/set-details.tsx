@@ -6,9 +6,7 @@ export function SetDetails({ sets }: { sets: Set[] | null }) {
 		sets &&
 		sets.length > 0 && (
 			<div className="p-4 border-t-2 border-black">
-				<h4 className="text-sm font-bold uppercase tracking-wider mb-2">
-					Set Details
-				</h4>
+				<h4 className="text-sm font-bold uppercase tracking-wider mb-2">Set Details</h4>
 				<ul className="space-y-1 list-none">
 					{sets.map((set, index) => {
 						const setInfo = [];

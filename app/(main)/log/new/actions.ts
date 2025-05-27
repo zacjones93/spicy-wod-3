@@ -1,11 +1,11 @@
 "use server";
 
+import { formatSecondsToTime, parseTimeScoreToSeconds } from "@/lib/utils";
 import { addLog } from "@/server/functions/log";
+import type { Set, Workout } from "@/types";
 import { fromZonedTime } from "date-fns-tz";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import type { Workout, Set } from "@/types";
-import { formatSecondsToTime, parseTimeScoreToSeconds } from "@/lib/utils"
 
 // Definition for individual set data to be passed to the database function
 
@@ -42,9 +42,7 @@ function parseScoreEntries(formData: FormData): Array<{ parts: string[] }> {
 		const parts: string[] = [];
 		let partIdx = 0;
 		while (formData.has(`scores[${roundIdx}][${partIdx}]`)) {
-			parts.push(
-				(formData.get(`scores[${roundIdx}][${partIdx}]`) as string) || "",
-			);
+			parts.push((formData.get(`scores[${roundIdx}][${partIdx}]`) as string) || "");
 			partIdx++;
 		}
 		if (parts.length > 0) {
@@ -146,8 +144,7 @@ function processScoreEntries(
 				};
 			}
 
-			const totalReps =
-				roundsCompleted * workout.repsPerRound! + repsCompleted;
+			const totalReps = roundsCompleted * workout.repsPerRound! + repsCompleted;
 
 			setsForDb.push({
 				setNumber,
@@ -255,24 +252,15 @@ function validateProcessedSets(
 	workoutScheme: Workout["scheme"],
 	atLeastOneScorePartFilled: boolean,
 ): { error?: string } | undefined {
-	if (
-		setsForDb.length === 0 &&
-		workoutScheme !== undefined &&
-		atLeastOneScorePartFilled
-	) {
+	if (setsForDb.length === 0 && workoutScheme !== undefined && atLeastOneScorePartFilled) {
 		console.error(
 			"[Action] All provided score entries resulted in no valid sets to save, but some input was detected.",
 		);
 		return {
-			error:
-				"Valid score information is required. Please check your inputs for each round/set.",
+			error: "Valid score information is required. Please check your inputs for each round/set.",
 		};
 	}
-	if (
-		setsForDb.length === 0 &&
-		workoutScheme !== undefined &&
-		!atLeastOneScorePartFilled
-	) {
+	if (setsForDb.length === 0 && workoutScheme !== undefined && !atLeastOneScorePartFilled) {
 		console.error(
 			"[Action] No score entries provided or all were empty, and workout expects scores.",
 		);
@@ -295,13 +283,24 @@ function generateWodScoreSummary(
 	let finalWodScoreSummary = "";
 	if (isTimeBasedWodScore) {
 		finalWodScoreSummary = formatSecondsToTime(totalSecondsForWodScore);
-		if (totalSecondsForWodScore === 0 && setsForDb.some(set => set.time !== null && set.time > 0)) {
+		if (
+			totalSecondsForWodScore === 0 &&
+			setsForDb.some((set) => set.time !== null && set.time > 0)
+		) {
 			// This means valid times were logged, but somehow total is still 0. Should not happen.
-		} else if (totalSecondsForWodScore === 0 && parsedScoreEntries.length > 0 && !atLeastOneScorePartFilled) {
+		} else if (
+			totalSecondsForWodScore === 0 &&
+			parsedScoreEntries.length > 0 &&
+			!atLeastOneScorePartFilled
+		) {
 			// No score parts filled, an error should have been caught earlier
 			// For safety, can return empty or specific string like "No Score"
 			finalWodScoreSummary = ""; // Or "No Score"
-		} else if (totalSecondsForWodScore === 0 && setsForDb.length === 0 && atLeastOneScorePartFilled) {
+		} else if (
+			totalSecondsForWodScore === 0 &&
+			setsForDb.length === 0 &&
+			atLeastOneScorePartFilled
+		) {
 			// some input, but no valid sets. Error should be caught.
 			// For safety, can return empty or specific string like "No Score"
 			finalWodScoreSummary = ""; // Or "No Score"
@@ -315,7 +314,11 @@ function generateWodScoreSummary(
 			if (isRoundsAndRepsWorkout) {
 				const roundsStr = scoreParts[0] || "0";
 				const repsStr = scoreParts[1] || "0";
-				if (roundsStr === "0" && repsStr === "0" && scoreParts.every(p => p.trim() === "")) {
+				if (
+					roundsStr === "0" &&
+					repsStr === "0" &&
+					scoreParts.every((p) => p.trim() === "")
+				) {
 					// Potentially skip
 				} else {
 					scoreSummaries.push(`${roundsStr} + ${repsStr}`);
@@ -399,13 +402,8 @@ export async function submitLogFormAction(
 ): Promise<{ error?: string } | undefined> {
 	const headerList = await headers();
 	const timezone = headerList.get("x-vercel-ip-timezone") ?? "America/Denver";
-	const {
-		selectedWorkoutId,
-		dateStr,
-		scaleValue,
-		notesValue,
-		redirectUrl,
-	} = parseBasicFormData(formData);
+	const { selectedWorkoutId, dateStr, scaleValue, notesValue, redirectUrl } =
+		parseBasicFormData(formData);
 
 	console.log("[Action] Date:", dateStr);
 
@@ -422,10 +420,7 @@ export async function submitLogFormAction(
 	}
 
 	const parsedScoreEntries = parseScoreEntries(formData);
-	console.log(
-		"[Action] Parsed Score Entries:",
-		JSON.stringify(parsedScoreEntries),
-	);
+	console.log("[Action] Parsed Score Entries:", JSON.stringify(parsedScoreEntries));
 
 	const validationError = validateParsedScores(parsedScoreEntries, workout.scheme);
 	if (validationError) {
@@ -436,8 +431,7 @@ export async function submitLogFormAction(
 		entry.parts.some((part) => part.trim() !== ""),
 	);
 
-	const isRoundsAndRepsWorkout =
-		!!workout.repsPerRound && workout.repsPerRound > 0;
+	const isRoundsAndRepsWorkout = !!workout.repsPerRound && workout.repsPerRound > 0;
 
 	const isTimeBasedWodScore = workout.scheme === "time" || workout.scheme === "time-with-cap";
 

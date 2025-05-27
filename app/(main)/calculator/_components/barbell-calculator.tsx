@@ -1,6 +1,6 @@
 "use client";
+import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import React, { useState, useMemo, Suspense } from "react";
-import { useQueryState, parseAsInteger, parseAsString } from "nuqs";
 // Since we are not in a Next.js environment for this immersive,
 // we'll simulate Head by just letting the style tag be global.
 // import Head from 'next/head'; // Not available in this environment
@@ -20,13 +20,13 @@ const roundToNearestIncrement = (weight: number, increment: number): number => {
 const calculatePlates = (
 	targetWeight: number,
 	barWeight: number,
-	availablePlates: number[]
+	availablePlates: number[],
 ): number[] => {
 	if (targetWeight <= barWeight) {
 		return [];
 	}
 	// Ensure calculations are done with sufficient precision then rounded at the end if necessary
-	let weightPerSide = (targetWeight - barWeight) / 2;
+	const weightPerSide = (targetWeight - barWeight) / 2;
 	const platesOnSide = [];
 	let remaining = weightPerSide;
 
@@ -90,34 +90,27 @@ const getPlateTextColor = (backgroundColor: string | null): string => {
 	// Determine if text should be black or white based on background
 	if (!backgroundColor) return "#000";
 	const hex = backgroundColor.replace("#", "");
-	const r = parseInt(hex.substring(0, 2), 16);
-	const g = parseInt(hex.substring(2, 4), 16);
-	const b = parseInt(hex.substring(4, 6), 16);
+	const r = Number.parseInt(hex.substring(0, 2), 16);
+	const g = Number.parseInt(hex.substring(2, 4), 16);
+	const b = Number.parseInt(hex.substring(4, 6), 16);
 	const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
 	return luminance > 0.5 ? "#000000" : "#FFFFFF";
 };
 
-const getPlateDimensions = (
-	weight: number
-): { height: number; width: number } => {
+const getPlateDimensions = (weight: number): { height: number; width: number } => {
 	const baseHeight = 100; // px
 	const baseWidth = 18; // px, increased for better visibility
 	const minHeight = baseHeight * 0.4;
 	const minWidth = baseWidth * 0.5;
 
-	if (weight >= 45 || weight >= 25)
-		return { height: baseHeight, width: baseWidth * 1.5 }; // 45lb or 25kg
-	if (weight >= 35 || weight >= 20)
-		return { height: baseHeight * 0.95, width: baseWidth * 1.4 }; // 35lb or 20kg
-	if (weight >= 25 || weight >= 15)
-		return { height: baseHeight * 0.9, width: baseWidth * 1.3 }; // 25lb or 15kg (note: 25lb is distinct from 25kg)
+	if (weight >= 45 || weight >= 25) return { height: baseHeight, width: baseWidth * 1.5 }; // 45lb or 25kg
+	if (weight >= 35 || weight >= 20) return { height: baseHeight * 0.95, width: baseWidth * 1.4 }; // 35lb or 20kg
+	if (weight >= 25 || weight >= 15) return { height: baseHeight * 0.9, width: baseWidth * 1.3 }; // 25lb or 15kg (note: 25lb is distinct from 25kg)
 	if (weight >= 15) return { height: baseHeight * 0.8, width: baseWidth * 1.2 }; // 15lb
 	if (weight >= 10) return { height: baseHeight * 0.7, width: baseWidth * 1.1 }; // 10lb or 10kg
 	if (weight >= 5) return { height: baseHeight * 0.6, width: baseWidth }; // 5lb or 5kg
-	if (weight >= 2.5)
-		return { height: baseHeight * 0.5, width: baseWidth * 0.8 }; // 2.5lb or 2.5kg
-	if (weight >= 1.25)
-		return { height: baseHeight * 0.4, width: baseWidth * 0.7 }; // 1.25kg
+	if (weight >= 2.5) return { height: baseHeight * 0.5, width: baseWidth * 0.8 }; // 2.5lb or 2.5kg
+	if (weight >= 1.25) return { height: baseHeight * 0.4, width: baseWidth * 0.7 }; // 1.25kg
 	return { height: minHeight, width: minWidth };
 };
 
@@ -224,21 +217,16 @@ const WarmupSet = ({
 export default function BarbellCalculator() {
 	const [targetWeightQuery, setTargetWeightQuery] = useQueryState(
 		"weight",
-		parseAsInteger.withDefault(135)
+		parseAsInteger.withDefault(135),
 	);
-	const [units, setUnits] = useQueryState(
-		"units",
-		parseAsString.withDefault("lb")
-	);
+	const [units, setUnits] = useQueryState("units", parseAsString.withDefault("lb"));
 	const [barWeightOption, setBarWeightOption] = useQueryState(
 		"bar",
-		parseAsInteger.withDefault(45) // This is always in LB as per UI
+		parseAsInteger.withDefault(45), // This is always in LB as per UI
 	);
 
 	// Local state for the input field to allow typing before submission
-	const [inputWeight, setInputWeight] = useState<string>(
-		targetWeightQuery.toString()
-	);
+	const [inputWeight, setInputWeight] = useState<string>(targetWeightQuery.toString());
 
 	const isKg = units === "kg";
 	// Bar weight in the currently selected unit system
@@ -260,11 +248,7 @@ export default function BarbellCalculator() {
 		: targetWeightQuery;
 
 	const platesPerSide = useMemo(() => {
-		return calculatePlates(
-			effectiveTargetWeightForCalc,
-			actualBarWeight,
-			availablePlates
-		);
+		return calculatePlates(effectiveTargetWeightForCalc, actualBarWeight, availablePlates);
 	}, [effectiveTargetWeightForCalc, actualBarWeight, availablePlates]);
 
 	const warmupSets = useMemo(() => {
@@ -282,26 +266,16 @@ export default function BarbellCalculator() {
 			let barForWarmupCalc;
 
 			if (isKg) {
-				displayWarmupWeight = roundToNearestIncrement(
-					warmupWeightLb * LB_TO_KG,
-					1.25
-				); // Convert to KG for display
-				barForWarmupCalc = roundToNearestIncrement(
-					barWeightLb * LB_TO_KG,
-					1.25
-				);
-				platesForWarmup = calculatePlates(
-					displayWarmupWeight,
-					barForWarmupCalc,
-					KG_PLATES
-				);
+				displayWarmupWeight = roundToNearestIncrement(warmupWeightLb * LB_TO_KG, 1.25); // Convert to KG for display
+				barForWarmupCalc = roundToNearestIncrement(barWeightLb * LB_TO_KG, 1.25);
+				platesForWarmup = calculatePlates(displayWarmupWeight, barForWarmupCalc, KG_PLATES);
 			} else {
 				displayWarmupWeight = warmupWeightLb;
 				barForWarmupCalc = barWeightLb;
 				platesForWarmup = calculatePlates(
 					displayWarmupWeight,
 					barForWarmupCalc,
-					LB_PLATES_FULL
+					LB_PLATES_FULL,
 				);
 			}
 
@@ -311,15 +285,11 @@ export default function BarbellCalculator() {
 				plates: platesForWarmup,
 			};
 		});
-	}, [
-		targetWeightQuery,
-		barWeightOption,
-		isKg
-	]);
+	}, [targetWeightQuery, barWeightOption, isKg]);
 
 	const handleWeightSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		const newWeight = parseInt(inputWeight, 10);
+		const newWeight = Number.parseInt(inputWeight, 10);
 		if (!isNaN(newWeight) && newWeight > 0) {
 			// Store the raw input. If units are KG, it will be converted for display/calc.
 			// If units are LB, it's used directly.

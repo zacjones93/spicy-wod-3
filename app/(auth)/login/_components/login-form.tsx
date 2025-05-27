@@ -70,10 +70,7 @@ export function LoginForm({ authenticateAction }: LoginFormProps) {
 		}
 	};
 
-	const [errorMessage, dispatch] = useActionState(
-		authenticateAction,
-		undefined,
-	);
+	const [errorMessage, dispatch] = useActionState(authenticateAction, undefined);
 
 	return (
 		<form action={dispatch} className="p-6 space-y-6">
@@ -98,13 +95,7 @@ export function LoginForm({ authenticateAction }: LoginFormProps) {
 				<label className="block font-bold uppercase mb-2" htmlFor="password">
 					Password
 				</label>
-				<input
-					className="input"
-					id="password"
-					name="password"
-					type="password"
-					required
-				/>
+				<input className="input" id="password" name="password" type="password" required />
 			</div>
 
 			{errorMessage === "CredentialsSignin" && (
@@ -123,11 +114,7 @@ export function LoginForm({ authenticateAction }: LoginFormProps) {
 					/>
 					<span>Remember me</span>
 				</label>
-				<Link
-					href="/forgot-password"
-					prefetch={false}
-					className="text-sm underline"
-				>
+				<Link href="/forgot-password" prefetch={false} className="text-sm underline">
 					Forgot password?
 				</Link>
 			</div>

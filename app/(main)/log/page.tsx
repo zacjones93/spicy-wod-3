@@ -1,12 +1,12 @@
 import { auth } from "@/auth";
+import { formatSecondsToTime } from "@/lib/utils";
 import { getLogsByUser } from "@/server/functions/log";
-import { redirect } from "next/navigation";
-import LogCalendarClient from "./_components/log-calendar-client"; // Import new calendar
-import Link from "next/link";
 import { getResultSetsById } from "@/server/functions/workout-results";
 import type { Set, WorkoutResultWithWorkoutName } from "@/types";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { formatSecondsToTime } from "@/lib/utils";
+import LogCalendarClient from "./_components/log-calendar-client"; // Import new calendar
 
 import type { Metadata } from "next";
 
@@ -54,95 +54,109 @@ export default async function LogPage() {
 			{/* Display recent results for now, calendar will be added here */}
 			<div className="flex flex-col md:flex-row gap-4">
 				<div className="mb-8 flex-1">
-					<h2 className="text-xl font-semibold mb-4 dark:text-white">
-						RECENT RESULTS
-					</h2>
+					<h2 className="text-xl font-semibold mb-4 dark:text-white">RECENT RESULTS</h2>
 					{/* Placeholder for recent results if needed, or remove if calendar is sufficient */}
 					{logs.length > 0 ? (
 						<div className="space-y-4">
-							{await Promise.all(
-								logs.map(async (log) => {
-									return (
-										<div
-											key={log.id}
-											className="border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white dark:bg-neutral-800 dark:border-neutral-700 dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)]"
-										>
-											<div className="p-4 flex justify-between items-start">
-												<div>
-													<Link href={`/workouts/${log.workoutId}`}>
-														<h3 className="text-xl font-bold uppercase tracking-tight hover:underline dark:text-white">
-															{log.workoutName || "Workout"}
-														</h3>
-													</Link>
-													<p className="text-xs font-mono text-neutral-600 dark:text-neutral-400">
-														{new Date(log.date).toLocaleDateString()}
-													</p>
-												</div>
-												<div className="text-right text-xs font-mono dark:text-neutral-300">
-													{log.type && (
-														<p>
-															<span className="font-semibold">Type:</span>{" "}
-															{log.type}
-														</p>
-													)}
-													{log.scale && (
-														<p>
-															<span className="font-semibold">Scale:</span>{" "}
-															{log.scale.toUpperCase()}
-														</p>
-													)}
-												</div>
-											</div>
-
-											<div className="p-4 space-y-2">
-												{log.notes && (
-													<div className="p-2 bg-neutral-100 border border-neutral-300 dark:bg-neutral-700 dark:border-neutral-600">
-														<p className="text-sm font-mono dark:text-neutral-200">
-															{log.notes}
-														</p>
-													</div>
-												)}
-
-												<div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm font-mono dark:text-neutral-300">
-													{log.wodScore && (
-														<p>
-															<span className="font-semibold">Score:</span>{" "}
-															{log.wodScore}
-														</p>
-													)}
-													{log.setCount && (
-														<p>
-															<span className="font-semibold">Sets:</span>{" "}
-															{log.setCount}
-														</p>
-													)}
-													{log.distance && (
-														<p>
-															<span className="font-semibold">Distance:</span>{" "}
-															{log.distance}m
-														</p>
-													)}
-													{log.time && (
-														<p>
-															<span className="font-semibold">Time:</span>{" "}
-															{formatSecondsToTime(log.time)}
-														</p>
-													)}
-												</div>
-											</div>
-											<Suspense
-												fallback={
-													<div className="p-4 border-t-2 border-black text-sm font-mono dark:border-neutral-700 dark:text-neutral-400">
-														Loading details...
-													</div>
-												}
+							{
+								await Promise.all(
+									logs.map(async (log) => {
+										return (
+											<div
+												key={log.id}
+												className="border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white dark:bg-neutral-800 dark:border-neutral-700 dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)]"
 											>
-												<SetDetails log={log} />
-											</Suspense>
-										</div>
-									);
-								})
-							)}
+												<div className="p-4 flex justify-between items-start">
+													<div>
+														<Link href={`/workouts/${log.workoutId}`}>
+															<h3 className="text-xl font-bold uppercase tracking-tight hover:underline dark:text-white">
+																{log.workoutName || "Workout"}
+															</h3>
+														</Link>
+														<p className="text-xs font-mono text-neutral-600 dark:text-neutral-400">
+															{new Date(
+																log.date,
+															).toLocaleDateString()}
+														</p>
+													</div>
+													<div className="text-right text-xs font-mono dark:text-neutral-300">
+														{log.type && (
+															<p>
+																<span className="font-semibold">
+																	Type:
+																</span>{" "}
+																{log.type}
+															</p>
+														)}
+														{log.scale && (
+															<p>
+																<span className="font-semibold">
+																	Scale:
+																</span>{" "}
+																{log.scale.toUpperCase()}
+															</p>
+														)}
+													</div>
+												</div>
+
+												<div className="p-4 space-y-2">
+													{log.notes && (
+														<div className="p-2 bg-neutral-100 border border-neutral-300 dark:bg-neutral-700 dark:border-neutral-600">
+															<p className="text-sm font-mono dark:text-neutral-200">
+																{log.notes}
+															</p>
+														</div>
+													)}
+
+													<div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm font-mono dark:text-neutral-300">
+														{log.wodScore && (
+															<p>
+																<span className="font-semibold">
+																	Score:
+																</span>{" "}
+																{log.wodScore}
+															</p>
+														)}
+														{log.setCount && (
+															<p>
+																<span className="font-semibold">
+																	Sets:
+																</span>{" "}
+																{log.setCount}
+															</p>
+														)}
+														{log.distance && (
+															<p>
+																<span className="font-semibold">
+																	Distance:
+																</span>{" "}
+																{log.distance}m
+															</p>
+														)}
+														{log.time && (
+															<p>
+																<span className="font-semibold">
+																	Time:
+																</span>{" "}
+																{formatSecondsToTime(log.time)}
+															</p>
+														)}
+													</div>
+												</div>
+												<Suspense
+													fallback={
+														<div className="p-4 border-t-2 border-black text-sm font-mono dark:border-neutral-700 dark:text-neutral-400">
+															Loading details...
+														</div>
+													}
+												>
+													<SetDetails log={log} />
+												</Suspense>
+											</div>
+										);
+									}),
+								)
+							}
 						</div>
 					) : (
 						<p className="dark:text-white">No recent results.</p>

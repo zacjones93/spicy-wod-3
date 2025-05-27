@@ -4,9 +4,9 @@ import { getAllTags } from "@/server/functions/tag";
 import { getUser } from "@/server/functions/user";
 import { getWorkoutById } from "@/server/functions/workout";
 import { updateWorkout } from "@/server/functions/workout";
+import type { WorkoutUpdate } from "@/types/workout";
 import { redirect } from "next/navigation";
 import EditWorkoutClient from "./_components/edit-workout-client";
-import { type WorkoutUpdate } from "@/types/workout";
 
 export const dynamic = "force-dynamic";
 

@@ -6,12 +6,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-
 interface Props {
 	movements: Movement[];
 	tags: Tag[];
 	createWorkoutAction: (data: {
-		workout: Omit<WorkoutCreate, 'createdAt'>;
+		workout: Omit<WorkoutCreate, "createdAt">;
 		tagIds: Tag["id"][];
 		movementIds: Movement["id"][];
 	}) => Promise<void>;
@@ -28,14 +27,10 @@ export default function CreateWorkoutClient({
 	const [newTag, setNewTag] = useState("");
 	const [name, setName] = useState("");
 	const [description, setDescription] = useState("");
-	const [scheme, setScheme] = useState<Workout['scheme']>();
-	const [scope, setScope] = useState<Workout['scope']>("private");
-	const [roundsToScore, setRoundsToScore] = useState<number | undefined>(
-		undefined,
-	);
-	const [repsPerRound, setRepsPerRound] = useState<number | undefined>(
-		undefined,
-	);
+	const [scheme, setScheme] = useState<Workout["scheme"]>();
+	const [scope, setScope] = useState<Workout["scope"]>("private");
+	const [roundsToScore, setRoundsToScore] = useState<number | undefined>(undefined);
+	const [repsPerRound, setRepsPerRound] = useState<number | undefined>(undefined);
 	const router = useRouter();
 
 	const handleAddTag = () => {
@@ -71,7 +66,7 @@ export default function CreateWorkoutClient({
 		e.preventDefault();
 		const workoutId = crypto.randomUUID();
 
-		if (!scheme) throw new Error("Must provide a workout scheme")
+		if (!scheme) throw new Error("Must provide a workout scheme");
 
 		await createWorkoutAction({
 			workout: {
@@ -104,9 +99,7 @@ export default function CreateWorkoutClient({
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 					<div className="space-y-6">
 						<div>
-							<label className="block font-bold uppercase mb-2">
-								Workout Name
-							</label>
+							<label className="block font-bold uppercase mb-2">Workout Name</label>
 							<input
 								type="text"
 								className="input"
@@ -118,9 +111,7 @@ export default function CreateWorkoutClient({
 						</div>
 
 						<div>
-							<label className="block font-bold uppercase mb-2">
-								Description
-							</label>
+							<label className="block font-bold uppercase mb-2">Description</label>
 							<textarea
 								className="textarea"
 								rows={4}
@@ -157,7 +148,7 @@ export default function CreateWorkoutClient({
 							<select
 								className="select"
 								value={scope}
-								onChange={(e) => setScope(e.target.value as Workout['scope'])}
+								onChange={(e) => setScope(e.target.value as Workout["scope"])}
 								required
 							>
 								<option value="private">Private</option>
@@ -231,7 +222,9 @@ export default function CreateWorkoutClient({
 									<div
 										key={tag.id}
 										className={`flex items-center border-2 border-black px-2 py-1 cursor-pointer ${
-											selectedTags.includes(tag.id) ? "bg-black text-white" : ""
+											selectedTags.includes(tag.id)
+												? "bg-black text-white"
+												: ""
 										}`}
 										onClick={() => handleTagToggle(tag.id)}
 									>
@@ -270,7 +263,9 @@ export default function CreateWorkoutClient({
 									>
 										<div className="flex justify-between items-center">
 											<span className="font-bold">{movement.name}</span>
-											<span className="text-xs uppercase">{movement.type}</span>
+											<span className="text-xs uppercase">
+												{movement.type}
+											</span>
 										</div>
 									</div>
 								))}

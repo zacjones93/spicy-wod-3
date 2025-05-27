@@ -29,12 +29,10 @@ export async function createUser(email: string, password: string) {
 	const salt = genSaltSync(10);
 	const hash = hashSync(password, salt);
 
-	return await db
-		.insert(users)
-		.values({
-			email,
-			hashedPassword: hash,
-			passwordSalt: salt,
-			joinedAt: new Date(),
-		});
+	return await db.insert(users).values({
+		email,
+		hashedPassword: hash,
+		passwordSalt: salt,
+		joinedAt: new Date(),
+	});
 }

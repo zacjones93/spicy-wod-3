@@ -20,13 +20,9 @@ export const {
 			},
 			async authorize(credentials, request) {
 				const email =
-					typeof credentials?.email === "string"
-						? credentials.email
-						: undefined;
+					typeof credentials?.email === "string" ? credentials.email : undefined;
 				const password =
-					typeof credentials?.password === "string"
-						? credentials.password
-						: undefined;
+					typeof credentials?.password === "string" ? credentials.password : undefined;
 
 				if (!email || !password) {
 					return null;

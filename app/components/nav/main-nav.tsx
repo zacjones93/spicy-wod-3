@@ -51,8 +51,11 @@ export default async function MainNav() {
 							>
 								Log
 							</Link>
-							<Link href="/calculator" className="font-bold uppercase hover:underline text-foreground dark:text-dark-foreground">
-									Calculator
+							<Link
+								href="/calculator"
+								className="font-bold uppercase hover:underline text-foreground dark:text-dark-foreground"
+							>
+								Calculator
 							</Link>
 							<div className="border-l-2 border-black dark:border-dark-border h-6 mx-2" />
 							<Link
@@ -66,7 +69,10 @@ export default async function MainNav() {
 						</>
 					) : (
 						<div className="flex items-center gap-2">
-							<Link href="/calculator" className="font-bold uppercase hover:underline text-foreground dark:text-dark-foreground">
+							<Link
+								href="/calculator"
+								className="font-bold uppercase hover:underline text-foreground dark:text-dark-foreground"
+							>
 								Calculator
 							</Link>
 							<Link href="/login" className="btn-outline">
@@ -76,7 +82,6 @@ export default async function MainNav() {
 								Sign Up
 							</Link>
 							<DarkModeToggle />
-						
 						</div>
 					)}
 				</nav>

@@ -57,8 +57,7 @@ export default function ProfileClient({ user }: ProfileClientProps) {
 			{message && (
 				<div
 					className={`mb-4 p-3 rounded-md ${
-						message.startsWith("Error") ||
-						message.startsWith("An unexpected error")
+						message.startsWith("Error") || message.startsWith("An unexpected error")
 							? "bg-red-100 text-red-700"
 							: "bg-green-100 text-green-700"
 					}`}
@@ -87,11 +86,7 @@ export default function ProfileClient({ user }: ProfileClientProps) {
 						className="mt-1"
 					/>
 				</div>
-				<Button
-					className="bg-black text-white"
-					type="submit"
-					disabled={loading}
-				>
+				<Button className="bg-black text-white" type="submit" disabled={loading}>
 					{loading ? "Saving..." : "Save Changes"}
 				</Button>
 			</form>

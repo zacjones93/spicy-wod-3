@@ -4,11 +4,7 @@ import { getDbAsync } from "../db";
 import { movements } from "../db/schema";
 
 type MovementType = "strength" | "gymnastic" | "monostructural";
-const VALID_MOVEMENT_TYPES: MovementType[] = [
-	"strength",
-	"gymnastic",
-	"monostructural",
-];
+const VALID_MOVEMENT_TYPES: MovementType[] = ["strength", "gymnastic", "monostructural"];
 
 // Fetch all movements
 export async function getAllMovements() {
@@ -16,45 +12,28 @@ export async function getAllMovements() {
 	try {
 		const db = await getDbAsync();
 		const allMovements = await db.select().from(movements);
-		console.log(
-			`[server/functions/movement] Fetched ${allMovements.length} movements`,
-		);
+		console.log(`[server/functions/movement] Fetched ${allMovements.length} movements`);
 		return allMovements;
 	} catch (error) {
-		console.error(
-			"[server/functions/movement] Error in getAllMovements:",
-			error,
-		);
+		console.error("[server/functions/movement] Error in getAllMovements:", error);
 		throw new Error("Failed to fetch movements.");
 	}
 }
 
 // Fetch a single movement by ID
 export async function getMovementById(id: string) {
-	console.log(
-		`[server/functions/movement] getMovementById called for id: ${id}`,
-	);
+	console.log(`[server/functions/movement] getMovementById called for id: ${id}`);
 	try {
 		const db = await getDbAsync();
-		const movement = await db
-			.select()
-			.from(movements)
-			.where(eq(movements.id, id));
+		const movement = await db.select().from(movements).where(eq(movements.id, id));
 		if (movement.length === 0) {
-			console.log(
-				`[server/functions/movement] No movement found for id: ${id}`,
-			);
+			console.log(`[server/functions/movement] No movement found for id: ${id}`);
 			return null;
 		}
-		console.log(
-			`[server/functions/movement] Fetched movement: ${movement[0].name}`,
-		);
+		console.log(`[server/functions/movement] Fetched movement: ${movement[0].name}`);
 		return movement[0];
 	} catch (error) {
-		console.error(
-			`[server/functions/movement] Error in getMovementById for id ${id}:`,
-			error,
-		);
+		console.error(`[server/functions/movement] Error in getMovementById for id ${id}:`, error);
 		throw new Error("Failed to fetch movement.");
 	}
 }
@@ -66,10 +45,7 @@ export async function createMovement(data: {
 	// userId is not in the current schema for movements table
 	userId?: string;
 }) {
-	console.log(
-		"[server/functions/movement] createMovement called with data:",
-		data,
-	);
+	console.log("[server/functions/movement] createMovement called with data:", data);
 	const db = await getDbAsync();
 	const { name, type: rawType } = data;
 
@@ -90,9 +66,7 @@ export async function createMovement(data: {
 	}
 
 	const movementId = crypto.randomUUID();
-	console.log(
-		`[server/functions/movement] Generated movementId: ${movementId}`,
-	);
+	console.log(`[server/functions/movement] Generated movementId: ${movementId}`);
 
 	try {
 		await db.insert(movements).values({
@@ -100,9 +74,7 @@ export async function createMovement(data: {
 			name,
 			type: movementType,
 		});
-		console.log(
-			`[server/functions/movement] Movement created successfully: ${movementId}`,
-		);
+		console.log(`[server/functions/movement] Movement created successfully: ${movementId}`);
 
 		revalidatePath("/movements");
 		revalidatePath("/"); // Revalidate home page if it lists movements or related data
@@ -112,10 +84,7 @@ export async function createMovement(data: {
 		// For now, the action in page.tsx doesn't expect a return value for redirection
 		return { id: movementId, name, movementType };
 	} catch (error) {
-		console.error(
-			`[server/functions/movement] Error creating movement '${name}':`,
-			error,
-		);
+		console.error(`[server/functions/movement] Error creating movement '${name}':`, error);
 		// Consider more specific error messages based on error type
 		throw new Error("Failed to create movement in the database.");
 	}

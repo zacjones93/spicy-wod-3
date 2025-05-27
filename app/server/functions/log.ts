@@ -1,10 +1,9 @@
 "use server";
 
+import type { Set, WorkoutResultWithWorkoutName } from "@/types";
 import { and, desc, eq, getTableColumns, gte, lt, sql } from "drizzle-orm";
 import { getDbAsync } from "../db";
 import { results, sets as setsTable, workouts } from "../db/schema";
-import type { WorkoutResultWithWorkoutName, Set } from "@/types";
-
 
 // Fetch all logs for a user (optionally filter by month)
 export async function getLogsByUser(
@@ -13,9 +12,7 @@ export async function getLogsByUser(
 	year?: number,
 ): Promise<WorkoutResultWithWorkoutName[]> {
 	if (userId === undefined) {
-		console.error(
-			"[log] getLogsByUser called with undefined userId. Returning empty array.",
-		);
+		console.error("[log] getLogsByUser called with undefined userId. Returning empty array.");
 		return [];
 	}
 	const db = await getDbAsync();
@@ -27,9 +24,7 @@ export async function getLogsByUser(
 		const end = new Date(year, month + 1, 1);
 		conditions.push(gte(results.date, start));
 		conditions.push(lt(results.date, end));
-		console.log(
-			`[log] Fetching logs for user ${userId} in ${month + 1}/${year} using Drizzle`,
-		);
+		console.log(`[log] Fetching logs for user ${userId} in ${month + 1}/${year} using Drizzle`);
 	} else {
 		console.log(`[log] Fetching all logs for user ${userId} using Drizzle`);
 	}
@@ -106,9 +101,7 @@ export async function addLog({
 
 			if (setValues.length > 0) {
 				additionalOperations.push(db.insert(setsTable).values(setValues));
-				console.log(
-					`[log] Prepared ${setValues.length} sets for result ${resultId}`,
-				);
+				console.log(`[log] Prepared ${setValues.length} sets for result ${resultId}`);
 			}
 		}
 
@@ -124,15 +117,10 @@ export async function addLog({
 		// satisfying db.batch()'s type requirement.
 		await db.batch([mainResultInsertOperation, ...additionalOperations]);
 
-		console.log(
-			`[log] Successfully batched log and associated sets for result ${resultId}`,
-		);
+		console.log(`[log] Successfully batched log and associated sets for result ${resultId}`);
 		return resultId;
 	} catch (error) {
-		console.error(
-			`[log] Batch operation failed for addLog (resultId: ${resultId}):`,
-			error,
-		);
+		console.error(`[log] Batch operation failed for addLog (resultId: ${resultId}):`, error);
 		// Re-throw or handle error as appropriate for the application
 		// For now, re-throwing to ensure the action can catch it.
 		throw error;

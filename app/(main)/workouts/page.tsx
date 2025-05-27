@@ -1,8 +1,8 @@
 import { getAllWorkouts } from "@/server/functions/workout";
 import { Plus } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import WorkoutControls from "./_components/WorkoutControls";
-import type { Metadata } from "next";
 
 export const metadata: Metadata = {
 	metadataBase: new URL("https://spicywod.com"),
@@ -13,9 +13,7 @@ export const metadata: Metadata = {
 		description: "Track your spicy workouts and progress.", // Default description
 		images: [
 			{
-				url: `/api/og?title=${encodeURIComponent(
-					"Spicy Wod | Explore Workouts"
-				)}`,
+				url: `/api/og?title=${encodeURIComponent("Spicy Wod | Explore Workouts")}`,
 				width: 1200,
 				height: 630,
 				alt: "Spicy Wod | Explore Workouts",
@@ -36,14 +34,12 @@ export default async function WorkoutsPage({
 	const selectedMovement = mySearchParams?.movement || "";
 	const workouts = allWorkouts.filter((workout) => {
 		const nameMatch = workout.name.toLowerCase().includes(searchTerm);
-		const descriptionMatch = workout.description
-			?.toLowerCase()
-			.includes(searchTerm);
+		const descriptionMatch = workout.description?.toLowerCase().includes(searchTerm);
 		const movementSearchMatch = workout.movements.some((movement) =>
-			movement?.name?.toLowerCase().includes(searchTerm)
+			movement?.name?.toLowerCase().includes(searchTerm),
 		);
 		const tagSearchMatch = workout.tags.some((tag) =>
-			tag.name.toLowerCase().includes(searchTerm)
+			tag.name.toLowerCase().includes(searchTerm),
 		);
 		const searchFilterPassed = searchTerm
 			? nameMatch || descriptionMatch || movementSearchMatch || tagSearchMatch
@@ -52,9 +48,7 @@ export default async function WorkoutsPage({
 			? workout.tags.some((tag) => tag.name === selectedTag)
 			: true;
 		const movementFilterPassed = selectedMovement
-			? workout.movements.some(
-					(movement) => movement?.name === selectedMovement
-			  )
+			? workout.movements.some((movement) => movement?.name === selectedMovement)
 			: true;
 		return searchFilterPassed && tagFilterPassed && movementFilterPassed;
 	});
@@ -72,25 +66,18 @@ export default async function WorkoutsPage({
 
 	// Extract unique tags and movements for filter dropdowns
 	const allTags = [
-		...new Set(
-			allWorkouts.flatMap((workout) => workout.tags.map((tag) => tag.name))
-		),
+		...new Set(allWorkouts.flatMap((workout) => workout.tags.map((tag) => tag.name))),
 	].sort() as string[];
 	const allMovements = [
 		...new Set(
-			allWorkouts.flatMap((workout) =>
-				workout.movements.map((m) => m?.name).filter(Boolean)
-			)
+			allWorkouts.flatMap((workout) => workout.movements.map((m) => m?.name).filter(Boolean)),
 		),
 	].sort() as string[];
 	return (
 		<div>
 			<div className="flex justify-between items-center sm:flex-row flex-col mb-6">
 				<h1 className="mb-4">WORKOUTS</h1>
-				<Link
-					href="/workouts/new"
-					className="btn flex items-center gap-2 w-fit"
-				>
+				<Link href="/workouts/new" className="btn flex items-center gap-2 w-fit">
 					<Plus className="h-5 w-5" />
 					Create Workout
 				</Link>
@@ -167,8 +154,8 @@ export default async function WorkoutsPage({
 																	result.scale === "rx"
 																		? "bg-green-100 text-green-700 dark:bg-green-700 dark:text-green-100"
 																		: result.scale === "rx+"
-																		? "bg-red-100 text-red-700 dark:bg-red-700 dark:text-red-100"
-																		: "bg-yellow-100 text-yellow-700 dark:bg-yellow-700 dark:text-yellow-100"
+																			? "bg-red-100 text-red-700 dark:bg-red-700 dark:text-red-100"
+																			: "bg-yellow-100 text-yellow-700 dark:bg-yellow-700 dark:text-yellow-100"
 																}`}
 															>
 																{result.scale.toUpperCase()}

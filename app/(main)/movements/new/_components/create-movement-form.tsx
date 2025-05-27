@@ -1,11 +1,11 @@
 "use client";
 
+import { movements } from "@/server/db/schema";
+import type { Movement } from "@/types";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { movements } from "@/server/db/schema";
-import { Movement } from "@/types";
 
 interface Props {
 	createMovementAction: (data: {
@@ -42,9 +42,7 @@ export default function CreateMovementForm({ createMovementAction }: Props) {
 			router.push("/movements"); // Redirect to the movements list page
 		} catch (err) {
 			console.error("Failed to create movement:", err);
-			setError(
-				err instanceof Error ? err.message : "An unknown error occurred."
-			);
+			setError(err instanceof Error ? err.message : "An unknown error occurred.");
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -61,16 +59,10 @@ export default function CreateMovementForm({ createMovementAction }: Props) {
 				</div>
 			</div>
 
-			<form
-				className="border-2 border-black p-6 max-w-md mx-auto"
-				onSubmit={handleSubmit}
-			>
+			<form className="border-2 border-black p-6 max-w-md mx-auto" onSubmit={handleSubmit}>
 				<div className="space-y-6">
 					<div>
-						<label
-							htmlFor="movementName"
-							className="block font-bold uppercase mb-2"
-						>
+						<label htmlFor="movementName" className="block font-bold uppercase mb-2">
 							Movement Name
 						</label>
 						<input
@@ -85,10 +77,7 @@ export default function CreateMovementForm({ createMovementAction }: Props) {
 					</div>
 
 					<div>
-						<label
-							htmlFor="movementType"
-							className="block font-bold uppercase mb-2"
-						>
+						<label htmlFor="movementType" className="block font-bold uppercase mb-2">
 							Movement Type
 						</label>
 						<select

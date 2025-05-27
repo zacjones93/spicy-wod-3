@@ -1,6 +1,6 @@
 "use client";
 
-import type { Movement, WorkoutWithTagsAndMovements, WorkoutResult } from "@/types";
+import type { Movement, WorkoutResult, WorkoutWithTagsAndMovements } from "@/types";
 import { ListChecks, Plus } from "lucide-react";
 import Link from "next/link";
 
@@ -77,7 +77,9 @@ export default function MovementDetailClient({
 														)}
 													</div>
 													{result.wodScore && (
-														<p className="text-xl mb-1">{result.wodScore}</p>
+														<p className="text-xl mb-1">
+															{result.wodScore}
+														</p>
 													)}
 													{result.notes && (
 														<p className="text-sm text-gray-600">

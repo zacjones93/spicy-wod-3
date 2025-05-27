@@ -1,29 +1,22 @@
 "use client";
 
+import type { Movement, Tag } from "@/types";
 import { Filter, Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import type { Tag, Movement } from "@/types"
 
 interface WorkoutControlsProps {
 	allTags: Tag["name"][];
 	allMovements: Movement["name"][];
 }
 
-export default function WorkoutControls({
-	allTags,
-	allMovements,
-}: WorkoutControlsProps) {
+export default function WorkoutControls({ allTags, allMovements }: WorkoutControlsProps) {
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
-	const [searchTerm, setSearchTerm] = useState(
-		searchParams.get("search") || "",
-	);
+	const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
 	const [selectedTag, setSelectedTag] = useState(searchParams.get("tag") || "");
-	const [selectedMovement, setSelectedMovement] = useState(
-		searchParams.get("movement") || "",
-	);
+	const [selectedMovement, setSelectedMovement] = useState(searchParams.get("movement") || "");
 
 	useEffect(() => {
 		const params = new URLSearchParams(searchParams.toString());
@@ -46,14 +39,7 @@ export default function WorkoutControls({
 		}
 
 		router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-	}, [
-		searchTerm,
-		selectedTag,
-		selectedMovement,
-		router,
-		pathname,
-		searchParams,
-	]);
+	}, [searchTerm, selectedTag, selectedMovement, router, pathname, searchParams]);
 
 	return (
 		<div className="flex flex-col sm:flex-row gap-4 mb-6">

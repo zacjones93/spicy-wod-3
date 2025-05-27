@@ -74,9 +74,7 @@ export default function SignupFormClient({ registerAction }: SignupFormClientPro
 			</div>
 
 			<div>
-				<label className="block font-bold uppercase mb-2">
-					Confirm Password
-				</label>
+				<label className="block font-bold uppercase mb-2">Confirm Password</label>
 				<input
 					type="password"
 					className="input"
@@ -91,12 +89,7 @@ export default function SignupFormClient({ registerAction }: SignupFormClientPro
 			</div>
 
 			<div className="flex items-center gap-2">
-				<input
-					type="checkbox"
-					className="h-5 w-5"
-					required
-					disabled={pending}
-				/>
+				<input type="checkbox" className="h-5 w-5" required disabled={pending} />
 				<span>
 					I agree to the{" "}
 					<Link href="/terms" className="underline">

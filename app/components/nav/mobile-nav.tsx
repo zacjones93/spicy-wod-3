@@ -2,17 +2,12 @@
 
 import LogoutButton from "@/components/nav/logout-button";
 import { Button } from "@/components/ui/button";
-import {
-	Sheet,
-	SheetContent,
-	SheetTitle,
-	SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Dumbbell, Menu, User } from "lucide-react";
 import type { Session } from "next-auth";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { DarkModeToggle } from "../ui/dark-mode-toggle";
 
 interface MobileNavProps {
@@ -33,10 +28,7 @@ export default function MobileNav({ session }: MobileNavProps) {
 					<SheetTitle>Navigation Menu</SheetTitle>
 				</VisuallyHidden>
 				<nav className="grid gap-6 text-lg font-medium">
-					<Link
-						href="/"
-						className="flex items-center gap-2 text-lg font-semibold mb-4"
-					>
+					<Link href="/" className="flex items-center gap-2 text-lg font-semibold mb-4">
 						<Image
 							src="/spicywod-logo-black.png"
 							alt="spicy wod"
@@ -51,7 +43,9 @@ export default function MobileNav({ session }: MobileNavProps) {
 							height={32}
 							className="hidden dark:block"
 						/>
-						<span className="text-2xl font-black uppercase text-foreground dark:text-dark-foreground">spicy wod</span>
+						<span className="text-2xl font-black uppercase text-foreground dark:text-dark-foreground">
+							spicy wod
+						</span>
 					</Link>
 					{session?.user ? (
 						<>

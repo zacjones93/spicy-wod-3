@@ -7,8 +7,8 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
 import type { WorkoutResultWithWorkoutName } from "@/types";
+import Link from "next/link";
 
 interface LogCalendarClientProps {
 	logs: WorkoutResultWithWorkoutName[];
@@ -16,15 +16,16 @@ interface LogCalendarClientProps {
 
 export default function LogCalendarClient({ logs }: LogCalendarClientProps) {
 	const [date, setDate] = React.useState<Date | undefined>(new Date());
-	const [selectedLog, setSelectedLog] = React.useState<WorkoutResultWithWorkoutName[] | null>(null);
+	const [selectedLog, setSelectedLog] = React.useState<WorkoutResultWithWorkoutName[] | null>(
+		null,
+	);
 
 	const handleDateSelect = React.useCallback(
 		(selectedDate: Date | undefined) => {
 			setDate(selectedDate);
 			if (selectedDate) {
 				const logsForDay = logs.filter(
-					(log) =>
-						new Date(log.date).toDateString() === selectedDate.toDateString(),
+					(log) => new Date(log.date).toDateString() === selectedDate.toDateString(),
 				);
 				setSelectedLog(logsForDay.length > 0 ? logsForDay : null);
 			} else {
@@ -63,10 +64,7 @@ export default function LogCalendarClient({ logs }: LogCalendarClientProps) {
 			{selectedLog && selectedLog.length > 0 && (
 				<div className="border p-4 rounded-md md:w-1/3 flex flex-col gap-4 min-w-[358px]">
 					{selectedLog.map((logEntry) => (
-						<div
-							key={logEntry.id}
-							className="border-2 border-black p-4 rounded-md"
-						>
+						<div key={logEntry.id} className="border-2 border-black p-4 rounded-md">
 							<h3 className="font-bold text-lg mb-2">
 								{logEntry.workoutName || "Workout Result"}
 							</h3>
@@ -83,12 +81,8 @@ export default function LogCalendarClient({ logs }: LogCalendarClientProps) {
 							{logEntry.wodScore && (
 								<p className="text-xl mb-1">{logEntry.wodScore}</p>
 							)}
-							{logEntry.time && (
-								<p className="mt-1">Duration: {logEntry.time}</p>
-							)}
-							{logEntry.setCount && (
-								<p className="mt-1">Sets: {logEntry.setCount}</p>
-							)}
+							{logEntry.time && <p className="mt-1">Duration: {logEntry.time}</p>}
+							{logEntry.setCount && <p className="mt-1">Sets: {logEntry.setCount}</p>}
 							{logEntry.notes && (
 								<p className="text-sm text-gray-600 mt-2">{logEntry.notes}</p>
 							)}
@@ -108,12 +102,8 @@ export default function LogCalendarClient({ logs }: LogCalendarClientProps) {
 			)}
 			{(!selectedLog || selectedLog.length === 0) && date && (
 				<div className="border p-4 rounded-md md:w-1/3 min-w-[358px]">
-					<h3 className="font-bold text-sm mb-2">
-						No workout logged for this day.
-					</h3>
-					<p className="text-sm text-muted-foreground">
-						{date.toLocaleDateString()}
-					</p>
+					<h3 className="font-bold text-sm mb-2">No workout logged for this day.</h3>
+					<p className="text-sm text-muted-foreground">{date.toLocaleDateString()}</p>
 				</div>
 			)}
 			{!date && (

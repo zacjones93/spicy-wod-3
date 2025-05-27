@@ -1,13 +1,7 @@
 "use client";
 
 import type { Prettify } from "@/lib/utils";
-import type {
-	Workout,
-	WorkoutUpdate,
-	Movement,
-	Tag,
-	WorkoutWithTagsAndMovements,
-} from "@/types";
+import type { Movement, Tag, Workout, WorkoutUpdate, WorkoutWithTagsAndMovements } from "@/types";
 import { ArrowLeft, Plus, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -34,25 +28,21 @@ export default function EditWorkoutClient({
 }: Props) {
 	const [name, setName] = useState(workout?.name || "");
 	const [description, setDescription] = useState(workout?.description || "");
-	const [scheme, setScheme] = useState<WorkoutUpdate["scheme"]>(
-		workout?.scheme
-	);
+	const [scheme, setScheme] = useState<WorkoutUpdate["scheme"]>(workout?.scheme);
 	const [scope, setScope] = useState(workout?.scope || "private");
 	const [tags, setTags] = useState<Tag[]>(initialTags);
 	const [selectedMovements, setSelectedMovements] = useState<string[]>(
-		(workout?.movements || []).map((m: Movement) => m.id)
+		(workout?.movements || []).map((m: Movement) => m.id),
 	);
 	const [selectedTags, setSelectedTags] = useState<string[]>(
-		(workout?.tags || []).map((t: Tag | string) =>
-			typeof t === "string" ? t : t.id
-		)
+		(workout?.tags || []).map((t: Tag | string) => (typeof t === "string" ? t : t.id)),
 	);
 	const [newTag, setNewTag] = useState("");
 	const [repsPerRound, setRepsPerRound] = useState<number | undefined>(
-		workout?.repsPerRound === null ? undefined : workout?.repsPerRound
+		workout?.repsPerRound === null ? undefined : workout?.repsPerRound,
 	);
 	const [roundsToScore, setRoundsToScore] = useState<number | undefined>(
-		workout?.roundsToScore === null ? 1 : workout?.roundsToScore || 1
+		workout?.roundsToScore === null ? 1 : workout?.roundsToScore || 1,
 	);
 
 	const handleAddTag = () => {
@@ -112,10 +102,7 @@ export default function EditWorkoutClient({
 				</div>
 			</div>
 
-			<form
-				className="border-2 border-black dark:border-white p-6"
-				onSubmit={handleSubmit}
-			>
+			<form className="border-2 border-black dark:border-white p-6" onSubmit={handleSubmit}>
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 					<div className="space-y-6">
 						<div>
@@ -216,7 +203,7 @@ export default function EditWorkoutClient({
 									setRepsPerRound(
 										e.target.value === ""
 											? undefined
-											: Number.parseInt(e.target.value)
+											: Number.parseInt(e.target.value),
 									)
 								}
 							/>
@@ -238,7 +225,7 @@ export default function EditWorkoutClient({
 									setRoundsToScore(
 										e.target.value === ""
 											? undefined
-											: Number.parseInt(e.target.value)
+											: Number.parseInt(e.target.value),
 									)
 								}
 							/>
@@ -277,7 +264,9 @@ export default function EditWorkoutClient({
 										type="button"
 										key={tag.id}
 										className={`flex items-center border-2 border-black px-2 py-1 cursor-pointer text-left ${
-											selectedTags.includes(tag.id) ? "bg-black text-white" : ""
+											selectedTags.includes(tag.id)
+												? "bg-black text-white"
+												: ""
 										}`}
 										onClick={() => handleTagToggle(tag.id)}
 									>
@@ -300,10 +289,7 @@ export default function EditWorkoutClient({
 					</div>
 
 					<div>
-						<label
-							htmlFor="movements-list"
-							className="block font-bold uppercase mb-2"
-						>
+						<label htmlFor="movements-list" className="block font-bold uppercase mb-2">
 							Movements
 						</label>
 						<div
@@ -324,7 +310,9 @@ export default function EditWorkoutClient({
 									>
 										<div className="flex justify-between items-center">
 											<span className="font-bold">{movement.name}</span>
-											<span className="text-xs uppercase">{movement.type}</span>
+											<span className="text-xs uppercase">
+												{movement.type}
+											</span>
 										</div>
 									</button>
 								))}

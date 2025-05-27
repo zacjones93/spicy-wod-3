@@ -34,20 +34,17 @@ export default function CalculatorLayout({
 								: ""
 						}`}
 					>
-						<Link
-							href="/calculator/spreadsheet"
-							className=""
-						>
+						<Link href="/calculator/spreadsheet" className="">
 							Percentage Spreadsheet
 						</Link>
 					</li>
 				</ul>
 			</nav>
-      <Suspense fallback={<div>Loading...</div>}>
-        <NuqsAdapter>
-          <main className="flex-grow p-4 h-full">{children}</main>
-        </NuqsAdapter>
-      </Suspense>
+			<Suspense fallback={<div>Loading...</div>}>
+				<NuqsAdapter>
+					<main className="flex-grow p-4 h-full">{children}</main>
+				</NuqsAdapter>
+			</Suspense>
 		</div>
 	);
 }

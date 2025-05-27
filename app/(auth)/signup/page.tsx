@@ -44,8 +44,8 @@ export default function SignupPage() {
 		console.log(
 			`[register] Creating user with email: ${email} and password: ${password.substring(
 				0,
-				3
-			)}...`
+				3,
+			)}...`,
 		);
 		await createUser(email, password);
 		redirect("/login"); // Redirect on successful creation

@@ -1,15 +1,8 @@
 "use client";
 
-import {
-	ArrowLeft,
-	Clock,
-	Dumbbell,
-	Edit,
-	ListChecks,
-	Tag,
-} from "lucide-react";
+import type { Set, WorkoutResult, WorkoutWithTagsAndMovements } from "@/types";
+import { ArrowLeft, Clock, Dumbbell, Edit, ListChecks, Tag } from "lucide-react";
 import Link from "next/link";
-import type { WorkoutResult, WorkoutWithTagsAndMovements, Set } from "@/types";
 import { Suspense } from "react";
 import { SetDetails } from "./set-details";
 

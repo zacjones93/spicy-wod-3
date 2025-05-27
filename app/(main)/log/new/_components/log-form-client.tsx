@@ -1,12 +1,12 @@
 "use client";
 
 import type { Prettify } from "@/lib/utils";
+import type { Workout } from "@/types";
 import { ArrowLeft, Search } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { submitLogFormAction } from "../actions";
-import type { Workout } from "@/types";
 
 export default function LogFormClient({
 	workouts,
@@ -90,8 +90,7 @@ export default function LogFormClient({
 		const expectedPartsPerScore = hasRepsPerRound ? 2 : 1; // 2 parts for rounds+reps, 1 otherwise
 
 		// Determine if scores need to be reset or initialized
-		const workoutIdContextChanged =
-			prevSelectedWorkoutIdRef.current !== selectedWorkout;
+		const workoutIdContextChanged = prevSelectedWorkoutIdRef.current !== selectedWorkout;
 		const scoresNeedRestructure =
 			scores.length !== numRoundsForInputs ||
 			scores.some((parts) => parts.length !== expectedPartsPerScore);
@@ -109,11 +108,7 @@ export default function LogFormClient({
 		// and scores are correctly structured. No action needed, preventing a loop.
 	}, [selectedWorkout, workouts, scores]); // scores is included to re-validate if its structure is somehow externally changed or inconsistent
 
-	const handleScoreChange = (
-		roundIndex: number,
-		partIndex: number,
-		value: string,
-	) => {
+	const handleScoreChange = (roundIndex: number, partIndex: number, value: string) => {
 		const newScores = scores.map((parts, rIndex) => {
 			if (rIndex === roundIndex) {
 				const newParts = [...parts];
@@ -181,9 +176,7 @@ export default function LogFormClient({
 			{selectedWorkout && (
 				<input type="hidden" name="selectedWorkoutId" value={selectedWorkout} />
 			)}
-			{redirectUrl && (
-				<input type="hidden" name="redirectUrl" value={redirectUrl} />
-			)}
+			{redirectUrl && <input type="hidden" name="redirectUrl" value={redirectUrl} />}
 			<div className="flex justify-between items-center mb-6">
 				<div className="flex items-center gap-2">
 					<Link href={redirectUrl || "/log"} className="btn-outline p-2">
@@ -361,23 +354,30 @@ export default function LogFormClient({
 													) : (
 														<input
 															type={
-																currentWorkoutDetails?.scheme === "time"
+																currentWorkoutDetails?.scheme ===
+																"time"
 																	? "text"
 																	: "number"
 															}
 															className="input w-full"
 															placeholder={
-																currentWorkoutDetails?.scheme === "time"
+																currentWorkoutDetails?.scheme ===
+																"time"
 																	? "e.g. 3:21"
 																	: "Reps/Load"
 															}
 															value={scoreParts[0] || ""}
 															onChange={(e) =>
-																handleScoreChange(roundIndex, 0, e.target.value)
+																handleScoreChange(
+																	roundIndex,
+																	0,
+																	e.target.value,
+																)
 															}
 															name={`scores[${roundIndex}][0]`}
 															min={
-																currentWorkoutDetails?.scheme !== "time"
+																currentWorkoutDetails?.scheme !==
+																"time"
 																	? "0"
 																	: undefined
 															}
@@ -420,11 +420,7 @@ export default function LogFormClient({
 					<Link href="/log" className="btn-outline">
 						Cancel
 					</Link>
-					<button
-						type="submit"
-						className="btn"
-						disabled={!selectedWorkout || isPending}
-					>
+					<button type="submit" className="btn" disabled={!selectedWorkout || isPending}>
 						{isPending ? "Saving..." : "Save Result"}
 					</button>
 				</div>
