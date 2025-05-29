@@ -15,7 +15,8 @@
 			"dist/**",
 			"build/**",
 			"*.config.js",
-			"*.config.mjs"
+			"*.config.mjs",
+			"drizzle.config.ts"
 		]
 	},
 	"formatter": {

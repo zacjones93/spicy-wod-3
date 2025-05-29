@@ -1,7 +1,7 @@
 "use client";
 
-import type { ResultSet, WorkoutResult, WorkoutWithTagsAndMovements } from "@/types";
-import { ArrowLeft, Clock, Dumbbell, Edit, ListChecks, Tag } from "lucide-react";
+import type { Movement, ResultSet, Tag, WorkoutResult, WorkoutWithTagsAndMovements } from "@/types";
+import { ArrowLeft, Clock, Dumbbell, Edit, ListChecks, Tag as TagIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import { SetDetails } from "./set-details";
@@ -83,42 +83,38 @@ export default function WorkoutDetailClient({
 								<h3>MOVEMENTS</h3>
 							</div>
 							<div className="space-y-4">
-								{(workout.movements || []).map(
-									(movement: { id: string; [key: string]: unknown }) => (
-										<div
-											key={movement.id}
-											className="border-2 border-black p-4 dark:border-dark-border"
-										>
-											<div className="flex items-center justify-between">
-												<p className="font-bold text-foreground text-lg dark:text-dark-foreground">
-													{movement.name}
-												</p>
-												<span className="bg-black px-2 py-1 font-bold text-white text-xs uppercase dark:bg-dark-foreground dark:text-dark-background">
-													{movement.type}
-												</span>
-											</div>
+								{(workout.movements || []).map((movement: Movement) => (
+									<div
+										key={movement.id}
+										className="border-2 border-black p-4 dark:border-dark-border"
+									>
+										<div className="flex items-center justify-between">
+											<p className="font-bold text-foreground text-lg dark:text-dark-foreground">
+												{movement.name}
+											</p>
+											<span className="bg-black px-2 py-1 font-bold text-white text-xs uppercase dark:bg-dark-foreground dark:text-dark-background">
+												{movement.type}
+											</span>
 										</div>
-									),
-								)}
+									</div>
+								))}
 							</div>
 
 							{workout.tags && workout.tags.length > 0 && (
 								<>
 									<div className="my-4 flex items-center gap-2">
-										<Tag className="h-5 w-5" />
+										<TagIcon className="h-5 w-5" />
 										<h3>TAGS</h3>
 									</div>
 									<div className="mb-6 flex flex-wrap gap-2">
-										{(workout.tags || []).map(
-											(tag: { id?: string; [key: string]: unknown }) => (
-												<span
-													key={tag.id || tag}
-													className="inline-block border-2 border-black px-3 py-1 text-foreground dark:border-dark-border dark:text-dark-foreground"
-												>
-													{tag.name || tag}
-												</span>
-											),
-										)}
+										{(workout.tags || []).map((tag: Tag) => (
+											<span
+												key={tag.id}
+												className="inline-block border-2 border-black px-3 py-1 text-foreground dark:border-dark-border dark:text-dark-foreground"
+											>
+												{tag.name}
+											</span>
+										))}
 									</div>
 								</>
 							)}

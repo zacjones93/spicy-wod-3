@@ -51,10 +51,10 @@ describe("BarbellCalculator", () => {
 		render(<BarbellCalculator />);
 		expect(screen.getByLabelText(/TARGET WEIGHT/i)).toHaveValue(135);
 
-		const lbRadio = screen.getByRole("radio", { name: "LB" });
+		const lbRadio = screen.getByLabelText("LB");
 		expect(lbRadio).toBeChecked();
 
-		const bar45Radio = screen.getByRole("radio", { name: "45 lb" });
+		const bar45Radio = screen.getByLabelText("45 lb");
 		expect(bar45Radio).toBeChecked();
 
 		// Check for the main displayed weight. Be specific if there are multiple elements with "135.0"

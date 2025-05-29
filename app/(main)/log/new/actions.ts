@@ -135,7 +135,7 @@ function processScoreEntries(
 				};
 			}
 			if (workout.repsPerRound === undefined) throw new Error("repsPerRound is required");
-			const totalReps = roundsCompleted * workout.repsPerRound + repsCompleted;
+			const totalReps = roundsCompleted * (workout.repsPerRound ?? 0) + repsCompleted;
 
 			setsForDb.push({
 				setNumber,

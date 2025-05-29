@@ -7,96 +7,104 @@ alwaysApply: false
 
 ## 1. Project Overview
 
-goal: A Next.js starter kit that uses NextAuth.js for simple email + password login, Drizzle as the ORM, and a Cloudflare D1 (SQLite) database to persist the data. The original template used Neon Postgres, but this has been adapted for Cloudflare.
+goal: Brutalist Next.js workout tracker with authentication, logging, and management for CrossFit-style workouts, movements, and results. Prioritizes clarity, accessibility, and type safety.
 type: Web Application
 key features:
 - User Authentication (Email + Password via NextAuth.js)
-- Workout Logging and Tracking (Inferred from "Spicy WOD" name and app structure)
-- Movement Management (Inferred from app structure)
-- Spreadsheet-based calculator (Inferred from app structure)
+- Workout Logging and Tracking
+- Movement and Tag Management
+- Spreadsheet-based calculator
+- Accessible, brutalist UI (no rounded edges, keyboard navigation)
 
 ## 2. Technology Stack
 
-language(s): TypeScript 5.3.3 (from package.json, tsconfig.json target ES2022)
-framework(s): Next.js 15.3.2 (App Router - from package.json, next.config.mjs)
-ui library/styling: Tailwind CSS v3.4.0 (tailwind.config.ts, package.json), Shadcn UI (components.json, app/components/ui), Lucide React (Icons)
-database(s): Cloudflare D1 (SQLite compatible) via Drizzle ORM (drizzle.config.ts, wrangler.toml, package.json)
-state management: React Context (Implicit with Next.js App Router), Potentially Zustand or other if specific stores are found, but not explicit in package.json as a primary global state manager. Using `nuqs` for URL state management.
-api layer: REST (via Next.js API Routes)
+language(s): TypeScript 5.3.3 (strict mode)
+framework(s): Next.js 15.3.2 (App Router), React 19.1.0
+ui library/styling: Tailwind CSS v3.4.0, Shadcn UI, Lucide React
+state management: React Context, nuqs (URL state)
+database(s): Cloudflare D1 (SQLite) via Drizzle ORM
+db migrations: drizzle-kit, wrangler
+testing: vitest (unit, integration)
+api layer: REST (Next.js API Routes)
 key libraries:
-- `next-auth@5.0.0-beta.28` (Authentication)
-- `drizzle-orm@0.43.1` (ORM)
-- `zod@3.24.4` (Validation)
-- `geist@1.2.0` (Fonts)
-- `date-fns@4.1.0` (Date utilities)
+- next-auth@5.0.0-beta.28 (Authentication)
+- drizzle-orm@0.43.1 (ORM)
+- zod@3.24.4 (Validation)
+- date-fns@4.1.0 (Date utilities)
+- biome@1.9.4 (Linting/formatting)
 
 ## 3. Project Structure
 
 main source directory: app/
-core directories: [Verify existence and common usage patterns]
-- components/: (app/components/ - Reusable UI elements, Shadcn UI components)
-- lib/ or utils/: (app/lib/ - Shared utility functions, e.g., `app/lib/utils.ts`)
-- services/ or api/: (app/api/ - Next.js API routes, app/server/ for server-side logic)
-- types/ or interfaces/: (app/types/ - Shared type definitions)
-- db/ or prisma/ or drizzle/: (app/server/db/ - Drizzle schema and client, drizzle/ for migrations)
-- tests/ or __tests__/: ([N/A - No dedicated top-level test directory found, tests might be co-located or not yet implemented extensively])
+core directories:
+- components/: app/components/ (Reusable UI, Shadcn UI)
+- lib/: app/lib/ (Shared utilities)
+- api/: app/api/ (API routes)
+- server/: app/server/ (Business logic, db)
+- types/: app/types/ (Type definitions)
+- db/: app/server/db/ (Schema, client)
+- drizzle/: drizzle/ (Migrations)
+- tests/: [N/A - tests are co-located or not yet extensive]
 diagram/link: [N/A]
 
 ## 4. Coding Standards & Conventions
 
-language usage: Strict TypeScript mode (tsconfig.json `strict: true`), Prefer Next.js App Router features (server components, actions).
+language usage: Strict TypeScript (`strict: true`), explicit types everywhere, avoid `any` (enforced by Biome). Use async/await. All interactive elements must be accessible (e.g., use <button> for actions, not <div>).
 naming conventions:
-- files/folders: kebab-case (observed in `app/` structure, e.g., `main-nav`)
-- components: PascalCase (e.g., `MainNav.tsx`, Shadcn components)
-- variables/functions: camelCase (observed in codebase)
-- types/interfaces: PascalCase (observed in codebase, e.g., `NextRequest` in `app/api/og/route.tsx`)
-code style/formatting: `@biomejs/biome` (from devDependencies, but no `biome.json` found at root. A `.eslintrc.json` exists but is minimal. Project rules state Biome is mandatory).
-comments: English only. Minimal comments observed in current files.
-imports: Absolute paths (`@/*` via `tsconfig.json` paths).
+- files/folders: kebab-case (e.g., log-form-client.tsx)
+- components: PascalCase (e.g., LogFormClient)
+- variables/functions: camelCase
+- types/interfaces: PascalCase
+code style/formatting: Biome (`biome.json` is canonical, see package.json scripts). 4-space tab width, double quotes, trailing commas, import sorting.
+comments: English only, minimal, code should be self-explanatory.
+imports: Absolute paths via @/ (tsconfig.json), sorted by Biome.
+accessibility: All actions must be keyboard accessible. Use semantic elements (button, input). Labels must be associated with controls. No mouse-only actions.
+error handling: No non-null assertions. Use explicit runtime errors for missing values.
 
 ## 5. Key Principles & Best Practices
 
-[No explicit principles documented in README.md or easily found in project structure. Global rules mention Zen of Python, Observability, Many Small Files, Micro-Milestones.]
-- Adherence to The Zen of Python (as per global rules and [zen-coding.mdc](mdc:.cursor/rules/zen-coding.mdc))
-- Observability: Add excessive logging (as per global rules)
-- Many Small Files: Prefer creating new files (as per global rules)
-- Micro-Milestones: Commit-sized chunks (as per global rules)
+- Zen of Python (see _global.mdc)
+- Observability: Add excessive logging
+- Many Small Files: Prefer new files over large ones
+- Micro-Milestones: Commit-sized changes
+- Accessibility: All UI must be usable by keyboard and screen reader
+- Type Safety: No `any`, always use explicit types
+- Linting: All code must pass Biome checks before commit
 
 ## 6. Testing
 
 framework: vitest
-types: [movement.ts](mdc:app/types/movement.ts) [workout.ts](mdc:app/types/workout.ts) [workout-result.ts](mdc:app/types/workout-result.ts) [tag.ts](mdc:app/types/tag.ts) [user.ts](mdc:app/types/user.ts) [N/A - No specific test types outlined in project docs yet.]
-location: [N/A - No dedicated test directories or co-located test files prominently visible.]
+types: [N/A - no explicit test types documented]
+location: Co-located with source files (e.g., *.test.tsx)
 coverage expectations: [N/A]
 
 ## 7. Tooling & Workflow
 
-package manager: pnpm 9.10.0 (from `package.json` `packageManager` field and `pnpm-lock.yaml`)
-build command(s): `pnpm build` (from `package.json` scripts: `next build`)
-run command(s) (dev): `pnpm dev` (from `package.json` scripts: `next dev`)
-version control: Git. Conventional Commits (`feat:`, `fix:`, `chore:`) used (as per task log and global rules).
-ci/cd: [N/A - No CI/CD configuration files like `.github/workflows/` or `gitlab-ci.yml` found in root.] OpenNextJS for Cloudflare (`@opennextjs/cloudflare`) is used for deployment.
-ide recommendations: [N/A - No `.vscode/extensions.json` found.]
+package manager: pnpm 9.10.0
+build command(s): pnpm build
+run command(s) (dev): pnpm dev
+version control: Git, Conventional Commits (feat:, fix:, chore:). No bypassing pre-commit hooks.
+ci/cd: [N/A - no CI/CD config found]
+ide recommendations: VS Code with Biome extension (see README)
 
 ## 8. (Optional) Database / API Guidelines
 
-[N/A - No specific `docs/database.md` or `docs/api_guidelines.md` found. Drizzle ORM is used with D1.]
-- Migrations managed by `drizzle-kit` and `wrangler d1 migrations`.
-- Schema defined in `app/server/db/schema.ts`.
+- Use Drizzle ORM for all db access
+- Migrations via drizzle-kit and wrangler
+- Schema in app/server/db/schema.ts
 
 ## 9. (Optional) Specific Feature Rules
 
-[N/A - No dedicated docs for complex features found yet.]
-- OG Image Generation: API route at `/api/og` for dynamic OG images.
+- OG Image Generation: /api/og route
+- Accessibility: All new UI must pass Biome a11y lint rules
 
 ## 10. (Optional) Rule Referencing
 
-[Check `.cursor/rules/` directory for other rule files.]
 - See [cli-github-search.mdc](mdc:.cursor/rules/cli-github-search.mdc)
 - See [req-mermaid.mdc](mdc:.cursor/rules/req-mermaid.mdc)
 - See [req-shape-up-breadboard.mdc](mdc:.cursor/rules/req-shape-up-breadboard.mdc)
 - See [req-shape-up-pitch.mdc](mdc:.cursor/rules/req-shape-up-pitch.mdc)
-- See [_global.mdc](mdc:.cursor/rules/_global.mdc) (Global rules always apply)
+- See [_global.mdc](mdc:.cursor/rules/_global.mdc)
 - See [db-migrate.mdc](mdc:.cursor/rules/db-migrate.mdc)
 - See [task-plan.mdc](mdc:.cursor/rules/task-plan.mdc)
 - See [zen-coding.mdc](mdc:.cursor/rules/zen-coding.mdc)
@@ -106,7 +114,7 @@ ide recommendations: [N/A - No `.vscode/extensions.json` found.]
 - See [react-rules.mdc](mdc:.cursor/rules/react-rules.mdc)
 - See [pull-request-create.mdc](mdc:.cursor/rules/pull-request-create.mdc)
 - See [prompt-improve.mdc](mdc:.cursor/rules/prompt-improve.mdc)
-- See [project-update-rules.mdc](mdc:.cursor/rules/project-update-rules.mdc) (This file)
+- See [project-update-rules.mdc](mdc:.cursor/rules/project-update-rules.mdc)
 - See [project-todos-next.mdc](mdc:.cursor/rules/project-todos-next.mdc)
 - See [pnpm-fixes.mdc](mdc:.cursor/rules/pnpm-fixes.mdc)
 - See [docs-tech-stack.mdc](mdc:.cursor/rules/docs-tech-stack.mdc)

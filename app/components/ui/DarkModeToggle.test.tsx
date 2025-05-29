@@ -2,37 +2,39 @@
 
 import { fireEvent, render, screen } from "@testing-library/react";
 import { useTheme } from "next-themes";
+import { vi } from "vitest";
+import type { Mock } from "vitest";
 import { DarkModeToggle } from "./dark-mode-toggle";
 
 // Mock useTheme
-jest.mock("next-themes", () => ({
-	useTheme: jest.fn(),
+vi.mock("next-themes", () => ({
+	useTheme: vi.fn(),
 }));
 
 // Mock Button component as it's not relevant to this test
-jest.mock("@/components/ui/button", () => ({
+vi.mock("@/components/ui/button", () => ({
 	Button: ({
 		onClick,
 		children,
-		...props
-	}: React.PropsWithChildren<{ onClick?: () => void }>) => (
-		<button onClick={onClick} {...props}>
+	}: {
+		onClick: () => void;
+		children: React.ReactNode;
+	}) => (
+		<button type="button" onClick={onClick}>
 			{children}
 		</button>
 	),
 }));
 
 describe("DarkModeToggle", () => {
-	let mockSetTheme: jest.Mock;
+	let mockSetTheme: Mock;
 
 	beforeEach(() => {
-		mockSetTheme = jest.fn();
-		(useTheme as jest.Mock).mockReturnValue({
+		mockSetTheme = vi.fn();
+		(useTheme as Mock).mockReturnValue({
 			theme: "light",
 			setTheme: mockSetTheme,
 		});
-		// Clear console mocks if any previous test spied on it
-		jest.clearAllMocks();
 	});
 
 	it("renders with the sun icon when in light mode", () => {
@@ -43,7 +45,7 @@ describe("DarkModeToggle", () => {
 	});
 
 	it("renders with the moon icon when in dark mode", () => {
-		(useTheme as jest.Mock).mockReturnValue({
+		(useTheme as Mock).mockReturnValue({
 			theme: "dark",
 			setTheme: mockSetTheme,
 		});
@@ -60,7 +62,7 @@ describe("DarkModeToggle", () => {
 	});
 
 	it('calls setTheme to "light" when in dark mode and clicked', () => {
-		(useTheme as jest.Mock).mockReturnValue({
+		(useTheme as Mock).mockReturnValue({
 			theme: "dark",
 			setTheme: mockSetTheme,
 		});
@@ -78,7 +80,7 @@ describe("DarkModeToggle", () => {
 		expect(mockSetTheme).toHaveBeenCalledWith("dark");
 
 		// Simulate theme changing to dark
-		(useTheme as jest.Mock).mockReturnValueOnce({
+		(useTheme as Mock).mockReturnValueOnce({
 			theme: "dark", // current theme after click
 			setTheme: mockSetTheme,
 		});
@@ -89,14 +91,14 @@ describe("DarkModeToggle", () => {
 
 	it("logs to console when LOG_LEVEL is debug and theme is toggled", () => {
 		process.env.LOG_LEVEL = "debug";
-		const consoleSpy = jest.spyOn(console, "log");
+		const consoleSpy = vi.spyOn(console, "log");
 
 		render(<DarkModeToggle />);
 		fireEvent.click(screen.getByRole("button"));
 		expect(consoleSpy).toHaveBeenCalledWith("Theme changed to dark");
 
 		// Simulate theme changed to dark, then toggle back to light
-		(useTheme as jest.Mock).mockReturnValue({
+		(useTheme as Mock).mockReturnValue({
 			theme: "dark",
 			setTheme: mockSetTheme,
 		});
@@ -113,7 +115,7 @@ describe("DarkModeToggle", () => {
 	it("does not log to console when LOG_LEVEL is not debug", () => {
 		// Ensure LOG_LEVEL is not 'debug'
 		process.env.LOG_LEVEL = undefined;
-		const consoleSpy = jest.spyOn(console, "log");
+		const consoleSpy = vi.spyOn(console, "log");
 
 		render(<DarkModeToggle />);
 		fireEvent.click(screen.getByRole("button"));

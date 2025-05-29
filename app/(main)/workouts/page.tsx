@@ -1,4 +1,5 @@
 import { getAllWorkouts } from "@/server/functions/workout";
+import type { WorkoutResult } from "@/types";
 import { Plus } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -139,42 +140,37 @@ export default async function WorkoutsPage({
 											{workout.resultsToday.length > 1 ? "s" : ""} for Today:
 										</h4>
 										<div className="space-y-3">
-											{workout.resultsToday.map(
-												(result: {
-													id: string;
-													[key: string]: unknown;
-												}) => (
-													<div
-														key={result.id}
-														className="w-fit rounded-md border border-gray-200 bg-gray-50 p-3 dark:border-dark-border dark:bg-dark-accent"
-													>
-														<div className="flex items-center justify-between gap-4">
-															<p className="font-bold text-foreground text-lg dark:text-dark-foreground">
-																{result.wodScore}
-															</p>
-															{result.scale && (
-																<span
-																	className={`px-2 py-0.5 font-semibold text-xs ${
-																		result.scale === "rx"
-																			? "bg-green-100 text-green-700 dark:bg-green-700 dark:text-green-100"
-																			: result.scale === "rx+"
-																				? "bg-red-100 text-red-700 dark:bg-red-700 dark:text-red-100"
-																				: "bg-yellow-100 text-yellow-700 dark:bg-yellow-700 dark:text-yellow-100"
-																	}`}
-																>
-																	{result.scale.toUpperCase()}
-																</span>
-															)}
-														</div>
-														{result.notes && (
-															<p className="mt-1 text-gray-700 text-sm italic dark:text-dark-muted-foreground">
-																Notes: {result.notes}
-															</p>
+											{workout.resultsToday.map((result: WorkoutResult) => (
+												<div
+													key={result.id}
+													className="w-fit rounded-md border border-gray-200 bg-gray-50 p-3 dark:border-dark-border dark:bg-dark-accent"
+												>
+													<div className="flex items-center justify-between gap-4">
+														<p className="font-bold text-foreground text-lg dark:text-dark-foreground">
+															{result.wodScore}
+														</p>
+														{result.scale && (
+															<span
+																className={`px-2 py-0.5 font-semibold text-xs ${
+																	result.scale === "rx"
+																		? "bg-green-100 text-green-700 dark:bg-green-700 dark:text-green-100"
+																		: result.scale === "rx+"
+																			? "bg-red-100 text-red-700 dark:bg-red-700 dark:text-red-100"
+																			: "bg-yellow-100 text-yellow-700 dark:bg-yellow-700 dark:text-yellow-100"
+																}`}
+															>
+																{result.scale.toUpperCase()}
+															</span>
 														)}
-														{/* Consider adding a link to view/edit the specific log entry if needed */}
 													</div>
-												),
-											)}
+													{result.notes && (
+														<p className="mt-1 text-gray-700 text-sm italic dark:text-dark-muted-foreground">
+															Notes: {result.notes}
+														</p>
+													)}
+													{/* Consider adding a link to view/edit the specific log entry if needed */}
+												</div>
+											))}
 										</div>
 									</div>
 								)}
