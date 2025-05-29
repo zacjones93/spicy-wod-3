@@ -27,8 +27,8 @@ export default async function MovementsPage() {
 	const movements = await getAllMovements();
 	return (
 		<div>
-			<div className="flex justify-between items-center mb-6">
-				<h1 className="text-2xl font-bold">MOVEMENTS</h1>
+			<div className="mb-6 flex items-center justify-between">
+				<h1 className="font-bold text-2xl">MOVEMENTS</h1>
 				<Link href="/movements/new" className="btn flex items-center gap-2">
 					<Plus className="h-5 w-5" />
 					<span>Create Movement</span>

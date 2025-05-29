@@ -27,8 +27,8 @@ export default function MobileNav({ session }: MobileNavProps) {
 				<VisuallyHidden>
 					<SheetTitle>Navigation Menu</SheetTitle>
 				</VisuallyHidden>
-				<nav className="grid gap-6 text-lg font-medium">
-					<Link href="/" className="flex items-center gap-2 text-lg font-semibold mb-4">
+				<nav className="grid gap-6 font-medium text-lg">
+					<Link href="/" className="mb-4 flex items-center gap-2 font-semibold text-lg">
 						<Image
 							src="/spicywod-logo-black.png"
 							alt="spicy wod"
@@ -43,7 +43,7 @@ export default function MobileNav({ session }: MobileNavProps) {
 							height={32}
 							className="hidden dark:block"
 						/>
-						<span className="text-2xl font-black uppercase text-foreground dark:text-dark-foreground">
+						<span className="font-black text-2xl text-foreground uppercase dark:text-dark-foreground">
 							spicy wod
 						</span>
 					</Link>

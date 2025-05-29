@@ -1,13 +1,13 @@
 import { formatSecondsToTime } from "@/lib/utils";
-import type { Set } from "@/types";
+import type { ResultSet as WorkoutSet } from "@/types";
 
-export function SetDetails({ sets }: { sets: Set[] | null }) {
+export function SetDetails({ sets }: { sets: WorkoutSet[] | null }) {
 	return (
 		sets &&
 		sets.length > 0 && (
-			<div className="p-4 border-t-2 border-black">
-				<h4 className="text-sm font-bold uppercase tracking-wider mb-2">Set Details</h4>
-				<ul className="space-y-1 list-none">
+			<div className="border-black border-t-2 p-4">
+				<h4 className="mb-2 font-bold text-sm uppercase tracking-wider">Set Details</h4>
+				<ul className="list-none space-y-1">
 					{sets.map((set, index) => {
 						const setInfo = [];
 						if (set.reps) {
@@ -26,7 +26,7 @@ export function SetDetails({ sets }: { sets: Set[] | null }) {
 							setInfo.push(`Score: ${set.score}`);
 						}
 						return (
-							<li key={set.id || index} className="font-mono text-xs flex">
+							<li key={set.id || index} className="flex font-mono text-xs">
 								<span className="w-16 shrink-0">Set {set.setNumber}:</span>
 								<span className="flex-1">{setInfo.join(" / ")}</span>
 								{set.notes && (

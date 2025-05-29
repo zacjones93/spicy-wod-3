@@ -45,9 +45,13 @@ export async function GET(request: Request) {
 				height: 630,
 			},
 		);
-	} catch (e: any) {
-		console.log(`${e.message}`);
-		return new Response(`Failed to generate the image`, {
+	} catch (e: unknown) {
+		if (typeof e === "object" && e !== null && "message" in e) {
+			console.log(`${(e as { message: string }).message}`);
+		} else {
+			console.log("Unknown error", e);
+		}
+		return new Response("Failed to generate the image", {
 			status: 500,
 		});
 	}

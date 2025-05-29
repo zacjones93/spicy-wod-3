@@ -30,21 +30,22 @@ export default function MovementList({ movements }: MovementListProps) {
 
 	return (
 		<div>
-			<div className="flex flex-col sm:flex-row gap-4 mb-6">
+			<div className="mb-6 flex flex-col gap-4 sm:flex-row">
 				<div className="relative flex-1">
-					<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+					<Search className="-translate-y-1/2 absolute top-1/2 left-3 transform text-gray-500" />
 					<input
 						type="text"
 						placeholder="Search movements..."
-						className="input pl-10 w-full"
+						className="input w-full pl-10"
 						value={searchTerm}
 						onChange={(e) => setSearchTerm(e.target.value)}
 					/>
 				</div>
 				<div className="relative">
 					<button
-						className="btn-outline  flex items-center gap-2 w-full sm:w-auto justify-between"
+						className="btn-outline flex w-full items-center justify-between gap-2 sm:w-auto"
 						onClick={() => setIsFilterOpen(!isFilterOpen)}
+						type="button"
 					>
 						<Filter className="h-5 w-5" />
 						<span>{selectedType || "Filter by Type"}</span>
@@ -55,15 +56,16 @@ export default function MovementList({ movements }: MovementListProps) {
 						/>
 					</button>
 					{isFilterOpen && (
-						<div className="absolute z-10 mt-1 w-full sm:w-auto min-w-[150px] bg-white border border-gray-200 rounded-md shadow-lg right-0 sm:right-auto">
+						<div className="absolute right-0 z-10 mt-1 w-full min-w-[150px] rounded-md border border-gray-200 bg-white shadow-lg sm:right-auto sm:w-auto">
 							{movementTypes.map((type) => (
 								<button
 									key={type}
-									className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+									className="block w-full px-4 py-2 text-left text-gray-700 text-sm hover:bg-gray-100"
 									onClick={() => {
 										setSelectedType(type === "All" ? null : type);
 										setIsFilterOpen(false);
 									}}
+									type="button"
 								>
 									{type}
 								</button>
@@ -77,16 +79,16 @@ export default function MovementList({ movements }: MovementListProps) {
 				<p className="text-center text-gray-500">No movements found for your criteria.</p>
 			)}
 
-			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+			<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 				{filteredMovements.map((movement) => (
 					<Link
 						key={movement.id}
 						href={`/movements/${movement.id}`}
-						className="card hover:bg-gray-50 dark:hover:text-black transition-colors"
+						className="card transition-colors hover:bg-gray-50 dark:hover:text-black"
 					>
-						<div className="flex justify-between items-center">
+						<div className="flex items-center justify-between">
 							<h3 className="mb-2">{movement.name}</h3>
-							<span className="px-2 py-1 text-xs font-bold bg-black text-white uppercase">
+							<span className="bg-black px-2 py-1 font-bold text-white text-xs uppercase">
 								{movement.type}
 							</span>
 						</div>

@@ -93,7 +93,7 @@ export default function EditWorkoutClient({
 
 	return (
 		<div>
-			<div className="flex justify-between items-center mb-6">
+			<div className="mb-6 flex items-center justify-between">
 				<div className="flex items-center gap-2">
 					<Link href={`/workouts/${workoutId}`} className="btn-outline p-2">
 						<ArrowLeft className="h-5 w-5" />
@@ -102,13 +102,13 @@ export default function EditWorkoutClient({
 				</div>
 			</div>
 
-			<form className="border-2 border-black dark:border-white p-6" onSubmit={handleSubmit}>
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+			<form className="border-2 border-black p-6 dark:border-white" onSubmit={handleSubmit}>
+				<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
 					<div className="space-y-6">
 						<div>
 							<label
 								htmlFor="workout-name"
-								className="block font-bold uppercase mb-2"
+								className="mb-2 block font-bold uppercase"
 							>
 								Workout Name
 							</label>
@@ -125,7 +125,7 @@ export default function EditWorkoutClient({
 						<div>
 							<label
 								htmlFor="workout-description"
-								className="block font-bold uppercase mb-2"
+								className="mb-2 block font-bold uppercase"
 							>
 								Description
 							</label>
@@ -142,7 +142,7 @@ export default function EditWorkoutClient({
 						<div>
 							<label
 								htmlFor="workout-scheme"
-								className="block font-bold uppercase mb-2"
+								className="mb-2 block font-bold uppercase"
 							>
 								Scheme
 							</label>
@@ -171,7 +171,7 @@ export default function EditWorkoutClient({
 						<div>
 							<label
 								htmlFor="workout-scope"
-								className="block font-bold uppercase mb-2"
+								className="mb-2 block font-bold uppercase"
 							>
 								Scope
 							</label>
@@ -190,7 +190,7 @@ export default function EditWorkoutClient({
 						<div>
 							<label
 								htmlFor="reps-per-round"
-								className="block font-bold uppercase mb-2"
+								className="mb-2 block font-bold uppercase"
 							>
 								Reps Per Round
 							</label>
@@ -212,7 +212,7 @@ export default function EditWorkoutClient({
 						<div>
 							<label
 								htmlFor="rounds-to-score"
-								className="block font-bold uppercase mb-2"
+								className="mb-2 block font-bold uppercase"
 							>
 								Rounds to Score
 							</label>
@@ -234,11 +234,11 @@ export default function EditWorkoutClient({
 						<div>
 							<label
 								htmlFor="add-tag-input"
-								className="block font-bold uppercase mb-2"
+								className="mb-2 block font-bold uppercase"
 							>
 								Tags
 							</label>
-							<div className="flex gap-2 mb-2">
+							<div className="mb-2 flex gap-2">
 								<input
 									id="add-tag-input"
 									type="text"
@@ -258,29 +258,39 @@ export default function EditWorkoutClient({
 								</button>
 							</div>
 
-							<div className="flex flex-wrap gap-2 mt-2">
+							<div className="mt-2 flex flex-wrap gap-2">
 								{tags.map((tag) => (
 									<button
 										type="button"
 										key={tag.id}
-										className={`flex items-center border-2 border-black px-2 py-1 cursor-pointer text-left ${
+										className={`flex cursor-pointer items-center border-2 border-black px-2 py-1 text-left ${
 											selectedTags.includes(tag.id)
 												? "bg-black text-white"
 												: ""
 										}`}
 										onClick={() => handleTagToggle(tag.id)}
+										tabIndex={0}
+										onKeyDown={(e) => {
+											if (e.key === "Enter" || e.key === " ")
+												handleTagToggle(tag.id);
+										}}
 									>
 										<span className="mr-2">{tag.name}</span>
 										{selectedTags.includes(tag.id) && (
-											<div
+											<button
+												type="button"
 												onClick={(e) => {
 													e.stopPropagation();
 													handleRemoveTag(tag.id);
 												}}
+												onKeyDown={(e) => {
+													if (e.key === "Enter" || e.key === " ")
+														handleRemoveTag(tag.id);
+												}}
 												className="text-red-500"
 											>
 												<X className="h-4 w-4" />
-											</div>
+											</button>
 										)}
 									</button>
 								))}
@@ -289,26 +299,26 @@ export default function EditWorkoutClient({
 					</div>
 
 					<div>
-						<label htmlFor="movements-list" className="block font-bold uppercase mb-2">
+						<label htmlFor="movements-list" className="mb-2 block font-bold uppercase">
 							Movements
 						</label>
 						<div
 							id="movements-list"
-							className="border-2 border-black p-4 h-[500px] overflow-y-auto"
+							className="h-[500px] overflow-y-auto border-2 border-black p-4"
 						>
 							<div className="space-y-2">
 								{movements.map((movement) => (
 									<button
 										type="button"
 										key={movement.id}
-										className={`p-3 border-2 w-full text-left ${
+										className={`w-full border-2 p-3 text-left ${
 											selectedMovements.includes(movement.id)
 												? "border-black bg-black text-white"
 												: "border-gray-300"
 										} cursor-pointer`}
 										onClick={() => handleMovementToggle(movement.id)}
 									>
-										<div className="flex justify-between items-center">
+										<div className="flex items-center justify-between">
 											<span className="font-bold">{movement.name}</span>
 											<span className="text-xs uppercase">
 												{movement.type}
@@ -321,7 +331,7 @@ export default function EditWorkoutClient({
 					</div>
 				</div>
 
-				<div className="flex justify-end gap-4 mt-6">
+				<div className="mt-6 flex justify-end gap-4">
 					<Link href={`/workouts/${workoutId}`} className="btn-outline">
 						Cancel
 					</Link>

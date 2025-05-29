@@ -50,7 +50,7 @@ export default function CreateMovementForm({ createMovementAction }: Props) {
 
 	return (
 		<div>
-			<div className="flex justify-between items-center mb-6">
+			<div className="mb-6 flex items-center justify-between">
 				<div className="flex items-center gap-2">
 					<Link href="/movements" className="btn-outline p-2">
 						<ArrowLeft className="h-5 w-5" />
@@ -59,10 +59,10 @@ export default function CreateMovementForm({ createMovementAction }: Props) {
 				</div>
 			</div>
 
-			<form className="border-2 border-black p-6 max-w-md mx-auto" onSubmit={handleSubmit}>
+			<form className="mx-auto max-w-md border-2 border-black p-6" onSubmit={handleSubmit}>
 				<div className="space-y-6">
 					<div>
-						<label htmlFor="movementName" className="block font-bold uppercase mb-2">
+						<label htmlFor="movementName" className="mb-2 block font-bold uppercase">
 							Movement Name
 						</label>
 						<input
@@ -77,7 +77,7 @@ export default function CreateMovementForm({ createMovementAction }: Props) {
 					</div>
 
 					<div>
-						<label htmlFor="movementType" className="block font-bold uppercase mb-2">
+						<label htmlFor="movementType" className="mb-2 block font-bold uppercase">
 							Movement Type
 						</label>
 						<select

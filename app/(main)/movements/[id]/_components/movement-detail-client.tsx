@@ -29,12 +29,12 @@ export default function MovementDetailClient({
 
 	return (
 		<div>
-			<h1 className="text-3xl font-bold mb-6">{movement.name.toUpperCase()}</h1>
+			<h1 className="mb-6 font-bold text-3xl">{movement.name.toUpperCase()}</h1>
 
 			<section>
-				<div className="flex items-center gap-2 mb-4">
+				<div className="mb-4 flex items-center gap-2">
 					<ListChecks className="h-6 w-6" />
-					<h2 className="text-2xl font-semibold">Workout Results</h2>
+					<h2 className="font-semibold text-2xl">Workout Results</h2>
 				</div>
 
 				{workouts.length > 0 ? (
@@ -42,9 +42,9 @@ export default function MovementDetailClient({
 						{workouts.map((workout) => {
 							const resultsForWorkout = workoutResults[workout.id] || [];
 							return (
-								<div key={workout.id} className="p-6 border-2 border-black">
-									<div className="flex justify-between items-center mb-4">
-										<h3 className="text-xl font-medium">{workout.name}</h3>
+								<div key={workout.id} className="border-2 border-black p-6">
+									<div className="mb-4 flex items-center justify-between">
+										<h3 className="font-medium text-xl">{workout.name}</h3>
 										<Link
 											href={`/log/new?workoutId=${workout.id}&redirectUrl=/movements/${movement.id}`}
 											className="btn btn-sm flex items-center gap-2"
@@ -54,7 +54,7 @@ export default function MovementDetailClient({
 										</Link>
 									</div>
 									{workout.description && (
-										<p className="text-sm text-gray-700 mb-4 italic">
+										<p className="mb-4 text-gray-700 text-sm italic">
 											{workout.description}
 										</p>
 									)}
@@ -64,25 +64,25 @@ export default function MovementDetailClient({
 											{resultsForWorkout.map((result) => (
 												<div
 													key={result.id}
-													className="border-2 border-gray-200 p-4 rounded"
+													className="rounded border-2 border-gray-200 p-4"
 												>
-													<div className="flex justify-between items-center mb-2">
-														<p className="text-lg font-bold">
+													<div className="mb-2 flex items-center justify-between">
+														<p className="font-bold text-lg">
 															{formatDate(result.date)}
 														</p>
 														{result.scale && (
-															<span className="px-2 py-1 text-xs font-bold bg-gray-200 text-black uppercase rounded">
+															<span className="rounded bg-gray-200 px-2 py-1 font-bold text-black text-xs uppercase">
 																{result.scale}
 															</span>
 														)}
 													</div>
 													{result.wodScore && (
-														<p className="text-xl mb-1">
+														<p className="mb-1 text-xl">
 															{result.wodScore}
 														</p>
 													)}
 													{result.notes && (
-														<p className="text-sm text-gray-600">
+														<p className="text-gray-600 text-sm">
 															Notes: {result.notes}
 														</p>
 													)}

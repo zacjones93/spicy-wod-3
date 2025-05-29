@@ -2,7 +2,7 @@
 
 import { formatSecondsToTime, parseTimeScoreToSeconds } from "@/lib/utils";
 import { addLog } from "@/server/functions/log";
-import type { Set, Workout } from "@/types";
+import type { ResultSet, Workout } from "@/types";
 import { fromZonedTime } from "date-fns-tz";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -76,7 +76,7 @@ function validateParsedScores(
 }
 
 interface ProcessedScoresOutput {
-	setsForDb: Set[];
+	setsForDb: ResultSet[];
 	totalSecondsForWodScore: number;
 	error?: { error: string };
 }
@@ -88,7 +88,7 @@ function processScoreEntries(
 	isRoundsAndRepsWorkout: boolean,
 	atLeastOneScorePartFilled: boolean, // Added to resolve linter issues and use in logic
 ): ProcessedScoresOutput {
-	const setsForDb: Set[] = [];
+	const setsForDb: ResultSet[] = [];
 	let totalSecondsForWodScore = 0;
 
 	for (let k = 0; k < parsedScoreEntries.length; k++) {
@@ -134,17 +134,8 @@ function processScoreEntries(
 					},
 				};
 			}
-			if (workout.repsPerRound && repsCompleted >= workout.repsPerRound) {
-				return {
-					setsForDb: [],
-					totalSecondsForWodScore: 0,
-					error: {
-						error: `Reps for set ${setNumber} (${repsCompleted}) cannot exceed or equal reps per round (${workout.repsPerRound}). Adjust rounds or reps.`,
-					},
-				};
-			}
-
-			const totalReps = roundsCompleted * workout.repsPerRound! + repsCompleted;
+			if (workout.repsPerRound === undefined) throw new Error("repsPerRound is required");
+			const totalReps = roundsCompleted * workout.repsPerRound + repsCompleted;
 
 			setsForDb.push({
 				setNumber,
@@ -248,7 +239,7 @@ function processScoreEntries(
 }
 
 function validateProcessedSets(
-	setsForDb: Set[],
+	setsForDb: ResultSet[],
 	workoutScheme: Workout["scheme"],
 	atLeastOneScorePartFilled: boolean,
 ): { error?: string } | undefined {
@@ -277,7 +268,7 @@ function generateWodScoreSummary(
 	parsedScoreEntries: Array<{ parts: string[] }>,
 	isRoundsAndRepsWorkout: boolean,
 	workoutScheme: Workout["scheme"],
-	setsForDb: Set[], // Added to check conditions for time-based summary
+	setsForDb: ResultSet[], // Added to check conditions for time-based summary
 	atLeastOneScorePartFilled: boolean, // Added for conditional logic
 ): string {
 	let finalWodScoreSummary = "";
@@ -348,7 +339,7 @@ async function submitLogToDatabase(
 	scaleValue: "rx" | "scaled" | "rx+",
 	finalWodScoreSummary: string,
 	notesValue: string,
-	setsForDb: Set[],
+	setsForDb: ResultSet[],
 	redirectUrl: string | null,
 ): Promise<{ error?: string } | undefined> {
 	console.log("[Action] Submitting log with sets:", {

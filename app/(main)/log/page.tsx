@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { formatSecondsToTime } from "@/lib/utils";
 import { getLogsByUser } from "@/server/functions/log";
 import { getResultSetsById } from "@/server/functions/workout-results";
-import type { Set, WorkoutResultWithWorkoutName } from "@/types";
+import type { ResultSet, WorkoutResultWithWorkoutName } from "@/types";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -42,19 +42,19 @@ export default async function LogPage() {
 	const logs = await getLogsByUser(session.user.id);
 	return (
 		<div>
-			<div className="flex justify-between items-center mb-6">
+			<div className="mb-6 flex items-center justify-between">
 				<h1 className="dark:text-white">WORKOUT LOG</h1>
 				<a
 					href="/log/new"
-					className="btn bg-white text-black border-black hover:bg-neutral-100 dark:bg-neutral-800 dark:text-white dark:border-neutral-600 dark:hover:bg-neutral-700"
+					className="btn border-black bg-white text-black hover:bg-neutral-100 dark:border-neutral-600 dark:bg-neutral-800 dark:text-white dark:hover:bg-neutral-700"
 				>
 					Log New Result
 				</a>
 			</div>
 			{/* Display recent results for now, calendar will be added here */}
-			<div className="flex flex-col md:flex-row gap-4">
+			<div className="flex flex-col gap-4 md:flex-row">
 				<div className="mb-8 flex-1">
-					<h2 className="text-xl font-semibold mb-4 dark:text-white">RECENT RESULTS</h2>
+					<h2 className="mb-4 font-semibold text-xl dark:text-white">RECENT RESULTS</h2>
 					{/* Placeholder for recent results if needed, or remove if calendar is sufficient */}
 					{logs.length > 0 ? (
 						<div className="space-y-4">
@@ -64,22 +64,22 @@ export default async function LogPage() {
 										return (
 											<div
 												key={log.id}
-												className="border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-white dark:bg-neutral-800 dark:border-neutral-700 dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)]"
+												className="rounded-none border-2 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:border-neutral-700 dark:bg-neutral-800 dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)]"
 											>
-												<div className="p-4 flex justify-between items-start">
+												<div className="flex items-start justify-between p-4">
 													<div>
 														<Link href={`/workouts/${log.workoutId}`}>
-															<h3 className="text-xl font-bold uppercase tracking-tight hover:underline dark:text-white">
+															<h3 className="font-bold text-xl uppercase tracking-tight hover:underline dark:text-white">
 																{log.workoutName || "Workout"}
 															</h3>
 														</Link>
-														<p className="text-xs font-mono text-neutral-600 dark:text-neutral-400">
+														<p className="font-mono text-neutral-600 text-xs dark:text-neutral-400">
 															{new Date(
 																log.date,
 															).toLocaleDateString()}
 														</p>
 													</div>
-													<div className="text-right text-xs font-mono dark:text-neutral-300">
+													<div className="text-right font-mono text-xs dark:text-neutral-300">
 														{log.type && (
 															<p>
 																<span className="font-semibold">
@@ -99,16 +99,16 @@ export default async function LogPage() {
 													</div>
 												</div>
 
-												<div className="p-4 space-y-2">
+												<div className="space-y-2 p-4">
 													{log.notes && (
-														<div className="p-2 bg-neutral-100 border border-neutral-300 dark:bg-neutral-700 dark:border-neutral-600">
-															<p className="text-sm font-mono dark:text-neutral-200">
+														<div className="border border-neutral-300 bg-neutral-100 p-2 dark:border-neutral-600 dark:bg-neutral-700">
+															<p className="font-mono text-sm dark:text-neutral-200">
 																{log.notes}
 															</p>
 														</div>
 													)}
 
-													<div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm font-mono dark:text-neutral-300">
+													<div className="grid grid-cols-2 gap-x-4 gap-y-1 font-mono text-sm dark:text-neutral-300">
 														{log.wodScore && (
 															<p>
 																<span className="font-semibold">
@@ -145,7 +145,7 @@ export default async function LogPage() {
 												</div>
 												<Suspense
 													fallback={
-														<div className="p-4 border-t-2 border-black text-sm font-mono dark:border-neutral-700 dark:text-neutral-400">
+														<div className="border-black border-t-2 p-4 font-mono text-sm dark:border-neutral-700 dark:text-neutral-400">
 															Loading details...
 														</div>
 													}
@@ -169,17 +169,17 @@ export default async function LogPage() {
 }
 
 async function SetDetails({ log }: { log: WorkoutResultWithWorkoutName }) {
-	const setDetails: Set[] = await getResultSetsById(log.id);
+	const setDetails: ResultSet[] = await getResultSetsById(log.id);
 
 	// console.log({ setDetails }); // Keep console.log commented out or remove for production
 
 	return (
 		setDetails.length > 1 && (
-			<div className="p-4 border-t-2 border-black dark:border-neutral-700">
-				<h4 className="text-sm font-bold uppercase tracking-wider mb-2 dark:text-white">
+			<div className="border-black border-t-2 p-4 dark:border-neutral-700">
+				<h4 className="mb-2 font-bold text-sm uppercase tracking-wider dark:text-white">
 					Set Details
 				</h4>
-				<ul className="space-y-1 list-none">
+				<ul className="list-none space-y-1">
 					{setDetails.map((set, index) => {
 						const setInfo = [];
 						if (set.reps) {
@@ -200,7 +200,7 @@ async function SetDetails({ log }: { log: WorkoutResultWithWorkoutName }) {
 						return (
 							<li
 								key={set.id || index}
-								className="font-mono text-xs flex dark:text-neutral-300"
+								className="flex font-mono text-xs dark:text-neutral-300"
 							>
 								<span className="w-16 shrink-0">Set {set.setNumber}:</span>
 								<span className="flex-1">{setInfo.join(" / ")}</span>

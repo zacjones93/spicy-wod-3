@@ -14,11 +14,14 @@ export function SubmitButton({ children }: { children: React.ReactNode }) {
 			{children}
 			{pending && (
 				<svg
-					className="animate-spin ml-2 h-4 w-4 text-black"
+					className="ml-2 h-4 w-4 animate-spin text-black"
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
 					viewBox="0 0 24 24"
+					role="img"
+					aria-label="Loading"
 				>
+					<title>Loading</title>
 					<circle
 						className="opacity-25"
 						cx="12"
@@ -34,7 +37,7 @@ export function SubmitButton({ children }: { children: React.ReactNode }) {
 					/>
 				</svg>
 			)}
-			<span aria-live="polite" className="sr-only" role="status">
+			<span aria-live="polite" className="sr-only">
 				{pending ? "Loading" : "Submit form"}
 			</span>
 		</button>

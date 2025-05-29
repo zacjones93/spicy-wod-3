@@ -73,9 +73,9 @@ export function LoginForm({ authenticateAction }: LoginFormProps) {
 	const [errorMessage, dispatch] = useActionState(authenticateAction, undefined);
 
 	return (
-		<form action={dispatch} className="p-6 space-y-6">
+		<form action={dispatch} className="space-y-6 p-6">
 			<div>
-				<label className="block font-bold uppercase mb-2" htmlFor="email">
+				<label className="mb-2 block font-bold uppercase" htmlFor="email">
 					Email
 				</label>
 				<input
@@ -92,7 +92,7 @@ export function LoginForm({ authenticateAction }: LoginFormProps) {
 			</div>
 
 			<div>
-				<label className="block font-bold uppercase mb-2" htmlFor="password">
+				<label className="mb-2 block font-bold uppercase" htmlFor="password">
 					Password
 				</label>
 				<input className="input" id="password" name="password" type="password" required />
@@ -104,7 +104,7 @@ export function LoginForm({ authenticateAction }: LoginFormProps) {
 				</div>
 			)}
 
-			<div className="flex justify-between items-center">
+			<div className="flex items-center justify-between">
 				<label className="flex items-center gap-2">
 					<input
 						type="checkbox"
@@ -126,7 +126,7 @@ export function LoginForm({ authenticateAction }: LoginFormProps) {
 			<div className="text-center">
 				<p>
 					Don&apos;t have an account?{" "}
-					<Link href="/signup" prefetch={false} className="underline font-bold">
+					<Link href="/signup" prefetch={false} className="font-bold underline">
 						Sign up
 					</Link>
 				</p>

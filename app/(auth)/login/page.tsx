@@ -43,28 +43,28 @@ export default function LoginPage() {
 	}
 
 	return (
-		<div className="min-h-screen flex flex-col">
-			<header className="border-b-2 border-black p-4">
+		<div className="flex min-h-screen flex-col">
+			<header className="border-black border-b-2 p-4">
 				<div className="container mx-auto">
 					<Link href="/" className="flex items-center gap-2">
 						<Dumbbell className="h-8 w-8" />
-						<h1 className="text-2xl font-black uppercase">spicy wod</h1>
+						<h1 className="font-black text-2xl uppercase">spicy wod</h1>
 					</Link>
 				</div>
 			</header>
 
-			<main className="flex-1 flex items-center justify-center p-4">
+			<main className="flex flex-1 items-center justify-center p-4">
 				<div className="w-full max-w-md">
 					<div className="border-2 border-black">
-						<div className="bg-black text-white p-4">
-							<h2 className="text-xl font-bold uppercase">Login</h2>
+						<div className="bg-black p-4 text-white">
+							<h2 className="font-bold text-xl uppercase">Login</h2>
 						</div>
 						<LoginForm authenticateAction={authenticateAction} />
 					</div>
 				</div>
 			</main>
 
-			<footer className="border-t-2 border-black p-4">
+			<footer className="border-black border-t-2 p-4">
 				<div className="container mx-auto">
 					<p className="text-center">
 						&copy; {new Date().getFullYear()} spicy wod. All rights reserved.

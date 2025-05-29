@@ -32,12 +32,12 @@ export default function LogCalendarClient({ logs }: LogCalendarClientProps) {
 				setSelectedLog(null);
 			}
 		},
-		[logs, setDate, setSelectedLog],
+		[logs],
 	);
 
 	React.useEffect(() => {
 		handleDateSelect(date);
-	}, [logs, date, handleDateSelect]);
+	}, [date, handleDateSelect]);
 
 	const loggedDates = logs.map((log) => new Date(log.date));
 
@@ -47,7 +47,7 @@ export default function LogCalendarClient({ logs }: LogCalendarClientProps) {
 				mode="single"
 				selected={date}
 				onSelect={handleDateSelect}
-				className=" border h-fit"
+				className=" h-fit border"
 				modifiers={{
 					logged: loggedDates,
 				}}
@@ -62,34 +62,34 @@ export default function LogCalendarClient({ logs }: LogCalendarClientProps) {
 				}}
 			/>
 			{selectedLog && selectedLog.length > 0 && (
-				<div className="border p-4 rounded-md md:w-1/3 flex flex-col gap-4 min-w-[358px]">
+				<div className="flex min-w-[358px] flex-col gap-4 rounded-md border p-4 md:w-1/3">
 					{selectedLog.map((logEntry) => (
-						<div key={logEntry.id} className="border-2 border-black p-4 rounded-md">
-							<h3 className="font-bold text-lg mb-2">
+						<div key={logEntry.id} className="rounded-md border-2 border-black p-4">
+							<h3 className="mb-2 font-bold text-lg">
 								{logEntry.workoutName || "Workout Result"}
 							</h3>
-							<div className="flex justify-between items-center mb-2">
-								<p className="text-sm text-muted-foreground">
+							<div className="mb-2 flex items-center justify-between">
+								<p className="text-muted-foreground text-sm">
 									{new Date(logEntry.date).toLocaleDateString()}
 								</p>
 								{logEntry.scale && (
-									<span className="px-2 py-1 text-xs font-bold bg-gray-200 text-black uppercase rounded-sm">
+									<span className="rounded-sm bg-gray-200 px-2 py-1 font-bold text-black text-xs uppercase">
 										{logEntry.scale}
 									</span>
 								)}
 							</div>
 							{logEntry.wodScore && (
-								<p className="text-xl mb-1">{logEntry.wodScore}</p>
+								<p className="mb-1 text-xl">{logEntry.wodScore}</p>
 							)}
 							{logEntry.time && <p className="mt-1">Duration: {logEntry.time}</p>}
 							{logEntry.setCount && <p className="mt-1">Sets: {logEntry.setCount}</p>}
 							{logEntry.notes && (
-								<p className="text-sm text-gray-600 mt-2">{logEntry.notes}</p>
+								<p className="mt-2 text-gray-600 text-sm">{logEntry.notes}</p>
 							)}
 							{logEntry.workoutId && (
 								<Button
 									asChild
-									className="mt-4 w-full bg-white text-black border border-black"
+									className="mt-4 w-full border border-black bg-white text-black"
 								>
 									<Link href={`/workouts/${logEntry.workoutId}`}>
 										View Workout
@@ -101,14 +101,14 @@ export default function LogCalendarClient({ logs }: LogCalendarClientProps) {
 				</div>
 			)}
 			{(!selectedLog || selectedLog.length === 0) && date && (
-				<div className="border p-4 rounded-md md:w-1/3 min-w-[358px]">
-					<h3 className="font-bold text-sm mb-2">No workout logged for this day.</h3>
-					<p className="text-sm text-muted-foreground">{date.toLocaleDateString()}</p>
+				<div className="min-w-[358px] rounded-md border p-4 md:w-1/3">
+					<h3 className="mb-2 font-bold text-sm">No workout logged for this day.</h3>
+					<p className="text-muted-foreground text-sm">{date.toLocaleDateString()}</p>
 				</div>
 			)}
 			{!date && (
-				<div className="border p-4 rounded-md md:w-1/3 min-w-[358px]">
-					<h3 className="font-bold text-sm mb-2 text-balance w-fit">
+				<div className="min-w-[358px] rounded-md border p-4 md:w-1/3">
+					<h3 className="mb-2 w-fit text-balance font-bold text-sm">
 						Select a date to view workout results.
 					</h3>
 				</div>

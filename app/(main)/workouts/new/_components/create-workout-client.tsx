@@ -62,7 +62,7 @@ export default function CreateWorkoutClient({
 		}
 	};
 
-	const handleSubmit = async (e: any) => {
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const workoutId = crypto.randomUUID();
 
@@ -86,7 +86,7 @@ export default function CreateWorkoutClient({
 
 	return (
 		<div>
-			<div className="flex justify-between items-center mb-6">
+			<div className="mb-6 flex items-center justify-between">
 				<div className="flex items-center gap-2">
 					<Link href="/workouts" className="btn-outline p-2">
 						<ArrowLeft className="h-5 w-5" />
@@ -96,11 +96,14 @@ export default function CreateWorkoutClient({
 			</div>
 
 			<form className="border-2 border-black p-6" onSubmit={handleSubmit}>
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+				<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
 					<div className="space-y-6">
 						<div>
-							<label className="block font-bold uppercase mb-2">Workout Name</label>
+							<label htmlFor="workoutName" className="mb-2 block font-bold uppercase">
+								Workout Name
+							</label>
 							<input
+								id="workoutName"
 								type="text"
 								className="input"
 								placeholder="e.g., Fran, Cindy, Custom WOD"
@@ -111,8 +114,11 @@ export default function CreateWorkoutClient({
 						</div>
 
 						<div>
-							<label className="block font-bold uppercase mb-2">Description</label>
+							<label htmlFor="description" className="mb-2 block font-bold uppercase">
+								Description
+							</label>
 							<textarea
+								id="description"
 								className="textarea"
 								rows={4}
 								placeholder="Describe the workout (e.g., 21-15-9 reps for time of Thrusters and Pull-ups)"
@@ -123,8 +129,11 @@ export default function CreateWorkoutClient({
 						</div>
 
 						<div>
-							<label className="block font-bold uppercase mb-2">Scheme</label>
+							<label htmlFor="scheme" className="mb-2 block font-bold uppercase">
+								Scheme
+							</label>
 							<select
+								id="scheme"
 								className="select"
 								value={scheme}
 								onChange={(e) => setScheme(e.target.value as Workout["scheme"])}
@@ -144,8 +153,11 @@ export default function CreateWorkoutClient({
 						</div>
 
 						<div>
-							<label className="block font-bold uppercase mb-2">Scope</label>
+							<label htmlFor="scope" className="mb-2 block font-bold uppercase">
+								Scope
+							</label>
 							<select
+								id="scope"
 								className="select"
 								value={scope}
 								onChange={(e) => setScope(e.target.value as Workout["scope"])}
@@ -157,10 +169,14 @@ export default function CreateWorkoutClient({
 						</div>
 
 						<div>
-							<label className="block font-bold uppercase mb-2">
+							<label
+								htmlFor="roundsToScore"
+								className="mb-2 block font-bold uppercase"
+							>
 								Rounds to Score
 							</label>
 							<input
+								id="roundsToScore"
 								type="number"
 								className="input"
 								placeholder="e.g., 4 (default is 1)"
@@ -177,10 +193,14 @@ export default function CreateWorkoutClient({
 						</div>
 
 						<div>
-							<label className="block font-bold uppercase mb-2">
+							<label
+								htmlFor="repsPerRound"
+								className="mb-2 block font-bold uppercase"
+							>
 								Reps per Round (if applicable)
 							</label>
 							<input
+								id="repsPerRound"
 								type="number"
 								className="input"
 								placeholder="e.g., 10"
@@ -197,9 +217,12 @@ export default function CreateWorkoutClient({
 						</div>
 
 						<div>
-							<label className="block font-bold uppercase mb-2">Tags</label>
-							<div className="flex gap-2 mb-2">
+							<label htmlFor="tagsInput" className="mb-2 block font-bold uppercase">
+								Tags
+							</label>
+							<div className="mb-2 flex gap-2">
 								<input
+									id="tagsInput"
 									type="text"
 									className="input flex-1"
 									placeholder="Add a tag"
@@ -217,64 +240,63 @@ export default function CreateWorkoutClient({
 								</button>
 							</div>
 
-							<div className="flex flex-wrap gap-2 mt-2">
+							<div className="mt-2 flex flex-wrap gap-2">
 								{tags.map((tag) => (
-									<div
+									<button
+										type="button"
 										key={tag.id}
-										className={`flex items-center border-2 border-black px-2 py-1 cursor-pointer ${
+										onClick={() => handleTagToggle(tag.id)}
+										className={`flex cursor-pointer items-center border-2 border-black px-2 py-1 ${
 											selectedTags.includes(tag.id)
 												? "bg-black text-white"
 												: ""
 										}`}
-										onClick={() => handleTagToggle(tag.id)}
 									>
 										<span className="mr-2">{tag.name}</span>
 										{selectedTags.includes(tag.id) && (
-											<button
-												type="button"
-												onClick={(e) => {
-													e.stopPropagation();
-													handleRemoveTag(tag.id);
-												}}
-												className="text-red-500"
-											>
-												<X className="h-4 w-4" />
-											</button>
+											<span className="text-xs">✓</span>
 										)}
-									</div>
+									</button>
 								))}
 							</div>
 						</div>
 					</div>
 
 					<div>
-						<label className="block font-bold uppercase mb-2">Movements</label>
-						<div className="border-2 border-black p-4 h-[500px] overflow-y-auto">
+						<label htmlFor="movementsInput" className="mb-2 block font-bold uppercase">
+							Movements
+						</label>
+						<div className="h-[500px] overflow-y-auto border-2 border-black p-4">
 							<div className="space-y-2">
 								{movements.map((movement) => (
-									<div
+									<button
 										key={movement.id}
-										className={`p-3 border-2 ${
-											selectedMovements.includes(movement.id)
-												? "border-black bg-black text-white"
-												: "border-gray-300"
-										} cursor-pointer`}
+										type="button"
 										onClick={() => handleMovementToggle(movement.id)}
+										onKeyDown={(e) => {
+											if (e.key === "Enter" || e.key === " ")
+												handleMovementToggle(movement.id);
+										}}
+										className={`flex cursor-pointer items-center border-2 border-black px-2 py-1 ${
+											selectedMovements.includes(movement.id)
+												? "bg-black text-white"
+												: ""
+										}`}
 									>
-										<div className="flex justify-between items-center">
+										<div className="flex items-center justify-between">
 											<span className="font-bold">{movement.name}</span>
-											<span className="text-xs uppercase">
-												{movement.type}
-											</span>
+											{selectedMovements.includes(movement.id) && (
+												<span className="text-xs">✓</span>
+											)}
 										</div>
-									</div>
+									</button>
 								))}
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<div className="flex justify-end gap-4 mt-6">
+				<div className="mt-6 flex justify-end gap-4">
 					<Link href="/workouts" className="btn-outline">
 						Cancel
 					</Link>

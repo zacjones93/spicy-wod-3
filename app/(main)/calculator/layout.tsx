@@ -13,11 +13,11 @@ export default function CalculatorLayout({
 	const pathname = usePathname();
 
 	return (
-		<div className="flex sm:flex-row flex-col">
-			<nav className="text-black dark:text-white p-4">
+		<div className="flex flex-col sm:flex-row">
+			<nav className="p-4 text-black dark:text-white">
 				<ul className="flex flex-col gap-2">
 					<li
-						className={`border-2 border-black dark:border-white p-2 ${
+						className={`border-2 border-black p-2 dark:border-white ${
 							pathname === "/calculator"
 								? "bg-black text-white dark:bg-white dark:text-black"
 								: ""
@@ -28,7 +28,7 @@ export default function CalculatorLayout({
 						</Link>
 					</li>
 					<li
-						className={`border-2 border-black dark:border-white p-2 ${
+						className={`border-2 border-black p-2 dark:border-white ${
 							pathname === "/calculator/spreadsheet"
 								? "bg-black text-white dark:bg-white dark:text-black"
 								: ""
@@ -42,7 +42,7 @@ export default function CalculatorLayout({
 			</nav>
 			<Suspense fallback={<div>Loading...</div>}>
 				<NuqsAdapter>
-					<main className="flex-grow p-4 h-full">{children}</main>
+					<main className="h-full flex-grow p-4">{children}</main>
 				</NuqsAdapter>
 			</Suspense>
 		</div>

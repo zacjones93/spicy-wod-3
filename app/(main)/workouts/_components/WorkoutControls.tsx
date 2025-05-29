@@ -42,13 +42,13 @@ export default function WorkoutControls({ allTags, allMovements }: WorkoutContro
 	}, [searchTerm, selectedTag, selectedMovement, router, pathname, searchParams]);
 
 	return (
-		<div className="flex flex-col sm:flex-row gap-4 mb-6">
+		<div className="mb-6 flex flex-col gap-4 sm:flex-row">
 			<div className="relative flex-1">
-				<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+				<Search className="-translate-y-1/2 absolute top-1/2 left-3 transform text-gray-500" />
 				<input
 					type="text"
 					placeholder="Search workouts..."
-					className="input pl-10 w-full"
+					className="input w-full pl-10"
 					value={searchTerm}
 					onChange={(e) => setSearchTerm(e.target.value)}
 				/>

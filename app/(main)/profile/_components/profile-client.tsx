@@ -52,11 +52,11 @@ export default function ProfileClient({ user }: ProfileClientProps) {
 	};
 
 	return (
-		<div className="container max-w-xl mx-auto py-8">
-			<h1 className="text-2xl font-bold mb-6">User Profile</h1>
+		<div className="container mx-auto max-w-xl py-8">
+			<h1 className="mb-6 font-bold text-2xl">User Profile</h1>
 			{message && (
 				<div
-					className={`mb-4 p-3 rounded-md ${
+					className={`mb-4 rounded-md p-3 ${
 						message.startsWith("Error") || message.startsWith("An unexpected error")
 							? "bg-red-100 text-red-700"
 							: "bg-green-100 text-green-700"

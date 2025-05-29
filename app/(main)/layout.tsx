@@ -24,12 +24,12 @@ export default function MainLayout({
 	children: React.ReactNode;
 }) {
 	return (
-		<div className="min-h-screen flex flex-col">
+		<div className="flex min-h-screen flex-col">
 			<MainNav />
 
-			<main className="flex-1 container mx-auto p-4">{children}</main>
+			<main className="container mx-auto flex-1 p-4">{children}</main>
 
-			<footer className="border-t-2 border-black p-4">
+			<footer className="border-black border-t-2 p-4">
 				<div className="container mx-auto">
 					<p className="text-center">
 						&copy; {new Date().getFullYear()} spicy wod. All rights reserved.

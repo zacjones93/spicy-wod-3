@@ -9,8 +9,8 @@ import Link from "next/link";
 export default async function MainNav() {
 	const session = await auth();
 	return (
-		<header className="border-b-2 border-black dark:border-dark-border p-4 bg-background dark:bg-dark-background">
-			<div className="container mx-auto flex justify-between items-center">
+		<header className="border-black border-b-2 bg-background p-4 dark:border-dark-border dark:bg-dark-background">
+			<div className="container mx-auto flex items-center justify-between">
 				<Link href="/" className="flex items-center gap-2">
 					<Image
 						src="/spicywod-logo-black.png"
@@ -26,38 +26,38 @@ export default async function MainNav() {
 						height={32}
 						className="hidden dark:block"
 					/>
-					<h1 className="text-2xl font-black uppercase text-foreground dark:text-dark-foreground">
+					<h1 className="font-black text-2xl text-foreground uppercase dark:text-dark-foreground">
 						spicy wod
 					</h1>
 				</Link>
-				<nav className="hidden md:flex items-center gap-4">
+				<nav className="hidden items-center gap-4 md:flex">
 					{session?.user ? (
 						<>
 							<Link
 								href="/workouts"
-								className="font-bold uppercase hover:underline text-foreground dark:text-dark-foreground"
+								className="font-bold text-foreground uppercase hover:underline dark:text-dark-foreground"
 							>
 								Workouts
 							</Link>
 							<Link
 								href="/movements"
-								className="font-bold uppercase hover:underline text-foreground dark:text-dark-foreground"
+								className="font-bold text-foreground uppercase hover:underline dark:text-dark-foreground"
 							>
 								Movements
 							</Link>
 							<Link
 								href="/log"
-								className="font-bold uppercase hover:underline text-foreground dark:text-dark-foreground"
+								className="font-bold text-foreground uppercase hover:underline dark:text-dark-foreground"
 							>
 								Log
 							</Link>
 							<Link
 								href="/calculator"
-								className="font-bold uppercase hover:underline text-foreground dark:text-dark-foreground"
+								className="font-bold text-foreground uppercase hover:underline dark:text-dark-foreground"
 							>
 								Calculator
 							</Link>
-							<div className="border-l-2 border-black dark:border-dark-border h-6 mx-2" />
+							<div className="mx-2 h-6 border-black border-l-2 dark:border-dark-border" />
 							<Link
 								href="/profile"
 								className="font-bold text-foreground dark:text-dark-foreground"
@@ -71,7 +71,7 @@ export default async function MainNav() {
 						<div className="flex items-center gap-2">
 							<Link
 								href="/calculator"
-								className="font-bold uppercase hover:underline text-foreground dark:text-dark-foreground"
+								className="font-bold text-foreground uppercase hover:underline dark:text-dark-foreground"
 							>
 								Calculator
 							</Link>

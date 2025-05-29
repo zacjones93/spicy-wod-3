@@ -177,7 +177,7 @@ export default function LogFormClient({
 				<input type="hidden" name="selectedWorkoutId" value={selectedWorkout} />
 			)}
 			{redirectUrl && <input type="hidden" name="redirectUrl" value={redirectUrl} />}
-			<div className="flex justify-between items-center mb-6">
+			<div className="mb-6 flex items-center justify-between">
 				<div className="flex items-center gap-2">
 					<Link href={redirectUrl || "/log"} className="btn-outline p-2">
 						<ArrowLeft className="h-5 w-5" />
@@ -186,11 +186,11 @@ export default function LogFormClient({
 				</div>
 			</div>
 			<div className="border-2 border-black p-6">
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+				<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
 					<div>
 						<h2 className="mb-4">SELECT WORKOUT</h2>
 						<div className="relative mb-4">
-							<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+							<Search className="-translate-y-1/2 absolute top-1/2 left-3 transform text-gray-500" />
 							<input
 								type="text"
 								placeholder="Search workouts..."
@@ -199,26 +199,31 @@ export default function LogFormClient({
 								onChange={(e) => setSearchQuery(e.target.value)}
 							/>
 						</div>
-						<div className="border-2 border-black h-[400px] overflow-y-auto">
+						<div className="h-[400px] overflow-y-auto border-2 border-black">
 							{filteredWorkouts.length > 0 ? (
 								<div className="divide-y-2 divide-black">
 									{filteredWorkouts.map((workout: Workout) => (
-										<div
+										<button
 											key={workout.id}
-											className={`p-4 cursor-pointer ${
+											type="button"
+											onClick={() => handleWorkoutSelection(workout.id)}
+											onKeyDown={(e) => {
+												if (e.key === "Enter" || e.key === " ")
+													handleWorkoutSelection(workout.id);
+											}}
+											className={`cursor-pointer p-4 ${
 												selectedWorkout === workout.id
 													? "bg-black text-white"
 													: "hover:bg-gray-100"
 											}`}
-											onClick={() => handleWorkoutSelection(workout.id)}
 										>
-											<div className="flex justify-between items-center">
+											<div className="flex items-center justify-between">
 												<h3 className="font-bold">{workout.name}</h3>
-												<span className="text-sm uppercase">
-													{workout.scheme}
-												</span>
+												{selectedWorkout === workout.id && (
+													<span className="text-xs">✓</span>
+												)}
 											</div>
-										</div>
+										</button>
 									))}
 								</div>
 							) : (
@@ -236,10 +241,14 @@ export default function LogFormClient({
 								</h2>
 								<div className="space-y-6">
 									<div>
-										<label className="block font-bold uppercase mb-2">
+										<label
+											htmlFor="log-date"
+											className="mb-2 block font-bold uppercase"
+										>
 											Date
 										</label>
 										<input
+											id="log-date"
 											type="date"
 											className="input"
 											value={date}
@@ -248,12 +257,23 @@ export default function LogFormClient({
 										/>
 									</div>
 									<div>
-										<label className="block font-bold uppercase mb-2">
+										<span
+											id="scale-label"
+											className="mb-2 block font-bold uppercase"
+										>
 											Scale
-										</label>
-										<div className="flex gap-4">
-											<label className="flex items-center gap-2">
+										</span>
+										<div
+											className="flex gap-4"
+											role="radiogroup"
+											aria-labelledby="scale-label"
+										>
+											<label
+												className="flex items-center gap-2"
+												htmlFor="scale-rx"
+											>
 												<input
+													id="scale-rx"
 													type="radio"
 													name="scale"
 													value="rx"
@@ -263,8 +283,12 @@ export default function LogFormClient({
 												/>
 												<span>RX</span>
 											</label>
-											<label className="flex items-center gap-2">
+											<label
+												className="flex items-center gap-2"
+												htmlFor="scale-rxplus"
+											>
 												<input
+													id="scale-rxplus"
 													type="radio"
 													name="scale"
 													value="rx+"
@@ -274,8 +298,12 @@ export default function LogFormClient({
 												/>
 												<span>RX+</span>
 											</label>
-											<label className="flex items-center gap-2">
+											<label
+												className="flex items-center gap-2"
+												htmlFor="scale-scaled"
+											>
 												<input
+													id="scale-scaled"
 													type="radio"
 													name="scale"
 													value="scaled"
@@ -288,10 +316,14 @@ export default function LogFormClient({
 										</div>
 									</div>
 									<div>
-										<label className="block font-bold uppercase mb-2">
+										<label
+											htmlFor="log-score"
+											className="mb-2 block font-bold uppercase"
+										>
 											Score
 										</label>
 										{scores.map((scoreParts, roundIndex) => {
+											const key = scoreParts?.id || roundIndex;
 											const currentWorkoutDetails = getSelectedWorkout();
 											const hasRepsPerRound =
 												!!currentWorkoutDetails?.repsPerRound;
@@ -299,18 +331,21 @@ export default function LogFormClient({
 												currentWorkoutDetails?.repsPerRound;
 
 											return (
-												<div key={roundIndex} className="mb-3">
-													{" "}
+												<div key={key} className="mb-3">
 													{/* Wrapper for each score entry/round */}
 													{currentWorkoutDetails?.roundsToScore &&
 														currentWorkoutDetails.roundsToScore > 1 && (
-															<label className="block text-sm font-medium text-gray-700 mb-1">
+															<label
+																htmlFor={`round-score-${roundIndex}`}
+																className="mb-1 block font-medium text-gray-700 text-sm"
+															>
 																Round {roundIndex + 1} Score
 															</label>
 														)}
 													{hasRepsPerRound ? (
 														<div className="flex items-center gap-2">
 															<input
+																id={`round-score-${roundIndex}-rounds`}
 																type="number"
 																className="input w-full"
 																placeholder="Rounds"
@@ -327,6 +362,7 @@ export default function LogFormClient({
 															/>
 															<span className="text-gray-600">+</span>
 															<input
+																id={`round-score-${roundIndex}-reps`}
 																type="number"
 																className="input w-full"
 																placeholder={`Reps (max ${
@@ -353,6 +389,7 @@ export default function LogFormClient({
 														</div>
 													) : (
 														<input
+															id={`round-score-${roundIndex}`}
 															type={
 																currentWorkoutDetails?.scheme ===
 																"time"
@@ -388,10 +425,14 @@ export default function LogFormClient({
 										})}
 									</div>
 									<div>
-										<label className="block font-bold uppercase mb-2">
+										<label
+											htmlFor="log-notes"
+											className="mb-2 block font-bold uppercase"
+										>
 											Notes
 										</label>
 										<textarea
+											id="log-notes"
 											className="textarea"
 											rows={4}
 											placeholder="How did it feel? Any modifications?"
@@ -403,7 +444,7 @@ export default function LogFormClient({
 								</div>
 							</div>
 						) : (
-							<div className="flex items-center justify-center h-full border-2 border-dashed border-gray-300 p-6">
+							<div className="flex h-full items-center justify-center border-2 border-gray-300 border-dashed p-6">
 								<p className="text-center text-gray-500">
 									Select a workout from the list to log a result
 								</p>
@@ -412,11 +453,11 @@ export default function LogFormClient({
 					</div>
 				</div>
 				{formError && (
-					<div className="mt-4 p-4 border border-red-500 bg-red-100 text-red-700">
+					<div className="mt-4 border border-red-500 bg-red-100 p-4 text-red-700">
 						<p>{formError}</p>
 					</div>
 				)}
-				<div className="flex justify-end gap-4 mt-6">
+				<div className="mt-6 flex justify-end gap-4">
 					<Link href="/log" className="btn-outline">
 						Cancel
 					</Link>

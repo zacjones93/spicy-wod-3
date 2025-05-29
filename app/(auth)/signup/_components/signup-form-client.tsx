@@ -35,15 +35,18 @@ export default function SignupFormClient({ registerAction }: SignupFormClientPro
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className="p-6 space-y-6">
+		<form onSubmit={handleSubmit} className="space-y-6 p-6">
 			{errorMessage && (
-				<div className="p-4 bg-red-100 text-red-700 border border-red-400 rounded">
+				<div className="rounded border border-red-400 bg-red-100 p-4 text-red-700">
 					{errorMessage}
 				</div>
 			)}
 			<div>
-				<label className="block font-bold uppercase mb-2">Email</label>
+				<label htmlFor="signup-email" className="mb-2 block font-bold uppercase">
+					Email
+				</label>
 				<input
+					id="signup-email"
 					type="email"
 					name="email"
 					className="input"
@@ -58,8 +61,11 @@ export default function SignupFormClient({ registerAction }: SignupFormClientPro
 			</div>
 
 			<div>
-				<label className="block font-bold uppercase mb-2">Password</label>
+				<label htmlFor="signup-password" className="mb-2 block font-bold uppercase">
+					Password
+				</label>
 				<input
+					id="signup-password"
 					type="password"
 					name="password"
 					className="input"
@@ -74,9 +80,13 @@ export default function SignupFormClient({ registerAction }: SignupFormClientPro
 			</div>
 
 			<div>
-				<label className="block font-bold uppercase mb-2">Confirm Password</label>
+				<label htmlFor="signup-confirm-password" className="mb-2 block font-bold uppercase">
+					Confirm Password
+				</label>
 				<input
+					id="signup-confirm-password"
 					type="password"
+					name="confirmPassword"
 					className="input"
 					value={confirmPassword}
 					onChange={(e) => {
@@ -109,7 +119,7 @@ export default function SignupFormClient({ registerAction }: SignupFormClientPro
 			<div className="text-center">
 				<p>
 					Already have an account?{" "}
-					<Link href="/login" className="underline font-bold">
+					<Link href="/login" className="font-bold underline">
 						Login
 					</Link>
 				</p>

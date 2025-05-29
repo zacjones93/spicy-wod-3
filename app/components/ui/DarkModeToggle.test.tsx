@@ -11,7 +11,11 @@ jest.mock("next-themes", () => ({
 
 // Mock Button component as it's not relevant to this test
 jest.mock("@/components/ui/button", () => ({
-	Button: ({ onClick, children, ...props }: any) => (
+	Button: ({
+		onClick,
+		children,
+		...props
+	}: React.PropsWithChildren<{ onClick?: () => void }>) => (
 		<button onClick={onClick} {...props}>
 			{children}
 		</button>
@@ -103,12 +107,12 @@ describe("DarkModeToggle", () => {
 		expect(consoleSpy).toHaveBeenCalledWith("Theme changed to light");
 
 		consoleSpy.mockRestore();
-		delete process.env.LOG_LEVEL;
+		process.env.LOG_LEVEL = undefined;
 	});
 
 	it("does not log to console when LOG_LEVEL is not debug", () => {
 		// Ensure LOG_LEVEL is not 'debug'
-		delete process.env.LOG_LEVEL;
+		process.env.LOG_LEVEL = undefined;
 		const consoleSpy = jest.spyOn(console, "log");
 
 		render(<DarkModeToggle />);

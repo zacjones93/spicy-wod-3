@@ -19,7 +19,7 @@ export default function SpreadsheetCalculator() {
 
 	const calculatePercentages = () => {
 		const max = Number.parseFloat(oneRepMax as string);
-		if (isNaN(max) || max <= 0) {
+		if (Number.isNaN(max) || max <= 0) {
 			setPercentages([]);
 			return;
 		}
@@ -35,9 +35,9 @@ export default function SpreadsheetCalculator() {
 	};
 
 	return (
-		<div className="container mx-auto p-4 max-w-screen-md">
-			<h1 className="text-2xl font-bold mb-4">1RM Percentage Calculator</h1>
-			<div className="flex gap-2 mb-4">
+		<div className="container mx-auto max-w-screen-md p-4">
+			<h1 className="mb-4 font-bold text-2xl">1RM Percentage Calculator</h1>
+			<div className="mb-4 flex gap-2">
 				<Input
 					type="number"
 					value={oneRepMax}
@@ -54,8 +54,8 @@ export default function SpreadsheetCalculator() {
 			</div>
 
 			{percentages.length === 0 && (
-				<div className="flex flex-col justify-center items-center border-2 border-black dark:border-white p-4 h-full">
-					<p className="text-sm text-gray-500">
+				<div className="flex h-full flex-col items-center justify-center border-2 border-black p-4 dark:border-white">
+					<p className="text-gray-500 text-sm">
 						Enter your 1RM to see the percentage breakdown.
 					</p>
 				</div>

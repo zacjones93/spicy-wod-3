@@ -1,6 +1,6 @@
 import { getDbAsync } from "@/server/db";
 import { results, sets } from "@/server/db/schema";
-import type { Set, WorkoutResult } from "@/types";
+import type { ResultSet, WorkoutResult } from "@/types";
 import { and, eq } from "drizzle-orm";
 
 export async function getWorkoutResultsByWorkoutAndUser(
@@ -29,7 +29,7 @@ export async function getWorkoutResultsByWorkoutAndUser(
 	}
 }
 
-export async function getResultSetsById(resultId: string): Promise<Set[]> {
+export async function getResultSetsById(resultId: string): Promise<ResultSet[]> {
 	const db = await getDbAsync();
 	console.log(`Fetching sets for resultId: ${resultId}`);
 	try {

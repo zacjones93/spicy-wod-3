@@ -1,6 +1,6 @@
 "use server";
 
-import type { Set, WorkoutResultWithWorkoutName } from "@/types";
+import type { ResultSet, WorkoutResultWithWorkoutName } from "@/types";
 import { and, desc, eq, getTableColumns, gte, lt, sql } from "drizzle-orm";
 import { getDbAsync } from "../db";
 import { results, sets as setsTable, workouts } from "../db/schema";
@@ -61,7 +61,7 @@ export async function addLog({
 	scale: "rx" | "scaled" | "rx+";
 	wodScore: string;
 	notes?: string;
-	sets?: Set[]; // Optional for now, but WODs will pass it
+	sets?: ResultSet[]; // Optional for now, but WODs will pass it
 	type: "wod" | "strength" | "monostructural"; // Added type
 }) {
 	const db = await getDbAsync();
@@ -105,7 +105,7 @@ export async function addLog({
 			}
 		}
 
-		const operationsToBatch: [any, ...any[]] = [
+		const operationsToBatch: [unknown, ...unknown[]] = [
 			mainResultInsertOperation,
 			...additionalOperations,
 		];

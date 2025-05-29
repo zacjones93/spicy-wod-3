@@ -6,8 +6,8 @@ export default defineConfig({
 	dialect: "sqlite",
 	driver: "d1-http",
 	dbCredentials: {
-		accountId: process.env.CF_ACCOUNT_ID!,
-		databaseId: process.env.DB_REMOTE_DATABASE_ID!,
-		token: process.env.CF_USER_API_TOKEN!,
+		accountId: process.env.CF_ACCOUNT_ID,
+		databaseId: process.env.DB_REMOTE_DATABASE_ID,
+		token: process.env.CF_USER_API_TOKEN,
 	},
 });
