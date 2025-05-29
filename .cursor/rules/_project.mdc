@@ -57,15 +57,15 @@ imports: Absolute paths (`@/*` via `tsconfig.json` paths).
 ## 5. Key Principles & Best Practices
 
 [No explicit principles documented in README.md or easily found in project structure. Global rules mention Zen of Python, Observability, Many Small Files, Micro-Milestones.]
-- Adherence to The Zen of Python (as per global rules)
+- Adherence to The Zen of Python (as per global rules and [zen-coding.mdc](mdc:.cursor/rules/zen-coding.mdc))
 - Observability: Add excessive logging (as per global rules)
 - Many Small Files: Prefer creating new files (as per global rules)
 - Micro-Milestones: Commit-sized chunks (as per global rules)
 
 ## 6. Testing
 
-framework: [N/A - No primary testing framework explicitly configured in `package.json` (e.g., Jest, Vitest). `eslint` is present for linting.]
-types: [N/A - No specific test types outlined in project docs yet.]
+framework: vitest
+types: [movement.ts](mdc:app/types/movement.ts) [workout.ts](mdc:app/types/workout.ts) [workout-result.ts](mdc:app/types/workout-result.ts) [tag.ts](mdc:app/types/tag.ts) [user.ts](mdc:app/types/user.ts) [N/A - No specific test types outlined in project docs yet.]
 location: [N/A - No dedicated test directories or co-located test files prominently visible.]
 coverage expectations: [N/A]
 
