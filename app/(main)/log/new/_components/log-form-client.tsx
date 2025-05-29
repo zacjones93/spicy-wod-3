@@ -323,7 +323,7 @@ export default function LogFormClient({
 											Score
 										</label>
 										{scores.map((scoreParts, roundIndex) => {
-											const key = scoreParts?.id || roundIndex;
+											const key = scoreParts[roundIndex] || roundIndex;
 											const currentWorkoutDetails = getSelectedWorkout();
 											const hasRepsPerRound =
 												!!currentWorkoutDetails?.repsPerRound;
