@@ -16,7 +16,7 @@ export const movements = sqliteTable("movements", {
 	id: text("id").primaryKey(),
 	name: text("name").notNull(),
 	type: text("type", {
-		enum: ["strength", "gymnastic", "monostructural"],
+		enum: ["weightlifting", "gymnastic", "monostructural"],
 	}).notNull(),
 });
 

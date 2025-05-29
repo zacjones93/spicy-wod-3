@@ -1,19 +1,19 @@
 -- Seed data for workouts, movements, tags, and junction tables
 -- Movements
 INSERT INTO movements (id, name, type) VALUES
-  ('1', 'Thrusters', 'strength'),
+  ('1', 'Thrusters', 'weightlifting'),
   ('2', 'Pull-ups', 'gymnastic'),
   ('3', 'Push-ups', 'gymnastic'),
-  ('4', 'Squats', 'strength'),
-  ('5', 'Deadlifts', 'strength'),
+  ('4', 'Squats', 'weightlifting'),
+  ('5', 'Deadlifts', 'weightlifting'),
   ('6', 'Box Jumps', 'gymnastic'),
-  ('7', 'Wall Ball', 'strength'),
-  ('8', 'Kettlebell Swings', 'strength'),
+  ('7', 'Wall Ball', 'weightlifting'),
+  ('8', 'Kettlebell Swings', 'weightlifting'),
   ('9', 'Double-Unders', 'monostructural'),
   ('10', 'Run', 'monostructural'),
-  ('11', 'Clean & Jerk', 'strength'),
-  ('12', 'Hang Power Clean', 'strength'),
-  ('13', 'Push Jerk', 'strength');
+  ('11', 'Clean & Jerk', 'weightlifting'),
+  ('12', 'Hang Power Clean', 'weightlifting'),
+  ('13', 'Push Jerk', 'weightlifting');
 
 -- Tags
 INSERT INTO tags (id, name) VALUES

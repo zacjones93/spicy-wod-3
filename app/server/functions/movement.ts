@@ -3,8 +3,9 @@ import { revalidatePath } from "next/cache";
 import { getDbAsync } from "../db";
 import { movements } from "../db/schema";
 
-type MovementType = "strength" | "gymnastic" | "monostructural";
-const VALID_MOVEMENT_TYPES: MovementType[] = ["strength", "gymnastic", "monostructural"];
+import type { Movement } from "@/types/movement";
+
+const VALID_MOVEMENT_TYPES: Movement["type"][] = ["weightlifting", "gymnastic", "monostructural"];
 
 // Fetch all movements
 export async function getAllMovements() {
@@ -51,13 +52,13 @@ export async function createMovement(data: {
 
 	const lowerCaseType = rawType.toLowerCase();
 
-	if (!VALID_MOVEMENT_TYPES.includes(lowerCaseType as MovementType)) {
+	if (!VALID_MOVEMENT_TYPES.includes(lowerCaseType as Movement["type"])) {
 		const errorMessage = `Invalid movement type: '${lowerCaseType}'. Must be one of: ${VALID_MOVEMENT_TYPES.join(", ")}.`;
 		console.error(`[server/functions/movement] ${errorMessage}`);
 		throw new Error(errorMessage);
 	}
 
-	const movementType = lowerCaseType as MovementType; // Type assertion after validation
+	const movementType = lowerCaseType as Movement["type"]; // Type assertion after validation
 
 	if (!name) {
 		// type is already validated by implication above
